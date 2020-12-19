@@ -5,8 +5,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{6BE1FE8A-72AE-45CA-9FC3-2CB4115867C6}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>WildFL.Player</RootNamespace>
-    <AssemblyName>WildFL.Player</AssemblyName>
+    <RootNamespace>Wilder.Player</RootNamespace>
+    <AssemblyName>Wilder.Player</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>

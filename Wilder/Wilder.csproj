@@ -5,8 +5,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{FB7B5441-3937-4655-972F-E31A5D4D917E}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>WildFL</RootNamespace>
-    <AssemblyName>WildFL</AssemblyName>
+    <RootNamespace>Wilder</RootNamespace>
+    <AssemblyName>Wilder</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
@@ -41,7 +41,7 @@
     <Folder Include="Projects\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="../WildFL.FLP/WildFL.FLP.csproj">
+    <ProjectReference Include="../Wilder.FLP/Wilder.FLP.csproj">
       <Project>{CE83037E-41AA-4C72-BE2E-1DF90583AD17}</Project>
       <Name>Wilder.FLP</Name>
     </ProjectReference>

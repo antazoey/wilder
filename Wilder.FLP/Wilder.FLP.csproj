@@ -7,8 +7,8 @@
     <ProjectGuid>{CE83037E-41AA-4C72-BE2E-1DF90583AD17}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WildFL.FLP</RootNamespace>
-    <AssemblyName>WildFL.FLP</AssemblyName>
+    <RootNamespace>Wilder.FLP</RootNamespace>
+    <AssemblyName>Wilder.FLP</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <LangVersion>latest</LangVersion>
@@ -55,7 +55,7 @@
     <Compile Include="Subparsers\PatternNotesParser.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WildFL.Common\WildFL.Common.csproj">
+    <ProjectReference Include="..\Wilder.Common\Wilder.Common.csproj">
       <Project>{7510940C-65BA-495B-B29D-708BD3ED627F}</Project>
       <Name>Wilder.Common</Name>
     </ProjectReference>
