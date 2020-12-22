@@ -1,9 +1,10 @@
 ﻿using System;
 using LibVLCSharp.Shared;
+using Wilder.Common.Interfaces;
 
 namespace Wilder.Player.VLC
 {
-    public class VLCPlayer
+    public class VLCPlayer : IPlayer
     {
         private readonly  LibVLC _libvlc;
 

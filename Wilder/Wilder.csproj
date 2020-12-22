@@ -31,19 +31,30 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties/AssemblyInfo.cs" />
-    <Compile Include="Controllers/FLProjectsController.cs" />
     <Compile Include="Projects/Constants.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Controllers\" />
     <Folder Include="Projects\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../Wilder.FLP/Wilder.FLP.csproj">
       <Project>{CE83037E-41AA-4C72-BE2E-1DF90583AD17}</Project>
       <Name>Wilder.FLP</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Wilder.AlbumMaker\Wilder.AlbumMaker.csproj">
+      <Project>{d61201be-c12d-442b-a434-c98609169ebc}</Project>
+      <Name>Wilder.AlbumMaker</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Wilder.Common\Wilder.Common.csproj">
+      <Project>{7510940c-65ba-495b-b29d-708bd3ed627f}</Project>
+      <Name>Wilder.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Wilder.Player\Wilder.Player.csproj">
+      <Project>{6be1fe8a-72ae-45ca-9fc3-2cb4115867c6}</Project>
+      <Name>Wilder.Player</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)/Microsoft.CSharp.targets" />

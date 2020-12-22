@@ -7,7 +7,7 @@ namespace Wilder.FLP
 {
     internal class ProjectFactory
     {
-        public Project CreateProject(BinaryReader flpReader)
+        public static Project CreateProject(BinaryReader flpReader)
         {
             var parser = new ProjectParser();
             ParseHeader(flpReader, parser);
@@ -16,7 +16,7 @@ namespace Wilder.FLP
             return parser.Project;
         }
 
-        private void ParseHeader(BinaryReader reader, ProjectParser parser)
+        private static void ParseHeader(BinaryReader reader, ProjectParser parser)
         {
             VerifyMagicNumber(reader);
             VerifyHeader(reader);

@@ -44,5 +44,11 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Wilder.Common\Wilder.Common.csproj">
+      <Project>{7510940c-65ba-495b-b29d-708bd3ed627f}</Project>
+      <Name>Wilder.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

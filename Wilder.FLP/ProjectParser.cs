@@ -1,11 +1,12 @@
 ﻿using System.IO;
 using System.Text;
+using Wilder.Common.Interfaces;
 using Wilder.Common.Model;
 using Wilder.FLP.Subparsers;
 
 namespace Wilder.FLP
 {
-    internal class ProjectParser
+    public class ProjectParser : IProjectParser
     {
         private Channel _currentChannel;
         private Insert _currentInsert;
@@ -17,6 +18,24 @@ namespace Wilder.FLP
         {
             Project = new Project();
             _currentInsert = Project.Inserts[0];
+        }
+
+        public IProject Parse(string projectFilePath)
+        {
+            using var stream = File.OpenRead(projectFilePath);
+            return Load(stream);
+        }
+
+        public static IProject Load(Stream flpFileStream)
+        {
+            using var reader = new BinaryReader(flpFileStream);
+            return Load(reader);
+        }
+
+        public static IProject Load(BinaryReader flpReader)
+        {
+            var factory = new ProjectFactory();
+            return ProjectFactory.CreateProject(flpReader);
         }
 
         public Project Project { get; }
@@ -53,7 +72,7 @@ namespace Wilder.FLP
         {
             set
             {
-                if (_currentChannel != null && _currentChannel.Data is GeneratorData genData)
+                if (_currentChannel?.Data is GeneratorData genData)
                     genData.BaseNote = value + 9;
             }
         }

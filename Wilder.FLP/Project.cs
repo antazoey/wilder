@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using Wilder.Common;
+using Wilder.Common.Interfaces;
 using Wilder.Common.Model;
 
 namespace Wilder.FLP
 {
-    public class Project
+    public class Project : IProject
     {
         /// <summary>
         /// The volume of the project.
@@ -15,12 +15,12 @@ namespace Wilder.FLP
         /// <summary>
         /// The pitch of the project.
         /// </summary>
-        public int MainPitch { get; set; } = 0;
+        public int MainPitch { get; set; }
 
         /// <summary>
         /// The pulses per quarter-beat of the project.
         /// </summary>
-        public int Ppq { get; set; } = 0;
+        public int Ppq { get; set; }
 
         /// <summary>
         /// The tempo of the project.
@@ -80,7 +80,7 @@ namespace Wilder.FLP
         /// <summary>
         /// Whether the project is set to play truncated notes.
         /// </summary>
-        public bool PlayTruncatedNotes { get; set; } = false;
+        public bool PlayTruncatedNotes { get; set; }
 
         public Project()
         {
@@ -91,39 +91,6 @@ namespace Wilder.FLP
                 Inserts[i] = new Insert { Id = i, Name = $"Insert {i}" };
 
             Inserts[0].Name = "Master";
-        }
-
-        /// <summary>
-        /// Load a project from the path to the project file.
-        /// </summary>
-        /// <param name="projectFilePath"></param>
-        /// <returns></returns>
-        public static Project Load(string projectFilePath)
-        {
-            using var stream = File.OpenRead(projectFilePath);
-            return Load(stream);
-        }
-
-        /// <summary>
-        /// Load a project from a given project file stream.
-        /// </summary>
-        /// <param name="flpFileStream"></param>
-        /// <returns></returns>
-        private static Project Load(Stream flpFileStream)
-        {
-            using var reader = new BinaryReader(flpFileStream);
-            return Load(reader);
-        }
-
-        /// <summary>
-        /// Load a project from a given binary reader.
-        /// </summary>
-        /// <param name="flpReader"></param>
-        /// <returns></returns>
-        private static Project Load(BinaryReader flpReader)
-        {
-            var factory = new ProjectFactory();
-            return factory.CreateProject(flpReader);
         }
     }
 }
