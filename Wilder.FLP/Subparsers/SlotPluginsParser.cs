@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using Wilder.Common.Enum;
 using Wilder.Common.Model;
+// ReSharper disable SwitchStatementMissingSomeEnumCasesNoDefault
 
 namespace Wilder.FLP.Subparsers
 {
@@ -27,7 +28,7 @@ namespace Wilder.FLP.Subparsers
             }
         }
 
-        internal static Plugin ParsePluginChunk(byte[] chunk)
+        private static Plugin ParsePluginChunk(byte[] chunk)
         {
             var plugin = new Plugin();
 

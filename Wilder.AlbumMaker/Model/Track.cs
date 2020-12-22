@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Wilder.Agency.Model
+namespace Wilder.AlbumMaker.Model
 {
-    public class Track
+    public abstract class Track
     {
         /// <summary>
         /// The title of the track.

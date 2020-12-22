@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Wilder.FLP;
 
 namespace Wilder.Controllers
 {
     public class FLProjectsController
     {
-        readonly string _projectsDirectoryPath;
+        private readonly string _projectsDirectoryPath;
 
         public FLProjectsController(string projectsDirectoryPath)
         {
@@ -17,13 +18,7 @@ namespace Wilder.Controllers
         {
             var projectsDirectory = new DirectoryInfo(_projectsDirectoryPath);
             var projectFiles = projectsDirectory.GetFiles();
-            var projects = new List<Project>();
-            foreach (var flpFile in projectFiles)
-            {
-                var project = Project.Load(flpFile.FullName);
-                projects.Add(project);
-            }
-            return projects;
+            return projectFiles.Select(flpFile => Project.Load(flpFile.FullName)).ToList();
         }
     }
 }

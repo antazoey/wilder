@@ -3,6 +3,8 @@ using System.IO;
 using System.Text;
 using Wilder.Common.Enum;
 using Wilder.FLP.Subparsers;
+// ReSharper disable SwitchStatementMissingSomeEnumCasesNoDefault
+// ReSharper disable SwitchStatementHandlesSomeKnownEnumValuesWithDefault
 
 namespace Wilder.FLP
 {
@@ -30,7 +32,7 @@ namespace Wilder.FLP
                 ParseDataEvent(eventId, reader);
         }
 
-        void ParseByteEvent(Event eventId, BinaryReader reader)
+        private void ParseByteEvent(Event eventId, BinaryReader reader)
         {
             var data = reader.ReadByte();
             var genData = _projectParser.GeneratorData;
@@ -53,7 +55,7 @@ namespace Wilder.FLP
             }
         }
 
-        void ParseWordEvent(Event eventId, BinaryReader reader)
+        private void ParseWordEvent(Event eventId, BinaryReader reader)
         {
             var data = reader.ReadUInt16();
             var genData = _projectParser.GeneratorData;
@@ -95,7 +97,7 @@ namespace Wilder.FLP
             }
         }
 
-        void ParseDwordEvent(Event eventId, BinaryReader reader)
+        private void ParseDwordEvent(Event eventId, BinaryReader reader)
         {
             var data = reader.ReadUInt32();
             switch (eventId)
@@ -115,7 +117,7 @@ namespace Wilder.FLP
             }
         }
 
-        static int GetBufferLen(BinaryReader reader)
+        private static int GetBufferLen(BinaryReader reader)
         {
             var data = reader.ReadByte();
             var dataLen = data & 0x7F;
@@ -128,7 +130,7 @@ namespace Wilder.FLP
             return dataLen;
         }
 
-        void ParseTextEvent(Event eventId, BinaryReader reader)
+        private void ParseTextEvent(Event eventId, BinaryReader reader)
         {
             var dataLen = GetBufferLen(reader);
             var dataBytes = reader.ReadBytes(dataLen);
@@ -158,7 +160,7 @@ namespace Wilder.FLP
                     _projectParser.Project.Genre = unicodeString;
                     break;
                 case Event.TextSampleFileName:
-                    _projectParser.ParseGeneratorName(genData, unicodeString);
+                    ProjectParser.ParseGeneratorName(genData, unicodeString);
                     break;
                 case Event.TextVersion:
                     _projectParser.ParseVersion(dataBytes);
@@ -177,7 +179,7 @@ namespace Wilder.FLP
             }
         }
 
-        void ParseDataEvent(Event eventId, BinaryReader reader)
+        private void ParseDataEvent(Event eventId, BinaryReader reader)
         {
             var dataLen = GetBufferLen(reader);
             var dataStart = reader.BaseStream.Position;

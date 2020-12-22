@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Wilder.Agency.Model
+namespace Wilder.AlbumMaker.Model
 {
-    public class Album
+    public abstract class Album
     {
         /// <summary>
         /// The name of the album.

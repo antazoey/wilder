@@ -85,7 +85,7 @@ namespace Wilder.FLP.Subparsers
                     insert.HighWidth = messageData;
                     break;
                 default:
-                    // any value 64 or above appears to be the desination insert
+                    // any value 64 or above appears to be the destination insert
                     if ((int)messageId >= 64 && (int)messageId <= 64 + 104)
                     {
                         var insertDest = (int)messageId - 64;

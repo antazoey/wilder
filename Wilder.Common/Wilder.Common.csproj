@@ -40,7 +40,7 @@
     <Compile Include="Model\Insert.cs" />
     <Compile Include="Model\InsertSlot.cs" />
     <Compile Include="Interfaces\IPlaylistItem.cs" />
-    <Compile Include="Exceptions\FlParseException.cs" />
+    <Compile Include="Exceptions\FLParseException.cs" />
     <Compile Include="Model\Note.cs" />
     <Compile Include="Model\Pattern.cs" />
     <Compile Include="Model\PatternPlaylistItem.cs" />

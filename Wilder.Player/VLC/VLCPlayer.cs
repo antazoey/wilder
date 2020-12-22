@@ -5,7 +5,8 @@ namespace Wilder.Player.VLC
 {
     public class VLCPlayer
     {
-        readonly  LibVLC _libvlc;
+        // ReSharper disable once ArrangeTypeMemberModifiers
+        private readonly  LibVLC _libvlc;
 
         public VLCPlayer()
         {
@@ -16,8 +17,8 @@ namespace Wilder.Player.VLC
         public void Play(string songPath)
         {
             using var media = new Media(_libvlc, new Uri(songPath));
-            using var mediaplayer = new MediaPlayer(media);
-            mediaplayer.Play();
+            using var mediaPlayer = new MediaPlayer(media);
+            mediaPlayer.Play();
         }
     }
 }

@@ -2,8 +2,8 @@
 {
     public class AutomationKeyframe
     {
-        public int Position { get; set; } = 0;
-        public double Value { get; set; } = 0;
-        public float Tension { get; set; } = 0;
+        public int Position { get; set; }
+        public double Value { get; set; }
+        public float Tension { get; set; }
     }
 }

@@ -109,7 +109,7 @@ namespace Wilder.FLP
         /// </summary>
         /// <param name="flpFileStream"></param>
         /// <returns></returns>
-        public static Project Load(Stream flpFileStream)
+        private static Project Load(Stream flpFileStream)
         {
             using var reader = new BinaryReader(flpFileStream);
             return Load(reader);
@@ -120,7 +120,7 @@ namespace Wilder.FLP
         /// </summary>
         /// <param name="flpReader"></param>
         /// <returns></returns>
-        public static Project Load(BinaryReader flpReader)
+        private static Project Load(BinaryReader flpReader)
         {
             var factory = new ProjectFactory();
             return factory.CreateProject(flpReader);

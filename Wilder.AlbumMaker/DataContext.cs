@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
-using Wilder.Agency.Model;
+using Wilder.AlbumMaker.Model;
 
-namespace Wilder.Profile
+namespace Wilder.AlbumMaker
 {
     [ExcludeFromCodeCoverage]
     internal class DataContext : DbContext

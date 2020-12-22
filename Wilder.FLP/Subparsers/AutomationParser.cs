@@ -46,7 +46,7 @@ namespace Wilder.FLP.Subparsers
             // remaining data is unknown
         }
 
-        static void SetChannelData(Project project, Channel channel, short destination, ushort param)
+        private static void SetChannelData(Project project, Channel channel, short destination, ushort param)
         {
             channel.Data = new AutomationData
             {
@@ -57,7 +57,7 @@ namespace Wilder.FLP.Subparsers
             };
         }
 
-        static void SetChannelSlotData(Channel channel, short destination, ushort param)
+        private static void SetChannelSlotData(Channel channel, short destination, ushort param)
         {
             channel.Data = new AutomationData // automation on insert slot
             {
@@ -67,7 +67,7 @@ namespace Wilder.FLP.Subparsers
             };
         }
 
-        static void ParseAutomationKeyFrame(Project project, BinaryReader reader, AutomationData autData, int index)
+        private static void ParseAutomationKeyFrame(Project project, BinaryReader reader, AutomationData autData, int index)
         {
             var startPos = reader.BaseStream.Position;
 

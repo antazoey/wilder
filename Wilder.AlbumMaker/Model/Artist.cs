@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Wilder.Agency.Model
+namespace Wilder.AlbumMaker.Model
 {
-    public class Artist
+    public abstract class Artist
     {
         /// <summary>
         /// The name of the artist.

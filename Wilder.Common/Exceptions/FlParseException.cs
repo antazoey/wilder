@@ -2,16 +2,17 @@
 
 namespace Wilder.Common.Exceptions
 {
-    public class FlParseException : Exception
+    public class FLParseException : Exception
     {
-        public long StreamPosition { get; }
+        private long StreamPosition { get; }
 
-        public FlParseException(string message, long streamPosition) : base(message)
+        public FLParseException(string message, long streamPosition) : base(message)
         {
             StreamPosition = streamPosition;
         }
 
-        public FlParseException(string message, long streamPosition, Exception innerException) : base(message, innerException)
+        public FLParseException(string message, long streamPosition, Exception innerException) 
+            : base(message, innerException)
         {
             StreamPosition = streamPosition;
         }

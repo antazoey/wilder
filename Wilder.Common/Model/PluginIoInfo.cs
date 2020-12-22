@@ -1,8 +1,8 @@
 ﻿namespace Wilder.Common.Model
 {
-    public class PluginIoInfo
+    public abstract class PluginIoInfo
     {
-        public int MixerOffset { get; set; } = 0;
-        public byte Flags { get; set; } = 0;
+        public int MixerOffset { get; set; }
+        public byte Flags { get; set; }
     }
 }
