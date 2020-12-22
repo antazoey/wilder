@@ -33,12 +33,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="Vlc.DotNet.Core.Interops">
-      <HintPath>packages\Vlc.DotNet.Core.Interops.3.1.0\lib\net48\Vlc.DotNet.Core.Interops.dll</HintPath>
-    </Reference>
-    <Reference Include="Vlc.DotNet.Core">
-      <HintPath>packages\Vlc.DotNet.Core.3.1.0\lib\net48\Vlc.DotNet.Core.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Project.cs" />

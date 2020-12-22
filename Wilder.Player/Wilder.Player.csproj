@@ -28,13 +28,11 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LibVLCSharp, Version=3.4.9.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\LibVLCSharp.3.4.9\lib\net471\LibVLCSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
-    <Reference Include="Vlc.DotNet.Core.Interops">
-      <HintPath>..\packages\Vlc.DotNet.Core.Interops.3.1.0\lib\net45\Vlc.DotNet.Core.Interops.dll</HintPath>
-    </Reference>
-    <Reference Include="Vlc.DotNet.Core">
-      <HintPath>..\packages\Vlc.DotNet.Core.3.1.0\lib\net45\Vlc.DotNet.Core.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />

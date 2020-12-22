@@ -5,7 +5,6 @@ namespace Wilder.Player.VLC
 {
     public class VLCPlayer
     {
-        // ReSharper disable once ArrangeTypeMemberModifiers
         private readonly  LibVLC _libvlc;
 
         public VLCPlayer()
