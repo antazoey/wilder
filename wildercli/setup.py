@@ -30,7 +30,7 @@ setup(
     zip_safe=False,
     python_requires=">3, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4",
     install_requires=[
-        "click>=7.1.1",
+        "clickext>=7.1.1",
     ],
     extras_require={
         "dev": [

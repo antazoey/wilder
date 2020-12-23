@@ -3,6 +3,8 @@ import sys
 
 import click
 
+from wildercli.clickext.groups import ExceptionHandlingGroup
+from wildercli.options import core_options
 
 BANNER = """\b
 .##......##.####.##.......########..########.########.
@@ -34,7 +36,7 @@ def play():
 
 
 @click.group(cls=ExceptionHandlingGroup, context_settings=CONTEXT_SETTINGS, help=BANNER)
-@sdk_options(hidden=True)
+@core_options(hidden=True)
 def cli(state):
     pass
    
