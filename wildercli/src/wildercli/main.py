@@ -24,20 +24,16 @@ def exit_on_interrupt(signal, frame):
 
 
 signal.signal(signal.SIGINT, exit_on_interrupt)
-
 CONTEXT_SETTINGS = {
     "help_option_names": ["-h", "--help"],
     "max_content_width": 200,
 }
-
-@click.command()
-def play():
-    """Plays"""
 
 
 @click.group(cls=ExceptionHandlingGroup, context_settings=CONTEXT_SETTINGS, help=BANNER)
 @core_options(hidden=True)
 def cli(state):
     pass
-   
+
+
 cli.add_command(play)

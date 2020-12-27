@@ -1,12 +1,19 @@
 using Wilder.Common.Interfaces;
+using Wilder.AlbumMaker.Repositories;
 
 namespace Wilder.AlbumMaker
 {
     public class AlbumMakerApi : IAlbumMaker
     {
-        public void CreateAlbum()
+        public IAlbumRepository Albums { get; }
+
+        public AlbumMakerApi() : this(new AlbumRepository())
         {
-            throw new System.NotImplementedException();
+        }
+
+        public AlbumMakerApi(IAlbumRepository albums)
+        {
+            Albums = albums;
         }
     }
 }

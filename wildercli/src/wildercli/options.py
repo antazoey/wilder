@@ -1,5 +1,7 @@
 import click
 
+from wildercli.clickext.types import FileOrString
+
 
 class CLIState:
     def __init__(self):
@@ -20,6 +22,9 @@ class CLIState:
 
 
 pass_state = click.make_pass_decorator(CLIState, ensure=True)
+
+
+song_option = click.option("-s", "--song", help="A path to a song.", type=FileOrString())
 
 
 def core_options(hidden=False):

@@ -32,6 +32,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Interfaces\IAlbumMaker.cs" />
+    <Compile Include="Interfaces\IAlbumRepository.cs" />
     <Compile Include="Interfaces\IPlayer.cs" />
     <Compile Include="Interfaces\IProject.cs" />
     <Compile Include="Interfaces\IProjectParser.cs" />

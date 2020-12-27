@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wilder.Player", "Wilder.Pla
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wilder.AlbumMaker", "Wilder.AlbumMaker\Wilder.AlbumMaker.csproj", "{D61201BE-C12D-442B-A434-C98609169EBC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wilder.Interop", "Wilder.Interop\Wilder.Interop.csproj", "{29980121-CEC3-48C1-9D6F-F1BC9977279C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{D61201BE-C12D-442B-A434-C98609169EBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D61201BE-C12D-442B-A434-C98609169EBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D61201BE-C12D-442B-A434-C98609169EBC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29980121-CEC3-48C1-9D6F-F1BC9977279C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29980121-CEC3-48C1-9D6F-F1BC9977279C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29980121-CEC3-48C1-9D6F-F1BC9977279C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29980121-CEC3-48C1-9D6F-F1BC9977279C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

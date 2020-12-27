@@ -2,6 +2,6 @@ namespace Wilder.Common.Interfaces
 {
     public interface IAlbumMaker
     {
-        public void CreateAlbum();
+        public IAlbumRepository Albums { get; }
     }
 }
