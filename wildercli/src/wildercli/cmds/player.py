@@ -1,5 +1,4 @@
 import click
-
 from wildercli.options import song_option
 
 

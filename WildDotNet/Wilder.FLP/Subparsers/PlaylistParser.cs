@@ -4,7 +4,7 @@ using Wilder.Common.Model;
 namespace Wilder.FLP.Subparsers
 {
     internal static class PlaylistParser
-    { 
+    {
         internal static void ParsePlayListItems(Project project, BinaryReader reader, int versionMajor, long dataEnd)
         {
             while (reader.BaseStream.Position < dataEnd)

@@ -29,11 +29,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     python_requires=">3, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4",
-    install_requires=[
-        "click>=7.1.1",
-        "pythonnet>=3.0.0.dev1",
-        "wheel==0.36.2"
-    ],
+    install_requires=["click>=7.1.1", "wilderpy"],
     extras_require={
         "dev": [
             "flake8==3.8.3",

@@ -5,8 +5,6 @@ import traceback
 from logging.handlers import RotatingFileHandler
 from threading import Lock
 
-from click.exceptions import ClickException
-
 from wildercli.util import get_user_project_path
 
 # prevent loggers from printing stacks to stderr if a pipe is broken
@@ -14,16 +12,6 @@ logging.raiseExceptions = False
 
 logger_deps_lock = Lock()
 ERROR_LOG_FILE_NAME = "wilder_errors.log"
-
-
-def handleError(record):
-    """Override logger's `handleError` method to exit if an exception is raised while trying to
-    log, otherwise it would continue to gather and process events if the connection breaks but send
-    them nowhere.
-    """
-    t, v, tb = sys.exc_info()
-    if t == BrokenPipeError:
-        raise ClickException("Network connection broken while sending results.")
 
 
 def _get_standard_formatter():

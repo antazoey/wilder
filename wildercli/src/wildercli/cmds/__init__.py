@@ -1,2 +1,1 @@
-PRODUCT_NAME = "wildercli"
-MAIN_COMMAND = "wild"
+from wildercli.cmds.mgmt import mgmt

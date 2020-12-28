@@ -1,6 +1,5 @@
 import click
 from click._compat import get_text_stderr
-
 from wildercli.logger import get_view_error_details_message
 
 ERRORED = False
@@ -42,22 +41,4 @@ class LoggedCLIError(WilderCLIError):
             "{}\n{}".format(self.message, locations_message)
             if self.message
             else locations_message
-        )
-
-
-class UserDoesNotExistError(WilderCLIError):
-    """An error to represent a username that is not in our system. The CLI shows this error when
-    the user tries to add or remove a user that does not exist. This error is not shown during
-    bulk add or remove."""
-
-    def __init__(self, username):
-        super().__init__("User '{}' does not exist.".format(username))
-
-
-class UserNotInLegalHoldError(WilderCLIError):
-    def __init__(self, username, matter_id):
-        super().__init__(
-            "User '{}' is not an active member of legal hold matter '{}'.".format(
-                username, matter_id
-            )
         )

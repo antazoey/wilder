@@ -33,7 +33,7 @@ wild album add --album "Wilder's Greatest Hits" --project-file "path/to/file"  -
 
 The command either needs a path to a project file or some way of knowing which type of project to create.
 It can gather that information from a `.wildrc` file if it exists, or it will require an argument.
-Arguments will always take precendence over the `.wildrc`, but the `.wildrc` is useful for 
+Arguments will always take precendence over the `.wildrc`, but the `.wildrc` is useful for
 setting user-defaults.
 
 ```bash
@@ -82,10 +82,10 @@ wild album play-song --album "Wilder's Greatest Hits" --player "vlc"
 
 #### Lint
 
-Lint your songs! This feature will use defaults but mostly be changed in `.wildrc` to meet 
+Lint your songs! This feature will use defaults but mostly be changed in `.wildrc` to meet
 personal requirements.
 
-For example, the lint report can mention if the song is exceeding 
+For example, the lint report can mention if the song is exceeding
 
 #### Release
 
@@ -103,7 +103,7 @@ Sort of like `git` but with less commits.
 wild album add-song --album "Wilder's Greatest Hits" --song "Dream Girl" --version-tag "Scary Mix"
 ```
 
-If adding a song that already exists in the same album without specifying a unique version tag, 
+If adding a song that already exists in the same album without specifying a unique version tag,
 it will prompt you for a version tag.
 
 The most recent version added is the default album version unles specified otherwise.
@@ -126,7 +126,7 @@ Manage whole discographies.
 
 ```bash
 wild discog --artist "Wilder"
-wild discog --artist "Wilder" --show-unreleased 
+wild discog --artist "Wilder" --show-unreleased
 ```
 
 ## .wildrc

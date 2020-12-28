@@ -3,10 +3,8 @@ import re
 from collections import OrderedDict
 
 import click
-
-from wildercli.errors import WilderCLIError
 from wildercli.errors import LoggedCLIError
-from wildercli.errors import UserDoesNotExistError
+from wildercli.errors import WilderCLIError
 from wildercli.logger import get_main_cli_logger
 
 _DIFFLIB_CUT_OFF = 0.6
@@ -44,27 +42,6 @@ class ExceptionHandlingGroup(click.Group):
 
         except click.exceptions.Exit:
             raise
-
-        except (
-            UserDoesNotExistError,
-            Py42UserAlreadyAddedError,
-            Py42UserNotOnListError,
-            Py42InvalidRuleOperationError,
-            Py42LegalHoldNotFoundOrPermissionDeniedError,
-        ) as err:
-            self.logger.log_error(err)
-            raise WilderCLIError(str(err))
-
-        except Py42ForbiddenError as err:
-            self.logger.log_verbose_error(self._original_args, err.response.request)
-            raise LoggedCLIError(
-                "You do not have the necessary permissions to perform this task. "
-                "Try using or creating a different profile."
-            )
-
-        except Py42HTTPError as err:
-            self.logger.log_verbose_error(self._original_args, err.response.request)
-            raise LoggedCLIError("Problem making request to server.")
 
         except OSError:
             raise
