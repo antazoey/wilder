@@ -1,9 +1,11 @@
-from flask import Flask, jsonify
+from flask import Flask
+from flask import jsonify
 from flask import request
-
-from wilder import get_mgmt_json
 from wilder import get_mgmt
-from wilder.server.error import WildServerError, MissingArtistError, MissingAlbumError
+from wilder import get_mgmt_json
+from wilder.server.error import MissingAlbumError
+from wilder.server.error import MissingArtistError
+from wilder.server.error import WildServerError
 from wilder.server.logger import get_error_file_logger
 
 
@@ -17,18 +19,18 @@ def handle_invalid_usage(err):
     return response
 
 
-@app.route('/')
+@app.route("/")
 def mgmt():
     return get_mgmt_json(as_dict=False)
 
 
-@app.route('/sign', methods=['POST'])
+@app.route("/sign", methods=["POST"])
 def sign():
-    if request.method == 'POST':
+    if request.method == "POST":
         data = request.form
         mgmt = get_mgmt()
         mgmt.start_new_album()
-        
+
 
 def _verify_sign_request_data(data):
     if not data.get("artist"):

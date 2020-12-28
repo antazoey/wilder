@@ -1,8 +1,8 @@
-import os
 import logging
+import os
+from logging.handlers import RotatingFileHandler
 from threading import Lock
 
-from logging.handlers import RotatingFileHandler
 from wilder.util import get_project_path
 
 

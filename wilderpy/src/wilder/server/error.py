@@ -10,7 +10,7 @@ class WildServerError(Exception):
         rv = dict(self.payload or ())
         rv["message"] = self.message
         return rv
-    
+
 
 class WildBadRequestError(WildServerError):
     def __init__(self, message, payload=None):
