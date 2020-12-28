@@ -17,11 +17,16 @@ class WildBadRequestError(WildServerError):
         WildServerError.__init__(self, 400, message, payload)
 
 
+class WildServerFailureError(WildServerError):
+    def __init__(self, err_str):
+        WildServerError.__init__(self, 500, "UNKNOWN_ERROR", payload={"message": str(err_str)})
+
+
 class MissingArtistError(WildBadRequestError):
     def __init__(self):
-        WildServerError.__init__(self, 400, "MISSING_ARTIST")
+        WildBadRequestError.__init__(self, "MISSING_ARTIST")
 
 
 class MissingAlbumError(WildBadRequestError):
     def __init__(self):
-        WildServerError.__init__(self, 400, "MISSING_ALBUM")
+        WildBadRequestError.__init__(self, "MISSING_ALBUM")
