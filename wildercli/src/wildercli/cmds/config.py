@@ -1,5 +1,4 @@
 import click
-
 from wilder.config import init_client_config
 from wilder.errors import ConfigAlreadyExistsError
 from wildercli.util import get_url_parts
@@ -13,10 +12,10 @@ def config():
 
 @click.command()
 @click.option(
-    "--host", 
-    "-h", 
-    help="The host address and port for the Wilder server.", 
-    required=True
+    "--host",
+    "-h",
+    help="The host address and port for the Wilder server.",
+    required=True,
 )
 def init(host):
     path_parts = get_url_parts(host)

@@ -1,5 +1,6 @@
+from wilder.client.connection import Connection
+from wilder.client.connection import create_connection
 from wilder.config import create_config_obj
-from wilder.client.connection import create_connection, Connection
 
 
 def create_client(config_file_path):

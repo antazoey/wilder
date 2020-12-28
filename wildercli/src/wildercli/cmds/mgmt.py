@@ -1,5 +1,4 @@
 import click
-from wildercli.util import get_wilder_mgmt
 from wilder.errors import ArtistAlreadySignedError
 from wilder.errors import ArtistNotFoundError
 from wilder.errors import ArtistNotSignedError
@@ -8,6 +7,7 @@ from wildercli.args import name_arg
 from wildercli.cmds import album
 from wildercli.options import format_option
 from wildercli.output_formats import OutputFormatter
+from wildercli.util import get_wilder_mgmt
 
 
 @click.group()

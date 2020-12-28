@@ -1,8 +1,11 @@
-import os
 import json
+import os
 
-from wilder.constants import HOST_KEY, PORT_KEY, CLIENT_KEY
-from wilder.errors import ConfigFileNotFoundError, ConfigAlreadyExistsError
+from wilder.constants import CLIENT_KEY
+from wilder.constants import HOST_KEY
+from wilder.constants import PORT_KEY
+from wilder.errors import ConfigAlreadyExistsError
+from wilder.errors import ConfigFileNotFoundError
 from wilder.util import get_config_path
 
 
@@ -16,7 +19,7 @@ def init_client_config(host, port):
             if config_json.get(CLIENT_KEY):
                 raise ConfigAlreadyExistsError()
         os.remove(config_path)
-        
+
     config_json[CLIENT_KEY] = client_config
     with open(config_path, "w") as config_file:
         config_file.write(json.dumps(config_json))
@@ -36,9 +39,9 @@ def delete_config_if_exists():
 def using_config():
     config = create_config_obj()
     return config.is_using_config()
-    
 
-class WildClientConfig:    
+
+class WildClientConfig:
     def __init__(self, config_path=None):
         config_path = config_path or get_config_path()
         if not os.path.exists(config_path):

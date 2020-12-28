@@ -1,6 +1,6 @@
 {
     "client": {
-        "host": "example.com", 
+        "host": "example.com",
         "port": 8888
     }
 }

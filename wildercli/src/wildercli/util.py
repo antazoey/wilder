@@ -12,7 +12,6 @@ from signal import signal
 from click import echo
 from click import get_current_context
 from click import style
-
 from wilder import get_mgmt
 from wilder.client import create_client
 from wilder.config import create_config_obj
@@ -25,7 +24,7 @@ def get_wilder_mgmt():
     if not config.is_using_config():
         return get_mgmt()
     return create_client(config.host, config.port)
-    
+
 
 def does_user_agree(prompt):
     """Prompts the user and checks if they said yes. If command has the `yes_option` flag, and

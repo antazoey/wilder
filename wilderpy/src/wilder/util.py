@@ -2,7 +2,10 @@ import json
 import os
 from os import path
 
-from wilder.constants import ARTISTS, HOST_KEY, CLIENT_KEY, PORT_KEY
+from wilder.constants import ARTISTS
+from wilder.constants import CLIENT_KEY
+from wilder.constants import HOST_KEY
+from wilder.constants import PORT_KEY
 
 _PADDING_SIZE = 3
 CONFIG_FILE_NAME = "config.json"

@@ -3,9 +3,9 @@ import sys
 
 import click
 from wildercli.clickext.groups import ExceptionHandlingGroup
+from wildercli.cmds import config
 from wildercli.cmds import mgmt
 from wildercli.cmds import play
-from wildercli.cmds import config
 from wildercli.options import core_options
 
 BANNER = """\b
