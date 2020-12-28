@@ -16,7 +16,7 @@ def init_client_config(host, port):
     if os.path.exists(config_path):
         with open(config_path) as config_file:
             config_json = json.load(config_file)
-            if config_json.get(CLIENT_KEY):
+            if config_json.get(CLIENT_KEY).get(HOST_KEY):
                 raise ConfigAlreadyExistsError()
         os.remove(config_path)
 

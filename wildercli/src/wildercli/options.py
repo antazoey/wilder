@@ -3,6 +3,14 @@ from wildercli.clickext.types import FileOrString
 from wildercli.output_formats import OutputFormat
 
 
+yes_option = click.option(
+    "-y",
+    "--assume-yes",
+    is_flag=True,
+    expose_value=False,
+    callback=lambda ctx, param, value: ctx.obj.set_assume_yes(value),
+    help='Assume "yes" as the answer to all prompts and run non-interactively.',
+)
 song_option = click.option(
     "-s", "--song", help="A path to a song.", type=FileOrString()
 )

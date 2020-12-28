@@ -1,7 +1,10 @@
 import click
+from wildercli.options import yes_option
 from wilder.config import init_client_config
+from wilder.config import create_config_obj
+from wilder.config import delete_config_if_exists
 from wilder.errors import ConfigAlreadyExistsError
-from wildercli.util import get_url_parts
+from wildercli.util import get_url_parts, does_user_agree
 
 
 @click.group()
@@ -25,4 +28,26 @@ def init(host):
         click.echo("Unable to create config. One already exists.", err=True)
 
 
+@click.command()
+def show():
+    """Show the current client config settings."""
+    _config = create_config_obj()
+    if _config.is_using_config():
+        click.echo(f"Host: {_config.host}, Port: {_config.port}.")
+    else:
+        click.echo("Not using config.")
+
+
+@click.command()
+@yes_option
+def reset():
+    """Deletes the config if it exists."""
+    _config = create_config_obj()
+    _prompt = "Are you sure you wish to delete your config (there is no undo)? "
+    if _config.is_using_config() and does_user_agree(_prompt):
+        delete_config_if_exists()
+
+
 config.add_command(init)
+config.add_command(show)
+config.add_command(reset)
