@@ -19,7 +19,7 @@ class WildBadRequestError(WildServerError):
 
 class WildServerFailureError(WildServerError):
     def __init__(self, err_str):
-        WildServerError.__init__(self, 500, "UNKNOWN_ERROR", payload={"message": str(err_str)})
+        WildServerError.__init__(self, 500, f"UNKNOWN_ERROR: {str(err_str)}")
 
 
 class MissingArtistError(WildBadRequestError):

@@ -7,12 +7,12 @@ from wilder.util import get_project_path
 
 
 logger_deps_lock = Lock()
-ERROR_LOG_FILE_NAME = "wilder_errors.log"
+ERROR_LOG_FILE_NAME = "wilder-server.log"
 
 
-def get_error_file_logger():
+def get_server_logger():
     """Gets the logger where raw exceptions are logged."""
-    logger = logging.getLogger("code42_error_logger")
+    logger = logging.getLogger("wilder_server_logger")
     if logger_has_handlers(logger):
         return logger
 
