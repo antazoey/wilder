@@ -4,9 +4,10 @@ from flask import request
 from wilder import get_mgmt
 from wilder import get_mgmt_json
 from wilder.constants import ARTISTS
-from wilder.server.error import MissingAlbumError, WildServerFailureError
+from wilder.server.error import MissingAlbumError
 from wilder.server.error import MissingArtistError
 from wilder.server.error import WildServerError
+from wilder.server.error import WildServerFailureError
 from wilder.server.logger import get_server_logger
 
 
@@ -36,11 +37,11 @@ def mgmt():
     return get_mgmt_json(as_dict=False)
 
 
-@app.route("/artists",  methods=["GET"])
+@app.route("/artists", methods=["GET"])
 def artists():
     _mgmt = get_mgmt()
     return {ARTISTS: _mgmt.artists}
-        
+
 
 @app.route("/sign", methods=["POST"])
 def sign():
