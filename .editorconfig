@@ -1,4 +1,14 @@
-﻿[*.cs]
+# https://editorconfig.org/
 
-# IDE0008: Use explicit type
-dotnet_diagnostic.IDE0008.severity = none
+root = true
+
+[*]
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = false
+end_of_line = lf
+charset = utf-8
+
+[*.py]
+max_line_length = 100
