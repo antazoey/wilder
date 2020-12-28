@@ -1,18 +1,21 @@
 import click
-from wilderpy.errors import ArtistNotFoundError
-from wilderpy.mgmt import get_mgmt
+from wilder.errors import ArtistNotFoundError
+from wilder.mgmt import get_mgmt
+from wildercli.args import name_arg
+from wildercli.options import format_option
+from wildercli.output_formats import OutputFormatter
 
 
 @click.group()
 def artist():
-    """Manage your artists."""
+    """Tools for managing artists."""
     pass
 
 
 @click.command()
-@click.argument("name")
+@name_arg
 def get(name):
-    """Get an artist by name."""
+    """Get artist info by name."""
     mgmt = get_mgmt()
     try:
         return mgmt.get_artist_by_name(name)
@@ -26,9 +29,16 @@ def get(name):
 
 
 @click.command()
-def create():
-    """Create a new artist."""
+@format_option
+def artists(format):
+    """List all your artists."""
+    mgmt = get_mgmt()
+    artists_to_list = [{"Name": a.name, "Bio": a.bio} for a in mgmt.artists]
+    if not artists_to_list:
+        click.echo("There are no artists currently being managed.")
+    else:
+        formatter = OutputFormatter(format)
+        formatter.echo_formatted_list(artists_to_list)
 
 
 artist.add_command(get)
-artist.add_command(create)

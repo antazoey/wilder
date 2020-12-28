@@ -1,11 +1,11 @@
 import click
+from wilder.mgmt import get_mgmt
 from wildercli.options import artist_option
-from wilderpy.mgmt import get_mgmt
 
 
 @click.group()
 def album():
-    """Manage your albums."""
+    """Tools for creating albums."""
     pass
 
 

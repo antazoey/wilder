@@ -1,5 +1,18 @@
 import click
 from wildercli.clickext.types import FileOrString
+from wildercli.output_formats import OutputFormat
+
+
+song_option = click.option(
+    "-s", "--song", help="A path to a song.", type=FileOrString()
+)
+format_option = click.option(
+    "-f",
+    "--format",
+    type=click.Choice(OutputFormat(), case_sensitive=False),
+    help="The output format of the result. Defaults to table format.",
+    default=OutputFormat.TABLE,
+)
 
 
 class CLIState:
@@ -27,11 +40,6 @@ def artist_option(required=True):
     return click.option(
         "-a", "--artist", help="The name of an artist.", required=required
     )
-
-
-song_option = click.option(
-    "-s", "--song", help="A path to a song.", type=FileOrString()
-)
 
 
 def core_options(hidden=False):
