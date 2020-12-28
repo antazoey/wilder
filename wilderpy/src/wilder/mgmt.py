@@ -1,17 +1,9 @@
-from wilder.errors import ArtistAlreadySignedError
-from wilder.errors import ArtistNotFoundError
-from wilder.errors import ArtistNotSignedError
+from wilder.errors import ArtistNotFoundError, ArtistAlreadySignedError, ArtistNotSignedError
 from wilder.models import Artist
-from wilder.parser import parse_mgmt
-from wilder.parser import save
+from wilder.parser import parse_mgmt, save
 
 
-def get_mgmt():
-    """Returns a new instance of an :class:`wilder.mgmt.ArtistMgmt`."""
-    return ArtistMgmt()
-
-
-class ArtistMgmt:
+class Wilder:
     def __init__(self):
         self._mgmt = parse_mgmt()
 
@@ -37,11 +29,7 @@ class ArtistMgmt:
         if not artist:
             raise ArtistNotFoundError()
         return artist
-
-    def get_all_albums_for_artist(self, artist_name):
-        artist = self.get_artist_by_name(artist_name)
-        return artist.discography
-
+    
     def sign_new_artist(self, name):
         """Creates a new artist.
         Raises :class:`wilder.errors.ArtistAlreadySignedError` if the artist already exists.
@@ -50,6 +38,11 @@ class ArtistMgmt:
             raise ArtistAlreadySignedError()
         artist = Artist(name)
         self.artists.append(artist)
+        self._save()
+    
+    def start_new_album(self, artist_name, album_name):
+        artist = self.get_artist_by_name(artist_name)
+        artist.start_new_album(album_name)
         self._save()
 
     def unsign_artist(self, name):
@@ -61,6 +54,11 @@ class ArtistMgmt:
 
     def is_represented(self, name):
         return name in self.artist_names
-
+    
     def _save(self):
         return save(self.json)
+    
+
+def get_mgmt():
+    """Returns a new instance of an :class:`wilder.mgmt.ArtistMgmt`."""
+    return Wilder()

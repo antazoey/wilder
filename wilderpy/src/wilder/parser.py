@@ -6,6 +6,7 @@ from wilder.constants import ALBUM_TYPE
 from wilder.constants import ARTISTS
 from wilder.constants import ARTWORK
 from wilder.constants import BIO
+from wilder.constants import COLLABORATORS
 from wilder.constants import DESCRIPTION
 from wilder.constants import DISCOGRAPHY
 from wilder.constants import LAST_UPDATED
@@ -60,6 +61,7 @@ def _parse_albums(artist, albums):
         album.description = a.get(DESCRIPTION)
         album.artwork = a.get(ARTWORK)
         album.album_type = a.get(ALBUM_TYPE)
+        album.state = a.get(STATE)
         tracks = a.get(TRACKS) or []
         album.tracks = _parse_tracks(artist, album, tracks)
         objs.append(album)
@@ -75,6 +77,7 @@ def _parse_tracks(artist, album, tracks):
         track.name = t.get(NAME)
         track.description = t.get(DESCRIPTION)
         track.track_number = t.get(TRACK_NUMBER)
+        track.collaborators = t.get(COLLABORATORS)
         objs.append(track)
     return objs
 

@@ -16,6 +16,9 @@ class Album:
     album_type = None
     state = None
 
+    def __init__(self, name=None):
+        self.name = name
+
     @property
     def json(self):
         return {
