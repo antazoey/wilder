@@ -13,8 +13,19 @@ from click import echo
 from click import get_current_context
 from click import style
 
+from wilder import get_mgmt
+from wilder.client import create_client
+from wilder.config import create_config_obj
+
 _PADDING_SIZE = 3
 
+
+def get_wilder_mgmt():
+    config = create_config_obj()
+    if not config.is_using_config():
+        return get_mgmt()
+    return create_client(config.host, config.port)
+    
 
 def does_user_agree(prompt):
     """Prompts the user and checks if they said yes. If command has the `yes_option` flag, and
@@ -38,6 +49,14 @@ def get_user_project_path(*subdirs):
     if not path.exists(result_path):
         os.makedirs(result_path)
     return result_path
+
+
+def get_url_parts(url_str):
+    parts = url_str.split(":")
+    port = None
+    if len(parts) > 1 and parts[1] != "":
+        port = int(parts[1])
+    return parts[0], port
 
 
 def find_format_width(record, header, include_header=True):

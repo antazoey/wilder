@@ -40,7 +40,7 @@ def mgmt():
 @app.route("/artists", methods=["GET"])
 def artists():
     _mgmt = get_mgmt()
-    return {ARTISTS: _mgmt.artists}
+    return {ARTISTS: [a.json for a in _mgmt.artists]}
 
 
 @app.route("/sign", methods=["POST"])
@@ -50,6 +50,13 @@ def sign():
     _mgmt = get_mgmt()
     _mgmt.start_new_album(data["artist"], data["album"])
     return {"status": "successful"}
+
+
+@app.route("/discography/<artist>", methods=["GET"])
+def albums(artist):
+    _mgmt = get_mgmt()
+    artist = _mgmt.get_artist_by_name(artist)
+    return {"discography": [a.json for a in artist.discography]}
 
 
 def _verify_sign_request_data(data):

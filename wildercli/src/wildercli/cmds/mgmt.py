@@ -1,8 +1,8 @@
 import click
+from wildercli.util import get_wilder_mgmt
 from wilder.errors import ArtistAlreadySignedError
 from wilder.errors import ArtistNotFoundError
 from wilder.errors import ArtistNotSignedError
-from wilder.mgmt import get_mgmt
 from wildercli.args import artist_arg
 from wildercli.args import name_arg
 from wildercli.cmds import album
@@ -20,7 +20,7 @@ def mgmt():
 @format_option
 def artists(format):
     """List all your artists."""
-    _mgmt = get_mgmt()
+    _mgmt = get_wilder_mgmt()
     artists_to_list = [{"Name": a.name, "Bio": a.bio} for a in _mgmt.artists]
     if not artists_to_list:
         click.echo("There are no artists currently being managed.")
@@ -33,7 +33,7 @@ def artists(format):
 @name_arg
 def artist(name):
     """Get artist info by name."""
-    _mgmt = get_mgmt()
+    _mgmt = get_wilder_mgmt()
     try:
         return _mgmt.get_artist_by_name(name)
     except ArtistNotFoundError:
@@ -50,7 +50,7 @@ def artist(name):
 @format_option
 def albums(artist, format):
     """List an artist's discography."""
-    _mgmt = get_mgmt()
+    _mgmt = get_wilder_mgmt()
     _artist = _mgmt.get_artist_by_name(artist)
     _albums = _artist.discography
     if not _albums:
@@ -65,7 +65,7 @@ def albums(artist, format):
 @name_arg
 def sign(name):
     """Manage a new artist."""
-    manager = get_mgmt()
+    manager = get_wilder_mgmt()
     try:
         manager.sign_new_artist(name)
     except ArtistAlreadySignedError:
@@ -76,7 +76,7 @@ def sign(name):
 @name_arg
 def unsign(name):
     """Stop managing an artist."""
-    manager = get_mgmt()
+    manager = get_wilder_mgmt()
     try:
         manager.unsign_artist(name)
     except ArtistNotSignedError:

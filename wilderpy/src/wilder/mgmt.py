@@ -3,16 +3,12 @@ from wilder.errors import ArtistNotFoundError
 from wilder.errors import ArtistNotSignedError
 from wilder.models import Artist
 from wilder.parser import parse_mgmt
-from wilder.parser import parse_mgmt_from_remote
 from wilder.parser import save
 
 
 class Wilder:
-    def __init__(self, is_server_cli=True, server_address=None):
-        if is_server_cli:
-            self._mgmt = parse_mgmt()
-        else:
-            self._mgmt = parse_mgmt_from_remote(server_address)
+    def __init__(self):
+        self._mgmt = parse_mgmt()
 
     @property
     def artists(self):
@@ -60,6 +56,7 @@ class Wilder:
         self._save()
 
     def is_represented(self, name):
+        """Returns True if the artist is represented by Wilder."""
         return name in self.artist_names
 
     def _save(self):

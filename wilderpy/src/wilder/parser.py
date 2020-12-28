@@ -29,11 +29,6 @@ def parse_mgmt(mgmt_path=None):
     return Mgmt(artists, last_updated=mgmt_json.get(LAST_UPDATED))
 
 
-def parse_mgmt_from_remote(host_address):
-    # TODO:  Load up the mgmt JSON from the given host address.
-    pass
-
-
 def save(mgmt_json_dict):
     """Save a MGMT dictionary to the mgmt.json file."""
     mgmt_json_dict[LAST_UPDATED] = datetime.utcnow().timestamp()

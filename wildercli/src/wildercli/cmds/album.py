@@ -1,5 +1,5 @@
 import click
-from wilder.mgmt import get_mgmt
+from wildercli.util import get_wilder_mgmt
 
 
 @click.group()
@@ -10,7 +10,7 @@ def album():
 @click.command()
 def init():
     """Start a new album."""
-    mgmt = get_mgmt()
+    mgmt = get_wilder_mgmt()
     mgmt.start_new_album()
 
 

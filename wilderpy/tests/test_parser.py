@@ -4,7 +4,6 @@ import os
 import pytest
 from wilder.constants import ARTISTS
 from wilder.constants import BIO
-from wilder.constants import COLLABORATORS
 from wilder.constants import DESCRIPTION
 from wilder.constants import DISCOGRAPHY
 from wilder.constants import NAME

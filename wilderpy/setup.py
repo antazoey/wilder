@@ -29,7 +29,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     python_requires=">3, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4",
-    install_requires=[],
+    install_requires=["Flask==1.1.2", "requests>=2.25.1"],
     extras_require={
         "dev": [
             "flake8==3.8.3",
@@ -51,4 +51,5 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: Implementation :: CPython",
     ],
+    scripts=["bin/start-wild-server.sh"],
 )

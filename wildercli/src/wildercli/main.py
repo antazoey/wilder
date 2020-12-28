@@ -5,6 +5,7 @@ import click
 from wildercli.clickext.groups import ExceptionHandlingGroup
 from wildercli.cmds import mgmt
 from wildercli.cmds import play
+from wildercli.cmds import config
 from wildercli.options import core_options
 
 BANNER = """\b
@@ -39,3 +40,4 @@ def cli(state):
 
 cli.add_command(play)
 cli.add_command(mgmt)
+cli.add_command(config)
