@@ -2,13 +2,16 @@ from wilder import BaseWildApi
 from wilder.client.connection import Connection
 from wilder.client.connection import create_connection
 from wilder.client.errors import WildClientError
-from wilder.constants import ALBUM, UNSIGN
+from wilder.constants import ALBUM
 from wilder.constants import ARTIST
 from wilder.constants import ARTISTS
 from wilder.constants import CREATE_ALBUM
 from wilder.constants import MGMT
 from wilder.constants import SIGN
-from wilder.errors import ArtistAlreadySignedError, ArtistNotSignedError, ArtistNotFoundError
+from wilder.constants import UNSIGN
+from wilder.errors import ArtistAlreadySignedError
+from wilder.errors import ArtistNotFoundError
+from wilder.errors import ArtistNotSignedError
 from wilder.parser import parse_artists
 from wilder.parser import parse_mgmt
 from wilder.server import WildBadRequestError

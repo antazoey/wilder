@@ -18,10 +18,11 @@ class WildServerError(Exception):
 class WildBadRequestError(WildServerError):
     def __init__(self, message, payload=None):
         WildServerError.__init__(self, 400, message, payload)
-        
+
 
 class WildNotFoundError(WildServerError):
     """A base error for when a resource is not found."""
+
     def __init__(self, message, payload=None):
         WildServerError.__init__(self, 404, message, payload)
 

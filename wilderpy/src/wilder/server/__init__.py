@@ -12,18 +12,20 @@ from wilder.constants import UNSIGN
 from wilder.errors import WildError
 from wilder.errors import WildNotFoundError
 from wilder.mgmt import get_mgmt
-from wilder.server.error import MissingAlbumError, UNKNOWN_ERROR, WildBadRequestError
+from wilder.server.error import MissingAlbumError
 from wilder.server.error import MissingArtistError
+from wilder.server.error import UNKNOWN_ERROR
+from wilder.server.error import WildBadRequestError
+from wilder.server.error import WildNotFoundError as WilderHttpNotFoundError
 from wilder.server.error import WildServerError
 from wilder.server.error import WildServerFailureError
-from wilder.server.error import WildNotFoundError as WilderHttpNotFoundError
 from wilder.server.logger import get_server_logger
 from wilder.util import get_mgmt_json
 
 app = Flask(__name__)
 
 
-class HttpMethod: 
+class HttpMethod:
     GET = "GET"
     POST = "POST"
 
@@ -108,7 +110,7 @@ def albums(artist):
     _mgmt = get_mgmt()
     artist = _mgmt.get_artist_by_name(artist)
     return {DISCOGRAPHY: [a.json for a in artist.discography]}
-    
+
 
 def _verify_data_present(data, keys=None):
     if not data:

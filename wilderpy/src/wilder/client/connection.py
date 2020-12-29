@@ -6,7 +6,9 @@ from requests.adapters import HTTPAdapter
 from requests.models import Request
 from requests.sessions import Session
 from wilder.client.errors import WildClientError
-from wilder.server import get_server_logger, WildBadRequestError, WildServerFailureError
+from wilder.server import get_server_logger
+from wilder.server import WildBadRequestError
+from wilder.server import WildServerFailureError
 from wilder.util import format_dict
 
 

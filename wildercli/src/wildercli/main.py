@@ -1,15 +1,15 @@
+import os
 import signal
 import sys
-import os
 
 import click
-from wildercli.logger import get_cli_error_log_path
-from wildercli.util import read_large_file
 from wildercli.clickext.groups import ExceptionHandlingGroup
 from wildercli.cmds import config
 from wildercli.cmds import mgmt
 from wildercli.cmds import play
+from wildercli.logger import get_cli_error_log_path
 from wildercli.options import core_options
+from wildercli.util import read_large_file
 
 BANNER = """\b
  |#      |#   |#   |#      |#----#   |#-----  |#-----#
