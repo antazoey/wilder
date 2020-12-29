@@ -1,130 +1,110 @@
 from flask import Flask
 from flask import jsonify
 from flask import request
-from wilder.constants import ALBUM
-from wilder.constants import ARTIST
-from wilder.constants import ARTISTS
-from wilder.constants import CREATE_ALBUM
-from wilder.constants import DISCOGRAPHY
-from wilder.constants import MGMT
-from wilder.constants import SIGN
-from wilder.constants import UNSIGN
+from wilder.constants import Constants as Consts
 from wilder.errors import WildError
-from wilder.errors import WildNotFoundError
+from wilder.errors import WildNotFoundError as WildCoreNotFoundError
 from wilder.mgmt import get_mgmt
-from wilder.server.error import MissingAlbumError
-from wilder.server.error import MissingArtistError
-from wilder.server.error import UNKNOWN_ERROR
-from wilder.server.error import WildBadRequestError
-from wilder.server.error import WildNotFoundError as WilderHttpNotFoundError
+from wilder.server._helper import _successful_response
+from wilder.server._helper import _verify_data_present
+from wilder.server._helper import HttpMethod
 from wilder.server.error import WildServerError
-from wilder.server.error import WildServerFailureError
-from wilder.server.logger import get_server_logger
 from wilder.util import get_mgmt_json
+
 
 app = Flask(__name__)
 
 
-class HttpMethod:
-    GET = "GET"
-    POST = "POST"
+"""**************"""
+"""Error handlers"""
+"""**************"""
 
 
-@app.errorhandler(WildNotFoundError)
+@app.errorhandler(WildCoreNotFoundError)
 def handle_not_found_wild_errors(err):
-    response = jsonify({"Error": str(err)})
-    err = WilderHttpNotFoundError(str(err))
+    response = jsonify({"error": "NOT_FOUND", "message": str(err)})
     response.status_code = 404
-    response.text = str(err)
     return response
 
 
 @app.errorhandler(WildServerError)
+@app.errorhandler(Exception)
 def handle_server_errors(err):
     response = jsonify(err.dict)
     response.status_code = 500
-    response.text = str(err)
     return response
 
 
 @app.errorhandler(WildError)
 def handle_wild_errors(err):
-    response = jsonify({"Error": str(err)})
-    err = WildBadRequestError(str(err))
+    response = jsonify({"error": "BAD_REQUEST", "message": str(err)})
     response.status_code = 400
-    response.text = str(err)
     return response
 
 
-@app.errorhandler(Exception)
-def handle_unknown_errors(err):
-    err = WildServerFailureError(str(err))
-    response = jsonify(err.dict)
-    response.status_code = 500
-    response.text = str(err)
-    return response
+"""******"""
+"""MGMT"""
+"""******"""
 
 
-@app.route(f"/{MGMT}")
+@app.route(f"/{Consts.MGMT}")
 def mgmt():
+    """Get full MGMT JSON"""
     return get_mgmt_json(as_dict=False)
 
 
-@app.route(f"/{ARTISTS}", methods=[HttpMethod.GET])
+"""******"""
+"""ARTIST"""
+"""******"""
+
+
+@app.route(f"/{Consts.ARTISTS}", methods=[HttpMethod.GET])
 def artists():
+    """Get all artists"""
     _mgmt = get_mgmt()
     _artists = _mgmt.get_artists()
-    return {ARTISTS: [a.json for a in _artists]}
+    return {Consts.ARTISTS: [a.json for a in _artists]}
 
 
-@app.route(f"/{CREATE_ALBUM}", methods=[HttpMethod.POST])
-def create_album():
-    _verify_data_present(request.json, [ARTIST, ALBUM])
-    _mgmt = get_mgmt()
-    artist = request.json.get(ARTIST)
-    album = request.json.get(ALBUM)
-    _mgmt.start_new_album(artist, album)
-    return _successful_response()
-
-
-@app.route(f"/{SIGN}", methods=[HttpMethod.POST])
+@app.route(f"/{Consts.SIGN}", methods=[HttpMethod.POST])
 def sign():
+    """Sign a new artist"""
     _json = request.json
-    artist = _json.get(ARTIST)
+    artist = _json.get(Consts.ARTIST)
     _verify_data_present(artist)
     _mgmt = get_mgmt()
     _mgmt.sign_new_artist(artist)
     return _successful_response()
 
 
-@app.route(f"/{UNSIGN}", methods=[HttpMethod.POST])
+@app.route(f"/{Consts.UNSIGN}", methods=[HttpMethod.POST])
 def unsign():
+    """Remove a managed artist"""
     _json = request.json
-    artist = _json.get(ARTIST)
+    artist = _json.get(Consts.ARTIST)
     _verify_data_present(artist)
     _mgmt = get_mgmt()
     _mgmt.unsign_artist(artist)
     return _successful_response()
 
 
-@app.route(f"/{DISCOGRAPHY}/<artist>", methods=[HttpMethod.GET])
-def albums(artist):
+"""*****"""
+"""ALBUM"""
+"""*****"""
+
+
+@app.route(f"/<artist>/{Consts.DISCOGRAPHY}", methods=[HttpMethod.GET])
+def discography(artist):
+    """Get all albums for artist"""
     _mgmt = get_mgmt()
-    artist = _mgmt.get_artist_by_name(artist)
-    return {DISCOGRAPHY: [a.json for a in artist.discography]}
+    return _mgmt.get_discography(artist)
 
 
-def _verify_data_present(data, keys=None):
-    if not data:
-        raise MissingArtistError()
-
-    if isinstance(data, str):
-        return
-
-    for key in keys:
-        if key and not data.get(key):
-            raise MissingArtistError()
-
-
-def _successful_response():
-    return {"status": "successful"}
+@app.route(f"/<artist>/{Consts.CREATE_ALBUM}", methods=[HttpMethod.POST])
+def create_album(artist):
+    """Create an album"""
+    _verify_data_present(request.values, Consts.ALBUM)
+    _mgmt = get_mgmt()
+    album = request.json.get(Consts.ALBUM)
+    _mgmt.start_new_album(artist, album)
+    return _successful_response()

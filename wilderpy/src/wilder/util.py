@@ -2,10 +2,7 @@ import json
 import os
 from os import path
 
-from wilder.constants import ARTISTS
-from wilder.constants import CLIENT_KEY
-from wilder.constants import HOST_KEY
-from wilder.constants import PORT_KEY
+from wilder.constants import Constants as Consts
 
 _PADDING_SIZE = 3
 CONFIG_FILE_NAME = "config.json"
@@ -25,7 +22,7 @@ def get_mgmt_json_path():
     mgmt_path = os.path.join(proj_path, "mgmt.json")
     if not os.path.exists(mgmt_path):
         with open(mgmt_path, "w") as mgmt_file:
-            json_dict = {ARTISTS: []}
+            json_dict = {Consts.ARTISTS: []}
             json_str = json.dumps(json_dict, indent=2)
             mgmt_file.write(json_str)
     return mgmt_path
@@ -36,7 +33,9 @@ def get_config_path(create_if_not_exists=True):
     config_path = os.path.join(proj_path, CONFIG_FILE_NAME)
     if create_if_not_exists and not os.path.exists(config_path):
         with open(config_path, "w") as config_file:
-            config_initial_dict = {CLIENT_KEY: {HOST_KEY: None, PORT_KEY: None}}
+            config_initial_dict = {
+                Consts.CLIENT_KEY: {Consts.HOST_KEY: None, Consts.PORT_KEY: None}
+            }
             config_content = f"{json.dumps(config_initial_dict)}\n"
             config_file.write(config_content)
     return config_path

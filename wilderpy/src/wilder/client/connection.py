@@ -1,15 +1,16 @@
 import json as json_lib
+from json import JSONDecodeError
 from urllib.parse import urljoin
 from urllib.parse import urlparse
 
 from requests.adapters import HTTPAdapter
 from requests.models import Request
 from requests.sessions import Session
+from wilder.client.errors import WildBadRequestError
 from wilder.client.errors import WildClientError
-from wilder.server import get_server_logger
-from wilder.server import WildBadRequestError
-from wilder.server import WildServerFailureError
-from wilder.server.error import WildNotFoundError
+from wilder.client.errors import WildNotFoundError
+from wilder.client.errors import WildUnknownServerError
+from wilder.server.logger import get_server_logger
 from wilder.util import format_dict
 
 
@@ -142,11 +143,21 @@ def _handle_error(method, url, response):
     if response is None:
         msg = f"No response was returned for {method} request to {url}."
         raise WildClientError(msg)
+
+    response_data = _try_get_response_data(response)
     if response.status_code == 400:
-        raise WildBadRequestError(response.text)
+        raise WildBadRequestError(response_data)
     elif response.status_code == 404:
-        raise WildNotFoundError(response.text)
-    raise WildServerFailureError(response.text)
+        raise WildNotFoundError(response_data)
+    raise WildUnknownServerError(response_data)
+
+
+def _try_get_response_data(response):
+    try:
+        response_json = json_lib.loads(response.content)
+    except JSONDecodeError:
+        return str(response)
+    return response_json.get("message") or str(response)
 
 
 def _print_request(method, url, params=None, data=None):

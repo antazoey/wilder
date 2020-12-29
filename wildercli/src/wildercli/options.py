@@ -23,6 +23,7 @@ format_option = click.option(
     help="The output format of the result. Defaults to table format.",
     default=OutputFormat.TABLE,
 )
+bio_option = click.option("--bio", help="The artist biography.")
 
 
 class CLIState:

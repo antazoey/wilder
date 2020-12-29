@@ -7,7 +7,6 @@ from wildercli.cmds import album
 from wildercli.cmds import artist
 from wildercli.cmds import config
 from wildercli.cmds import play
-from wildercli.cmds import play
 from wildercli.options import mgmt_options
 
 

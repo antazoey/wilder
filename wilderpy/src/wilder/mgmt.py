@@ -1,4 +1,5 @@
 from wilder import BaseWildApi
+from wilder.constants import Constants
 from wilder.errors import ArtistAlreadySignedError
 from wilder.errors import ArtistNotFoundError
 from wilder.errors import ArtistNotSignedError
@@ -27,13 +28,17 @@ class Wilder(BaseWildApi):
             raise ArtistNotFoundError(name)
         return artist
 
-    def sign_new_artist(self, name):
+    def get_discography(self, artist):
+        artist = self.get_artist_by_name(artist)
+        return {Constants.DISCOGRAPHY: [a.json for a in artist.discography]}
+
+    def sign_new_artist(self, name, bio=None):
         """Creates a new artist.
         Raises :class:`wilder.errors.ArtistAlreadySignedError` if the artist already exists.
         """
         if self.is_represented(name):
             raise ArtistAlreadySignedError(name)
-        artist = Artist(name)
+        artist = Artist(name=name, bio=bio)
         self._mgmt.artists.append(artist)
         self._save()
 

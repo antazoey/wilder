@@ -1,7 +1,4 @@
-from wilder.constants import COLLABORATORS
-from wilder.constants import DESCRIPTION
-from wilder.constants import NAME
-from wilder.constants import TRACK_NUMBER
+from wilder.constants import Constants
 
 
 class Track:
@@ -29,8 +26,8 @@ class Track:
     @property
     def json(self):
         return {
-            NAME: self.name,
-            DESCRIPTION: self.description,
-            TRACK_NUMBER: self.track_number,
-            COLLABORATORS: self.collaborators,
+            Constants.NAME: self.name,
+            Constants.DESCRIPTION: self.description,
+            Constants.TRACK_NUMBER: self.track_number,
+            Constants.COLLABORATORS: self.collaborators,
         }

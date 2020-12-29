@@ -1,4 +1,4 @@
-from wilder.constants import ARTISTS
+from wilder.constants import Constants
 
 
 class Mgmt:
@@ -24,8 +24,8 @@ class Mgmt:
 
     @property
     def artists_json(self):
-        return self.json.get(ARTISTS) or []
+        return self.json.get(Constants.ARTISTS) or []
 
     @property
     def json(self):
-        return {ARTISTS: [a.json for a in self.artists]}
+        return {Constants.ARTISTS: [a.json for a in self.artists]}

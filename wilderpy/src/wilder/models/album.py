@@ -1,7 +1,4 @@
-from wilder.constants import ARTWORK
-from wilder.constants import DESCRIPTION
-from wilder.constants import NAME
-from wilder.constants import TRACKS
+from wilder.constants import Constants
 
 
 class Album:
@@ -22,8 +19,8 @@ class Album:
     @property
     def json(self):
         return {
-            NAME: self.name,
-            DESCRIPTION: self.description,
-            ARTWORK: self.artwork,
-            TRACKS: [t.json for t in self.tracks],
+            Constants.NAME: self.name,
+            Constants.DESCRIPTION: self.description,
+            Constants.ARTWORK: self.artwork,
+            Constants.TRACKS: [t.json for t in self.tracks],
         }

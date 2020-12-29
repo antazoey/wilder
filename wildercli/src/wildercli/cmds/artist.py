@@ -3,6 +3,7 @@ from wilder.errors import ArtistAlreadySignedError
 from wilder.errors import ArtistNotSignedError
 from wildercli.args import name_arg
 from wildercli.cmds.util import echo_formatted_list
+from wildercli.options import bio_option
 from wildercli.options import format_option
 from wildercli.options import mgmt_options
 
@@ -29,10 +30,11 @@ def _list(state, format):
 @click.command()
 @mgmt_options()
 @name_arg
-def sign(state, name):
+@bio_option
+def sign(state, name, bio):
     """Manage a new artist."""
     try:
-        state.mgmt.sign_new_artist(name)
+        state.mgmt.sign_new_artist(name, bio=bio)
     except ArtistAlreadySignedError:
         click.echo(f"{name} is already signed.")
 

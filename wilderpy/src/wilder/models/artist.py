@@ -1,6 +1,4 @@
-from wilder.constants import BIO
-from wilder.constants import DISCOGRAPHY
-from wilder.constants import NAME
+from wilder.constants import Constants
 from wilder.models import Album
 
 
@@ -11,15 +9,16 @@ class Artist:
     # Relational
     discography = []
 
-    def __init__(self, name=None):
+    def __init__(self, name=None, bio=None):
         self.name = name
+        self.bio = bio
 
     @property
     def json(self):
         return {
-            NAME: self.name,
-            BIO: self.bio,
-            DISCOGRAPHY: [a.json for a in self.discography],
+            Constants.NAME: self.name,
+            Constants.BIO: self.bio,
+            Constants.DISCOGRAPHY: [a.json for a in self.discography],
         }
 
     def start_new_album(self, name=None):
