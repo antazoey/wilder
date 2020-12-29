@@ -4,11 +4,10 @@ import sys
 import click
 from wildercli.clickext.groups import ExceptionHandlingGroup
 from wildercli.cmds import album
-from wildercli.cmds import artists
+from wildercli.cmds import artist
 from wildercli.cmds import config
 from wildercli.cmds import play
-from wildercli.cmds import sign
-from wildercli.cmds import unsign
+from wildercli.cmds import play
 from wildercli.options import mgmt_options
 
 
@@ -44,7 +43,5 @@ def cli(state):
 
 cli.add_command(play)
 cli.add_command(album)
-cli.add_command(artists)
+cli.add_command(artist)
 cli.add_command(config)
-cli.add_command(sign)
-cli.add_command(unsign)
