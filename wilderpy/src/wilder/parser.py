@@ -90,5 +90,6 @@ def save(mgmt_json_dict):
     mgmt_json = json.dumps(mgmt_json_dict)
     mgmt_path = get_mgmt_json_path()
     os.remove(mgmt_path)
+    print(mgmt_json)
     with open(mgmt_path, "w") as mgmt_file:
         mgmt_file.write(mgmt_json)

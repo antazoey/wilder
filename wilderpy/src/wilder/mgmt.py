@@ -34,7 +34,7 @@ class Wilder(BaseWildApi):
         if self.is_represented(name):
             raise ArtistAlreadySignedError()
         artist = Artist(name)
-        self.artists.append(artist)
+        self._mgmt.artists.append(artist)
         self._save()
 
     def start_new_album(self, artist_name, album_name):
@@ -50,7 +50,7 @@ class Wilder(BaseWildApi):
         self._save()
 
     def _save(self):
-        return save(self.get_mgmt)
+        return save(self.get_mgmt())
 
 
 def get_mgmt():

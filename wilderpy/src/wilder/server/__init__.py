@@ -28,6 +28,7 @@ class HttpMethod:
 
 @app.errorhandler(Exception)
 def handle_unknown_errors(err):
+    print(err)
     err = WildServerFailureError(str(err))
     response = jsonify(err.dict)
     return _set_response_from_wild_error(response, err)
@@ -35,12 +36,13 @@ def handle_unknown_errors(err):
 
 @app.errorhandler(WildServerError)
 def handle_server_errors(err):
-    response = jsonify(err.dict())
+    response = jsonify(err.dict)
     return _set_response_from_wild_error(response, err)
 
 
 def _set_response_from_wild_error(response, err):
     response.status_code = err.status_code
+    response.text = str(err)
     return response
 
 
@@ -57,28 +59,31 @@ def artists():
 
 @app.route(f"/{CREATE_ALBUM}", methods=[HttpMethod.POST])
 def create_album():
-    data = request.form
-    _verify_create_album_request_data(data)
+    _verify_data_present(request.json_module, [ARTIST, ALBUM])
     _mgmt = get_mgmt()
-    _mgmt.start_new_album(data[ARTIST], data[ALBUM])
+    artist = request.json.get(ARTIST)
+    album = request.json.get(ALBUM)
+    _mgmt.start_new_album(artist, album)
     return _successful_response()
 
 
 @app.route(f"/{SIGN}", methods=[HttpMethod.POST])
 def sign():
-    data = request.form
-    _verify_present_artist(data)
+    _json = request.json
+    artist = _json.get(ARTIST)
+    _verify_data_present(artist)
     _mgmt = get_mgmt()
-    _mgmt.sign_new_artist(data.get(ARTIST))
+    _mgmt.sign_new_artist(artist)
     return _successful_response()
 
 
 @app.route(f"/{UNSIGN}", methods=[HttpMethod.POST])
 def unsign():
-    data = request.form
-    _verify_present_artist(data)
+    _json = request.json
+    artist = _json.get(ARTIST)
+    _verify_data_present(artist)
     _mgmt = get_mgmt()
-    _mgmt.unsign_artist(data.get(ARTIST))
+    _mgmt.unsign_artist(artist)
     return _successful_response()
 
 
@@ -87,17 +92,18 @@ def albums(artist):
     _mgmt = get_mgmt()
     artist = _mgmt.get_artist_by_name(artist)
     return {DISCOGRAPHY: [a.json for a in artist.discography]}
+    
 
-
-def _verify_create_album_request_data(data):
-    _verify_present_artist(data)
-    if not data.get(ALBUM):
-        raise MissingAlbumError()
-
-
-def _verify_present_artist(data):
-    if not data.get(ARTIST):
+def _verify_data_present(data, keys=None):
+    if not data:
         raise MissingArtistError()
+
+    if isinstance(data, str):
+        return
+
+    for key in keys:
+        if key and not data.get(key):
+            raise MissingArtistError()
 
 
 def _successful_response():

@@ -18,11 +18,11 @@ ERROR_LOG_FILE_NAME = "wildercli_errors.log"
 
 
 def _create_error_file_handler():
-    log_path = _get_error_log_path()
+    log_path = get_cli_error_log_path()
     return create_error_file_handler(log_path=log_path)
 
 
-def _get_error_log_path():
+def get_cli_error_log_path():
     log_path = get_user_project_path("log")
     return get_error_log_path(base_path=log_path)
 
@@ -43,7 +43,7 @@ def _get_error_file_logger():
 
 def get_view_error_details_message():
     """Returns the error message that is printed when errors occur."""
-    path = _get_error_log_path()
+    path = get_cli_error_log_path()
     return "View details in {}".format(path)
 
 

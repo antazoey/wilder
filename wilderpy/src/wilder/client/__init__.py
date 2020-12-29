@@ -1,7 +1,8 @@
 from wilder import BaseWildApi
 from wilder.client.connection import Connection
 from wilder.client.connection import create_connection
-from wilder.constants import ALBUM
+from wilder.client.errors import WildClientError
+from wilder.constants import ALBUM, UNSIGN
 from wilder.constants import ARTIST
 from wilder.constants import ARTISTS
 from wilder.constants import CREATE_ALBUM
@@ -40,20 +41,23 @@ class WildClient(BaseWildApi):
         """Creates a new artist.
         Raises :class:`wilder.errors.ArtistAlreadySignedError` if the artist already exists.
         """
-        response = self._post(SIGN, {ARTIST: artist})
-        return response.json()
-
-    def start_new_album(self, artist, album):
-        response = self._post(CREATE_ALBUM, {ARTIST: artist, ALBUM: album})
-        return response.json()
+        return self._post(SIGN, {ARTIST: artist})
 
     def unsign_artist(self, artist):
         """Removed an artist."""
+        return self._post(UNSIGN, {ARTIST: artist})
+
+    def start_new_album(self, artist, album):
+        return self._post(CREATE_ALBUM, {ARTIST: artist, ALBUM: album})
 
     def _get(self, endpoint):
         response = self.connection.get(f"/{endpoint}")
-        return response.json()
+        if response:
+            return response.json()
+        raise WildClientError()
 
-    def _post(self, endpoint, data=None):
-        response = self.connection.post(f"/{endpoint}", data=data)
-        return response.json()
+    def _post(self, endpoint, params=None):
+        response = self.connection.post(f"/{endpoint}", json=params)
+        if response:
+            return response.json()
+        raise WildClientError()

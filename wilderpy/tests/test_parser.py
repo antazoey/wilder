@@ -27,8 +27,8 @@ def mock_mgmt_json(schema_path):
 
 def test_parse_mgmt_parses_artist(schema_path, mock_mgmt_json):
     mgmt = parse_mgmt(mgmt_path=schema_path)
-    assert len(mgmt.artists) == 1
-    actual_artist = mgmt.artists[0]
+    assert len(mgmt.get_artists()) == 1
+    actual_artist = mgmt.get_artists()[0]
     expected_artist = mock_mgmt_json[ARTISTS][0]
     assert actual_artist.name == expected_artist[NAME]
     assert actual_artist.bio == expected_artist[BIO]
@@ -37,8 +37,8 @@ def test_parse_mgmt_parses_artist(schema_path, mock_mgmt_json):
 
 def test_parse_mgmt_parses_album(schema_path, mock_mgmt_json):
     mgmt = parse_mgmt(mgmt_path=schema_path)
-    artist = mgmt.artists[0]
-    actual_album = mgmt.artists[0].discography[0]
+    artist = mgmt.get_artists()[0]
+    actual_album = mgmt.get_artists()[0].discography[0]
     expected_album = mock_mgmt_json[ARTISTS][0][DISCOGRAPHY][0]
     assert actual_album.artist == artist
     assert actual_album.name == expected_album[NAME]
@@ -51,7 +51,7 @@ def test_parse_mgmt_parses_album(schema_path, mock_mgmt_json):
 
 def test_parse_mgmt_parses_tracks(schema_path, mock_mgmt_json):
     mgmt = parse_mgmt(mgmt_path=schema_path)
-    actual_tracks = mgmt.artists[0].discography[0].tracks
+    actual_tracks = mgmt.get_artists()[0].discography[0].tracks
     expected_tracks = mock_mgmt_json[ARTISTS][0][DISCOGRAPHY][0][TRACKS]
     assert len(actual_tracks) == len(expected_tracks) == 3
     actual_one = actual_tracks[0]
@@ -71,8 +71,8 @@ def test_parse_mgmt_parses_tracks(schema_path, mock_mgmt_json):
 
 
 def _assert_equal_track(mgmt, actual, expected, num):
-    artist = mgmt.artists[0]
-    album = mgmt.artists[0].discography[0]
+    artist = mgmt.get_artists()[0]
+    album = mgmt.get_artists()[0].discography[0]
     assert actual.artist == artist
     assert actual.album == album
     assert actual.name == expected[NAME]

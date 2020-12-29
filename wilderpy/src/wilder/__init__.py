@@ -1,13 +1,13 @@
 class BaseWildApi:
-    @property
-    def artists(self):
+    def get_artists(self):
         """Override"""
         return []
 
     @property
     def artist_names(self):
         """The names of the artists represented."""
-        return [a.name for a in self.artists]
+        artists = self.get_artists()
+        return [a.name for a in artists]
 
     def is_represented(self, name):
         """Returns True if the artist is represented by Wilder."""

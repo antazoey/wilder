@@ -98,6 +98,19 @@ def find_format_width(record, header, include_header=True):
     return rows, column_size
 
 
+def read_large_file(file_handler, block_size=10000):
+    block = []
+    for line in file_handler:
+        block.append(line)
+        if len(block) == block_size:
+            yield block
+            block = []
+
+    # yield last block
+    if block:
+        yield block
+
+
 def format_to_table(rows, column_size):
     """Formats given rows into a string of left justified table."""
     lines = []
