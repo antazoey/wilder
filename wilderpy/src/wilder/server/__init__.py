@@ -21,6 +21,11 @@ from wilder.util import get_mgmt_json
 app = Flask(__name__)
 
 
+class HttpMethod: 
+    GET = "GET"
+    POST = "POST"
+
+
 @app.errorhandler(Exception)
 def handle_unknown_errors(err):
     err = WildServerFailureError(str(err))
@@ -44,13 +49,13 @@ def mgmt():
     return get_mgmt_json(as_dict=False)
 
 
-@app.route(f"/{ARTISTS}", methods=["GET"])
+@app.route(f"/{ARTISTS}", methods=[HttpMethod.GET])
 def artists():
     _mgmt = get_mgmt()
     return {ARTISTS: [a.json for a in _mgmt.artists]}
 
 
-@app.route(f"/{CREATE_ALBUM}", methods=["POST"])
+@app.route(f"/{CREATE_ALBUM}", methods=[HttpMethod.POST])
 def create_album():
     data = request.form
     _verify_create_album_request_data(data)
@@ -59,7 +64,7 @@ def create_album():
     return _successful_response()
 
 
-@app.route(f"/{SIGN}", methods=["POST"])
+@app.route(f"/{SIGN}", methods=[HttpMethod.POST])
 def sign():
     data = request.form
     _verify_present_artist(data)
@@ -68,7 +73,7 @@ def sign():
     return _successful_response()
 
 
-@app.route(f"/{UNSIGN}", methods=["POST"])
+@app.route(f"/{UNSIGN}", methods=[HttpMethod.POST])
 def unsign():
     data = request.form
     _verify_present_artist(data)
@@ -77,7 +82,7 @@ def unsign():
     return _successful_response()
 
 
-@app.route(f"/{DISCOGRAPHY}/<artist>", methods=["GET"])
+@app.route(f"/{DISCOGRAPHY}/<artist>", methods=[HttpMethod.GET])
 def albums(artist):
     _mgmt = get_mgmt()
     artist = _mgmt.get_artist_by_name(artist)
