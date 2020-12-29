@@ -45,6 +45,7 @@ class WildClient(BaseWildApi):
             artist = mgmt.get_artist_by_name(name)
             if not artist:
                 raise ArtistNotFoundError(name)
+            return artist
         except WildNotFoundError as err:
             if f"{name} not found" in str(err):
                 raise ArtistNotFoundError(name)

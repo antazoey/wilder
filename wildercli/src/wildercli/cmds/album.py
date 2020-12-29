@@ -14,7 +14,7 @@ def album():
 @click.command()
 @artist_option()
 @album_option()
-def init(artist, album):
+def new(artist, album):
     """Start a new album."""
     mgmt = get_wilder_mgmt()
     try:
@@ -23,4 +23,4 @@ def init(artist, album):
         click.echo(f"Artist '{artist}' not found.")
 
 
-album.add_command(init)
+album.add_command(new)

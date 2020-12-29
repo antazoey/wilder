@@ -5,11 +5,14 @@ import sys
 import click
 from wildercli.clickext.groups import ExceptionHandlingGroup
 from wildercli.cmds import config
-from wildercli.cmds import mgmt
+from wildercli.cmds import artists
+from wildercli.cmds import album
+from wildercli.cmds import albums
 from wildercli.cmds import play
-from wildercli.logger import get_cli_error_log_path
+from wildercli.cmds import sign
+from wildercli.cmds import unsign
 from wildercli.options import core_options
-from wildercli.util import read_large_file
+
 
 BANNER = """\b
  |#      |#   |#   |#      |#----#   |#-----  |#-----#
@@ -42,5 +45,9 @@ def cli(state):
 
 
 cli.add_command(play)
-cli.add_command(mgmt)
+cli.add_command(album)
+cli.add_command(albums)
+cli.add_command(artists)
 cli.add_command(config)
+cli.add_command(sign)
+cli.add_command(unsign)

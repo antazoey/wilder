@@ -8,19 +8,19 @@ This will create some sort of entry for a new album.
 Name must be unique.
 
 ```bash
-wild album init --album "Wilder's Greatest Hits"
+wild album new "Wilder's Greatest Hits"
 ```
 
 This will list the songs on an album.
 
 ```bash
-wild album list-songs --album "Wilder's Greatest Hits"
+wild album list-songs "Wilder's Greatest Hits"
 ```
 
 This will list all the current albums you have made with `wild`:
 
 ```bash
-wild album list
+wild albums
 ```
 
 This is how you add a song to wild.
