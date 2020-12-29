@@ -24,7 +24,7 @@ class Wilder(BaseWildApi):
         """
         artist = self._mgmt.get_artist_by_name(name)
         if not artist:
-            raise ArtistNotFoundError()
+            raise ArtistNotFoundError(name)
         return artist
 
     def sign_new_artist(self, name):
@@ -32,7 +32,7 @@ class Wilder(BaseWildApi):
         Raises :class:`wilder.errors.ArtistAlreadySignedError` if the artist already exists.
         """
         if self.is_represented(name):
-            raise ArtistAlreadySignedError()
+            raise ArtistAlreadySignedError(name)
         artist = Artist(name)
         self._mgmt.artists.append(artist)
         self._save()
@@ -45,7 +45,7 @@ class Wilder(BaseWildApi):
     def unsign_artist(self, name):
         """Removed an artist."""
         if not self.is_represented(name):
-            raise ArtistNotSignedError()
+            raise ArtistNotSignedError(name)
         del self._mgmt[name]
         self._save()
 

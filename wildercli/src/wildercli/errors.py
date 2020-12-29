@@ -19,7 +19,7 @@ class WilderCLIError(click.ClickException):
         """Override default `show` to print CLI errors in red text."""
         if file is None:
             file = get_text_stderr()
-        click.secho("Error: {}".format(self.format_message()), file=file, fg="red")
+        click.secho(f"Error: {self.format_message()}", file=file, fg="red")
         if self.help:
             click.echo(self.help, err=True)
 

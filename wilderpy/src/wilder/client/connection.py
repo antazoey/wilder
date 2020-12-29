@@ -6,7 +6,7 @@ from requests.adapters import HTTPAdapter
 from requests.models import Request
 from requests.sessions import Session
 from wilder.client.errors import WildClientError
-from wilder.server import get_server_logger
+from wilder.server import get_server_logger, WildBadRequestError, WildServerFailureError
 from wilder.util import format_dict
 
 
@@ -139,6 +139,9 @@ def _handle_error(method, url, response):
     if response is None:
         msg = f"No response was returned for {method} request to {url}."
         raise WildClientError(msg)
+    if response.status_code == 400:
+        raise WildBadRequestError(response.text)
+    raise WildServerFailureError(response.text)
 
 
 def _print_request(method, url, params=None, data=None):

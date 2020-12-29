@@ -8,8 +8,11 @@ from wilder.constants import ARTISTS
 from wilder.constants import CREATE_ALBUM
 from wilder.constants import MGMT
 from wilder.constants import SIGN
+from wilder.errors import ArtistAlreadySignedError, ArtistNotSignedError, ArtistNotFoundError
 from wilder.parser import parse_artists
 from wilder.parser import parse_mgmt
+from wilder.server import WildBadRequestError
+from wilder.server.error import WildNotFoundError
 
 
 def create_client(config):
@@ -35,17 +38,32 @@ class WildClient(BaseWildApi):
         Raises :class:`wilder.errors.ArtistNotFoundError` when the name does not exist.
         """
         mgmt = self.get_mgmt()
-        return mgmt.get_artist_by_name(name)
+        try:
+            return mgmt.get_artist_by_name(name)
+        except WildNotFoundError as err:
+            if f"{name} not found" in str(err):
+                raise ArtistNotFoundError(name)
+            raise
 
     def sign_new_artist(self, artist):
         """Creates a new artist.
         Raises :class:`wilder.errors.ArtistAlreadySignedError` if the artist already exists.
         """
-        return self._post(SIGN, {ARTIST: artist})
+        try:
+            return self._post(SIGN, {ARTIST: artist})
+        except WildBadRequestError as err:
+            if f"{artist} already signed" in str(err):
+                raise ArtistAlreadySignedError(artist)
+            raise
 
     def unsign_artist(self, artist):
         """Removed an artist."""
-        return self._post(UNSIGN, {ARTIST: artist})
+        try:
+            return self._post(UNSIGN, {ARTIST: artist})
+        except WildBadRequestError as err:
+            if f"{artist} is not signed" in str(err):
+                raise ArtistNotSignedError(artist)
+            raise
 
     def start_new_album(self, artist, album):
         return self._post(CREATE_ALBUM, {ARTIST: artist, ALBUM: album})
@@ -54,10 +72,8 @@ class WildClient(BaseWildApi):
         response = self.connection.get(f"/{endpoint}")
         if response:
             return response.json()
-        raise WildClientError()
 
     def _post(self, endpoint, params=None):
         response = self.connection.post(f"/{endpoint}", json=params)
         if response:
             return response.json()
-        raise WildClientError()
