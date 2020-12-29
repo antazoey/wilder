@@ -25,21 +25,11 @@ from wilder.util import get_mgmt_json_path
 
 def parse_mgmt(mgmt_path=None):
     mgmt_json = get_mgmt_json(mgmt_path=mgmt_path)
-    artists = _parse_artists(mgmt_json)
+    artists = parse_artists(mgmt_json)
     return Mgmt(artists, last_updated=mgmt_json.get(LAST_UPDATED))
 
 
-def save(mgmt_json_dict):
-    """Save a MGMT dictionary to the mgmt.json file."""
-    mgmt_json_dict[LAST_UPDATED] = datetime.utcnow().timestamp()
-    mgmt_json = json.dumps(mgmt_json_dict)
-    mgmt_path = get_mgmt_json_path()
-    os.remove(mgmt_path)
-    with open(mgmt_path, "w") as mgmt_file:
-        mgmt_file.write(mgmt_json)
-
-
-def _parse_artists(json_data):
+def parse_artists(json_data):
     objs = []
     artists = json_data.get(ARTISTS) or []
     for a in artists:
@@ -47,12 +37,12 @@ def _parse_artists(json_data):
         artist.name = a.get(NAME)
         artist.bio = a.get(BIO)
         discography = a.get(DISCOGRAPHY) or []
-        artist.discography = _parse_albums(artist, discography)
+        artist.discography = parse_albums(artist, discography)
         objs.append(artist)
     return objs
 
 
-def _parse_albums(artist, albums):
+def parse_albums(artist, albums):
     objs = []
     for a in albums:
         album = Album()
@@ -63,12 +53,12 @@ def _parse_albums(artist, albums):
         album.album_type = a.get(ALBUM_TYPE)
         album.state = a.get(STATE)
         tracks = a.get(TRACKS) or []
-        album.tracks = _parse_tracks(artist, album, tracks)
+        album.tracks = parse_tracks(artist, album, tracks)
         objs.append(album)
     return objs
 
 
-def _parse_tracks(artist, album, tracks):
+def parse_tracks(artist, album, tracks):
     objs = []
     for t in tracks:
         track = Track()
@@ -82,7 +72,7 @@ def _parse_tracks(artist, album, tracks):
     return objs
 
 
-def _parse_releases(artist, album, releases):
+def parse_releases(artist, album, releases):
     objs = []
     for r in releases:
         release = Release()
@@ -92,3 +82,13 @@ def _parse_releases(artist, album, releases):
         release.album = album
         objs.append(release)
     return objs
+
+
+def save(mgmt_json_dict):
+    """Save a MGMT dictionary to the mgmt.json file."""
+    mgmt_json_dict[LAST_UPDATED] = datetime.utcnow().timestamp()
+    mgmt_json = json.dumps(mgmt_json_dict)
+    mgmt_path = get_mgmt_json_path()
+    os.remove(mgmt_path)
+    with open(mgmt_path, "w") as mgmt_file:
+        mgmt_file.write(mgmt_json)

@@ -21,7 +21,8 @@ def mgmt():
 def artists(format):
     """List all your artists."""
     _mgmt = get_wilder_mgmt()
-    artists_to_list = [{"Name": a.name, "Bio": a.bio} for a in _mgmt.artists]
+    _artists = _mgmt.get_artists()
+    artists_to_list = [{"Name": a.name, "Bio": a.bio} for a in _artists]
     if not artists_to_list:
         click.echo("There are no artists currently being managed.")
     else:

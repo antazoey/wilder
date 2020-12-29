@@ -12,7 +12,7 @@ from signal import signal
 from click import echo
 from click import get_current_context
 from click import style
-from wilder import get_mgmt
+from wilder.mgmt import get_mgmt
 from wilder.client import create_client
 from wilder.config import create_config_obj
 
@@ -23,7 +23,7 @@ def get_wilder_mgmt():
     config = create_config_obj()
     if not config.is_using_config():
         return get_mgmt()
-    return create_client(config.host, config.port)
+    return create_client(config)
 
 
 def does_user_agree(prompt):
@@ -52,10 +52,17 @@ def get_user_project_path(*subdirs):
 
 def get_url_parts(url_str):
     parts = url_str.split(":")
+    host = None
     port = None
-    if len(parts) > 1 and parts[1] != "":
+    # includes scheme
+    if len(parts) == 3:
+        host = f"{parts[0]}:{parts[1]}"
+        port = int(parts[2])
+        
+    elif len(parts) > 1 and parts[1] != "":
+        host = parts[0]
         port = int(parts[1])
-    return parts[0], port
+    return host, port
 
 
 def find_format_width(record, header, include_header=True):

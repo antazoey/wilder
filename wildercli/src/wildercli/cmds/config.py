@@ -22,6 +22,7 @@ def config():
     required=True,
 )
 def init(host):
+    """Create a config file to re-use your Wilder connection parameters."""
     path_parts = get_url_parts(host)
     try:
         init_client_config(path_parts[0], path_parts[1])

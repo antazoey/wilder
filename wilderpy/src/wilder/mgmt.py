@@ -1,3 +1,4 @@
+from wilder import BaseWildApi
 from wilder.errors import ArtistAlreadySignedError
 from wilder.errors import ArtistNotFoundError
 from wilder.errors import ArtistNotSignedError
@@ -6,22 +7,15 @@ from wilder.parser import parse_mgmt
 from wilder.parser import save
 
 
-class Wilder:
+class Wilder(BaseWildApi):
     def __init__(self):
         self._mgmt = parse_mgmt()
 
-    @property
-    def artists(self):
+    def get_artists(self):
         """The artists represented."""
         return self._mgmt.artists
 
-    @property
-    def artist_names(self):
-        """The names of the artists represented."""
-        return [a.name for a in self.artists]
-
-    @property
-    def json(self):
+    def get_mgmt(self):
         return self._mgmt.json
 
     def get_artist_by_name(self, name):
@@ -55,12 +49,8 @@ class Wilder:
         del self._mgmt[name]
         self._save()
 
-    def is_represented(self, name):
-        """Returns True if the artist is represented by Wilder."""
-        return name in self.artist_names
-
     def _save(self):
-        return save(self.json)
+        return save(self.get_mgmt)
 
 
 def get_mgmt():

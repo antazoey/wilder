@@ -4,6 +4,7 @@ from wildercli.util import get_wilder_mgmt
 
 @click.group()
 def album():
+    """Tools for creating albums."""
     pass
 
 

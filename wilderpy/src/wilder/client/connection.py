@@ -31,7 +31,7 @@ class Connection:
         self._session = session or ROOT_SESSION
         self._headers = self._session.headers.copy()
         if not host.startswith("http://") and not host.startswith("https://"):
-            host = "https://{}".format(host)
+            host = f"https://{host}"
         parsed_host = urlparse(host)
         self._headers["Host"] = parsed_host.netloc
         self.host_address = host
@@ -86,7 +86,7 @@ class Connection:
             )
 
             response = self._session.send(
-                request, stream=stream, timeout=timeout, cert=cert, proxies=proxies,
+                request, stream=stream, timeout=timeout, cert=cert, proxies=proxies, verify=False
             )
 
             if not stream and response is not None:
@@ -132,13 +132,13 @@ class Connection:
 
 def _handle_error(method, url, response):
     if response is None:
-        msg = "No response was returned for {} request to {}.".format(method, url)
+        msg = f"No response was returned for {method} request to {url}."
         raise WildClientError(msg)
 
 
 def _print_request(method, url, params=None, data=None):
     logger = get_server_logger()
-    logger.info("{}{}".format(method.ljust(8), url))
+    logger.info(f"{method.ljust(8)}{url}")
     if params:
         logger.debug(format_dict(params, "  params"))
     if data:
