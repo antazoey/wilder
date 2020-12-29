@@ -24,7 +24,11 @@ from wilder.util import get_mgmt_json_path
 
 
 def parse_mgmt(mgmt_json=None):
-    # Handle when given path to json file
+    # Parses the given mgmt json.
+    # Give it a path to a JSON file to parse that file.
+    # Give it None (or no arg) to parse the user config file.
+    # Give it the raw dict to just use that.
+    
     if mgmt_json is None or isinstance(mgmt_json, str):
         mgmt_json = get_mgmt_json(mgmt_path=mgmt_json)
     artists = parse_artists(mgmt_json)

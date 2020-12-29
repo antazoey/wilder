@@ -30,36 +30,38 @@ class HttpMethod:
     POST = "POST"
 
 
-@app.errorhandler(Exception)
-def handle_unknown_errors(err):
-    err = WildServerFailureError(str(err))
-    response = jsonify(err.dict)
-    return _set_response_from_wild_error(response, err)
+@app.errorhandler(WildNotFoundError)
+def handle_not_found_wild_errors(err):
+    response = jsonify({"Error": str(err)})
+    err = WilderHttpNotFoundError(str(err))
+    response.status_code = 404
+    response.text = str(err)
+    return response
 
 
 @app.errorhandler(WildServerError)
 def handle_server_errors(err):
     response = jsonify(err.dict)
-    return _set_response_from_wild_error(response, err)
-
-
-@app.errorhandler(WildNotFoundError)
-def handle_not_found_wild_errors(err):
-    response = jsonify({"Error": str(err)})
-    err = WilderHttpNotFoundError(str(err))
-    return _set_response_from_wild_error(response, err)
+    response.status_code = 500
+    response.text = str(err)
+    return response
 
 
 @app.errorhandler(WildError)
 def handle_wild_errors(err):
     response = jsonify({"Error": str(err)})
     err = WildBadRequestError(str(err))
-    return _set_response_from_wild_error(response, err)
+    response.status_code = 400
+    response.text = str(err)
+    return response
 
 
-def _set_response_from_wild_error(response, err):
-    response.status_code = err.status_code
-    response.text = str(err) or UNKNOWN_ERROR
+@app.errorhandler(Exception)
+def handle_unknown_errors(err):
+    err = WildServerFailureError(str(err))
+    response = jsonify(err.dict)
+    response.status_code = 500
+    response.text = str(err)
     return response
 
 
@@ -77,7 +79,7 @@ def artists():
 
 @app.route(f"/{CREATE_ALBUM}", methods=[HttpMethod.POST])
 def create_album():
-    _verify_data_present(request.json_module, [ARTIST, ALBUM])
+    _verify_data_present(request.json, [ARTIST, ALBUM])
     _mgmt = get_mgmt()
     artist = request.json.get(ARTIST)
     album = request.json.get(ALBUM)

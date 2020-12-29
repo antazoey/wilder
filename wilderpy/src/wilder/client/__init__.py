@@ -71,7 +71,12 @@ class WildClient(BaseWildApi):
             raise
 
     def start_new_album(self, artist, album):
-        return self._post(CREATE_ALBUM, {ARTIST: artist, ALBUM: album})
+        try:
+            return self._post(CREATE_ALBUM, {ARTIST: artist, ALBUM: album})
+        except WildNotFoundError as err:
+            if f"{artist} not found" in str(err):
+                raise ArtistNotFoundError(artist)
+            raise
 
     def _get(self, endpoint):
         response = self.connection.get(f"/{endpoint}")

@@ -9,6 +9,7 @@ from wilder.client.errors import WildClientError
 from wilder.server import get_server_logger
 from wilder.server import WildBadRequestError
 from wilder.server import WildServerFailureError
+from wilder.server.error import WildNotFoundError
 from wilder.util import format_dict
 
 
@@ -143,6 +144,8 @@ def _handle_error(method, url, response):
         raise WildClientError(msg)
     if response.status_code == 400:
         raise WildBadRequestError(response.text)
+    elif response.status_code == 404:
+        raise WildNotFoundError(response.text)
     raise WildServerFailureError(response.text)
 
 
