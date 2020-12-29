@@ -45,15 +45,11 @@ pass_state = click.make_pass_decorator(CLIState, ensure=True)
 
 
 def artist_option(required=True):
-    return click.option(
-        "--artist", help="The name of an artist.", required=required
-    )
+    return click.option("--artist", help="The name of an artist.", required=required)
 
 
 def album_option(required=True):
-    return click.option(
-        "--album", help="The name of an album.", required=required
-    )
+    return click.option("--album", help="The name of an album.", required=required)
 
 
 def core_options(hidden=False):

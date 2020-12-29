@@ -1,7 +1,7 @@
 import click
 from wilder.errors import ArtistNotFoundError
-from wildercli.options import artist_option
 from wildercli.options import album_option
+from wildercli.options import artist_option
 from wildercli.util import get_wilder_mgmt
 
 
