@@ -11,6 +11,15 @@ _PADDING_SIZE = 3
 CONFIG_FILE_NAME = "config.json"
 
 
+def get_mgmt_json(mgmt_path=None, as_dict=True):
+    mgmt_path = mgmt_path or get_mgmt_json_path()
+    with open(mgmt_path) as mgmt_file:
+        json_dict = json.load(mgmt_file)
+        if as_dict:
+            return json_dict
+        return json.dumps(json_dict)
+
+
 def get_mgmt_json_path():
     proj_path = get_project_path()
     mgmt_path = os.path.join(proj_path, "mgmt.json")
@@ -20,15 +29,6 @@ def get_mgmt_json_path():
             json_str = json.dumps(json_dict, indent=2)
             mgmt_file.write(json_str)
     return mgmt_path
-
-
-def get_mgmt_json(mgmt_path=None, as_dict=True):
-    mgmt_path = mgmt_path or get_mgmt_json_path()
-    with open(mgmt_path) as mgmt_file:
-        json_dict = json.load(mgmt_file)
-        if as_dict:
-            return json_dict
-        return json.dumps(json_dict)
 
 
 def get_config_path(create_if_not_exists=True):

@@ -11,8 +11,8 @@ class WilderCLIError(click.ClickException):
     message but not logged to file.
     """
 
-    def __init__(self, message, help=None):
-        self.help = help
+    def __init__(self, message, help_func=None):
+        self.help = help_func
         super().__init__(message)
 
     def show(self, file=None):
@@ -42,3 +42,11 @@ class LoggedCLIError(WilderCLIError):
             if self.message
             else locations_message
         )
+
+
+class WildServerConnectionError(WilderCLIError):
+    """Exception raised when unable to connect to the Wild server."""
+    
+    def __init__(self, base_err):
+        msg = f"Unable to connect. Reason: f{str(base_err)}."
+        super().__init__(msg)

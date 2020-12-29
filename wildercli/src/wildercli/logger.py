@@ -1,6 +1,5 @@
 import logging
 import traceback
-from logging.handlers import RotatingFileHandler
 from threading import Lock
 
 from wilder.server.logger import add_handler_to_logger

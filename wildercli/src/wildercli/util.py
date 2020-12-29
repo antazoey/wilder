@@ -12,18 +12,8 @@ from signal import signal
 from click import echo
 from click import get_current_context
 from click import style
-from wilder.client import create_client
-from wilder.config import create_config_obj
-from wilder.mgmt import get_mgmt
 
 _PADDING_SIZE = 3
-
-
-def get_wilder_mgmt():
-    config = create_config_obj()
-    if not config.is_using_config():
-        return get_mgmt()
-    return create_client(config)
 
 
 def does_user_agree(prompt):
