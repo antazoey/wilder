@@ -12,9 +12,9 @@ from signal import signal
 from click import echo
 from click import get_current_context
 from click import style
-from wilder.mgmt import get_mgmt
 from wilder.client import create_client
 from wilder.config import create_config_obj
+from wilder.mgmt import get_mgmt
 
 _PADDING_SIZE = 3
 
@@ -58,7 +58,7 @@ def get_url_parts(url_str):
     if len(parts) == 3:
         host = f"{parts[0]}:{parts[1]}"
         port = int(parts[2])
-        
+
     elif len(parts) > 1 and parts[1] != "":
         host = parts[0]
         port = int(parts[1])

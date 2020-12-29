@@ -86,7 +86,12 @@ class Connection:
             )
 
             response = self._session.send(
-                request, stream=stream, timeout=timeout, cert=cert, proxies=proxies, verify=False
+                request,
+                stream=stream,
+                timeout=timeout,
+                cert=cert,
+                proxies=proxies,
+                verify=False,
             )
 
             if not stream and response is not None:

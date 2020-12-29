@@ -1,10 +1,9 @@
 class BaseWildApi:
-
     @property
     def artists(self):
         """Override"""
         return []
-    
+
     @property
     def artist_names(self):
         """The names of the artists represented."""

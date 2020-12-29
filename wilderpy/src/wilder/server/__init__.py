@@ -1,14 +1,21 @@
 from flask import Flask
 from flask import jsonify
 from flask import request
+from wilder.constants import ALBUM
+from wilder.constants import ARTIST
+from wilder.constants import ARTISTS
+from wilder.constants import CREATE_ALBUM
+from wilder.constants import DISCOGRAPHY
+from wilder.constants import MGMT
+from wilder.constants import SIGN
+from wilder.constants import UNSIGN
 from wilder.mgmt import get_mgmt
-from wilder.util import get_mgmt_json
-from wilder.constants import ARTISTS, MGMT, ARTIST, ALBUM, CREATE_ALBUM, DISCOGRAPHY, UNSIGN, SIGN
 from wilder.server.error import MissingAlbumError
 from wilder.server.error import MissingArtistError
 from wilder.server.error import WildServerError
 from wilder.server.error import WildServerFailureError
 from wilder.server.logger import get_server_logger
+from wilder.util import get_mgmt_json
 
 
 app = Flask(__name__)
@@ -81,8 +88,8 @@ def _verify_create_album_request_data(data):
     _verify_present_artist(data)
     if not data.get(ALBUM):
         raise MissingAlbumError()
-    
-    
+
+
 def _verify_present_artist(data):
     if not data.get(ARTIST):
         raise MissingArtistError()

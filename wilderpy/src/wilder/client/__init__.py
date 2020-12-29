@@ -1,8 +1,14 @@
 from wilder import BaseWildApi
 from wilder.client.connection import Connection
 from wilder.client.connection import create_connection
-from wilder.constants import ARTIST, ALBUM, ARTISTS, MGMT, SIGN, CREATE_ALBUM
-from wilder.parser import parse_artists, parse_mgmt
+from wilder.constants import ALBUM
+from wilder.constants import ARTIST
+from wilder.constants import ARTISTS
+from wilder.constants import CREATE_ALBUM
+from wilder.constants import MGMT
+from wilder.constants import SIGN
+from wilder.parser import parse_artists
+from wilder.parser import parse_mgmt
 
 
 def create_client(config):
@@ -18,7 +24,7 @@ class WildClient(BaseWildApi):
     def get_artists(self):
         _json = self._get(ARTISTS)
         return parse_artists(_json)
-    
+
     def get_mgmt(self):
         _json = self._get(MGMT)
         return parse_mgmt(_json)
