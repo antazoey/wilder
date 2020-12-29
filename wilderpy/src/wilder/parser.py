@@ -23,8 +23,10 @@ from wilder.util import get_mgmt_json
 from wilder.util import get_mgmt_json_path
 
 
-def parse_mgmt(mgmt_path=None):
-    mgmt_json = get_mgmt_json(mgmt_path=mgmt_path)
+def parse_mgmt(mgmt_json=None):
+    # Handle when given path to json file
+    if isinstance(mgmt_json, str):
+        mgmt_json = get_mgmt_json(mgmt_path=mgmt_json)
     artists = parse_artists(mgmt_json)
     return Mgmt(artists, last_updated=mgmt_json.get(LAST_UPDATED))
 

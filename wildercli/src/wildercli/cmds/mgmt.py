@@ -35,15 +35,14 @@ def artists(format):
 def artist(name):
     """Get artist info by name."""
     _mgmt = get_wilder_mgmt()
+    not_found_msg = f"Artist '{name}' not found."
     try:
-        return _mgmt.get_artist_by_name(name)
+        _artist = _mgmt.get_artist_by_name(name)
+        if _artist is None:
+            click.echo(not_found_msg, err=True)
+        return _artist
     except ArtistNotFoundError:
-        msg = (
-            f"I'm sorry, we have no records of the artist '{name}'. "
-            f"Do you care to sign an artist by this name? "
-            f"Do so with:\n\twild mgmt artist sign [NAME]"
-        )
-        click.echo(msg, err=True)
+        click.echo(not_found_msg, err=True)
 
 
 @click.command()
