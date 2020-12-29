@@ -8,8 +8,8 @@ from wilder.parser import save
 
 
 class Wilder(BaseWildApi):
-    def __init__(self):
-        self._mgmt = parse_mgmt()
+    def __init__(self, mgmt_obj=None):
+        self._mgmt = mgmt_obj or parse_mgmt()
 
     def get_artists(self):
         """The artists represented."""
@@ -53,6 +53,6 @@ class Wilder(BaseWildApi):
         return save(self.get_mgmt())
 
 
-def get_mgmt():
+def get_mgmt(obj=None):
     """Returns a new instance of an :class:`wilder.mgmt.ArtistMgmt`."""
-    return Wilder()
+    return Wilder(obj)
