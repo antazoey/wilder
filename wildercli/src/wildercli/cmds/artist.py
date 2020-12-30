@@ -2,7 +2,7 @@ import click
 from wilder.errors import ArtistAlreadySignedError
 from wilder.errors import ArtistNotSignedError
 from wildercli.args import name_arg
-from wildercli.cmds.util import echo_formatted_list
+from wildercli.cmds.util import echo_formatted_list, requires_existing_artist_if_given
 from wildercli.options import bio_option
 from wildercli.options import format_option
 from wildercli.options import mgmt_options
@@ -50,6 +50,27 @@ def unsign(state, name):
         click.echo(f"{name} is not signed.")
 
 
+@click.command("update")
+@mgmt_options()
+@name_arg
+@bio_option
+@requires_existing_artist_if_given
+def update(state, name, bio):
+    """Update artist information."""
+    state.mgmt.update_artist(name, bio)
+
+
+@click.command("focus-on")
+@mgmt_options()
+@name_arg
+@requires_existing_artist_if_given
+def focus_on(state, name):
+    """Change the focus artist."""
+    state.mgmt.focus_artist(name)
+    
+
 artist.add_command(_list)
 artist.add_command(sign)
 artist.add_command(unsign)
+artist.add_command(focus_on)
+artist.add_command(update)

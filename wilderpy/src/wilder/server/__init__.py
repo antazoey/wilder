@@ -30,7 +30,7 @@ def handle_not_found_wild_errors(err):
 @app.errorhandler(WildServerError)
 @app.errorhandler(Exception)
 def handle_server_errors(err):
-    response = jsonify(err.dict)
+    response = jsonify(err.dict) if err.dict else jsonify({"error": "UNKNOWN", "message": str(err)})
     response.status_code = 500
     return response
 
@@ -69,29 +69,35 @@ def artists():
 @app.route(f"/{Consts.SIGN}", methods=[HttpMethod.POST])
 def sign():
     """Sign a new artist"""
-    _json = request.json
-    artist = _json.get(Consts.ARTIST)
-    _verify_data_present(artist)
+    _artist = _get_request_param(Consts.ARTIST)
     _mgmt = get_mgmt()
-    _mgmt.sign_new_artist(artist)
+    _mgmt.sign_new_artist(_artist)
     return _successful_response()
 
 
 @app.route(f"/{Consts.UNSIGN}", methods=[HttpMethod.POST])
 def unsign():
     """Remove a managed artist"""
-    _json = request.json
-    artist = _json.get(Consts.ARTIST)
-    _verify_data_present(artist)
+    _artist = _get_request_param(Consts.ARTIST)
     _mgmt = get_mgmt()
-    _mgmt.unsign_artist(artist)
+    _mgmt.unsign_artist(_artist)
     return _successful_response()
 
 
-@app.route("/<artist>/update")
+@app.route("/<artist>/update", methods=[HttpMethod.POST])
 def update_artist(artist):
-    # TODO
-    pass
+    _mgmt = get_mgmt()
+    _bio = _get_request_param(Consts.BIO)
+    _mgmt.update_artist(artist, _bio)
+    return _successful_response()
+
+
+@app.route("/focus", methods=[HttpMethod.POST])
+def focus():
+    _artist = _get_request_param(Consts.ARTIST)
+    _mgmt = get_mgmt()
+    _mgmt.focus_on_artist(_artist)
+    return _successful_response()
 
 
 """*****"""
@@ -109,10 +115,9 @@ def discography(artist):
 @app.route(f"/<artist>/{Consts.CREATE_ALBUM}", methods=[HttpMethod.POST])
 def create_album(artist):
     """Create an album"""
-    _verify_data_present(request.values, Consts.ALBUM)
+    _album = _get_request_param(Consts.ALBUM)
     _mgmt = get_mgmt()
-    album = request.json.get(Consts.ALBUM)
-    _mgmt.start_new_album(artist, album)
+    _mgmt.start_new_album(artist, _album)
     return _successful_response()
 
 
@@ -120,3 +125,10 @@ def create_album(artist):
 def add_track(artist, album):
     # TODO
     pass
+
+
+def _get_request_param(key):
+    _json = request.json
+    artist = _json.get(key)
+    _verify_data_present(artist)
+    return artist

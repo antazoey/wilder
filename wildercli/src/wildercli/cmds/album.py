@@ -1,7 +1,7 @@
 import click
 from wilder.errors import ArtistNotFoundError
 from wildercli.args import artist_arg
-from wildercli.cmds.util import echo_formatted_list
+from wildercli.cmds.util import echo_formatted_list, requires_existing_artist_if_given
 from wildercli.constants import ALL
 from wildercli.options import album_option
 from wildercli.options import artist_option
@@ -13,18 +13,6 @@ from wildercli.options import mgmt_options
 def album():
     """Tools for creating albums."""
     pass
-
-
-def requires_existing_artist_if_given(f):
-    def decorate(*args, **kwargs):
-        artist = kwargs.get("artist")
-        try:
-            return f(*args, **kwargs)
-        except ArtistNotFoundError:
-            click.echo(f"Artist '{artist}' not found.")
-
-    decorate.__doc__ = f.__doc__
-    return decorate
 
 
 @click.command("new")

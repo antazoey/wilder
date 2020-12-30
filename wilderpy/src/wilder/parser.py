@@ -20,8 +20,10 @@ def parse_mgmt(mgmt_json=None):
 
     if mgmt_json is None or isinstance(mgmt_json, str):
         mgmt_json = get_mgmt_json(mgmt_path=mgmt_json)
+    last_updated = mgmt_json.get(Consts.LAST_UPDATED)
+    focus_artist = mgmt_json.get(Consts.FOCUS_ARTIST)
     artists = parse_artists(mgmt_json)
-    return Mgmt(artists, last_updated=mgmt_json.get(Consts.LAST_UPDATED))
+    return Mgmt(artists, last_updated=last_updated, focus_artist=focus_artist)
 
 
 def parse_artists(json_data):
@@ -85,6 +87,5 @@ def save(mgmt_json_dict):
     mgmt_json = json.dumps(mgmt_json_dict)
     mgmt_path = get_mgmt_json_path()
     os.remove(mgmt_path)
-    print(mgmt_json)
     with open(mgmt_path, "w") as mgmt_file:
         mgmt_file.write(mgmt_json)

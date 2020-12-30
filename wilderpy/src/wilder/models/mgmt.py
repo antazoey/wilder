@@ -3,10 +3,13 @@ from wilder.constants import Constants
 
 class Mgmt:
     artists = []
+    last_updated = None
+    focus_artist = None
 
-    def __init__(self, artists, last_updated=None):
+    def __init__(self, artists, last_updated=None, focus_artist=None):
         self.artists = artists
         self.last_updated = last_updated
+        self.focus_artist = focus_artist
 
     def __getitem__(self, item):
         return self.get_artist_by_name(item)
@@ -21,10 +24,6 @@ class Mgmt:
             if artist.name == name:
                 return artist
         return None
-
-    @property
-    def artists_json(self):
-        return self.json.get(Constants.ARTISTS) or []
 
     @property
     def json(self):

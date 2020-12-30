@@ -42,11 +42,6 @@ class Wilder(BaseWildApi):
         self._mgmt.artists.append(artist)
         self._save()
 
-    def start_new_album(self, artist_name, album_name):
-        artist = self.get_artist_by_name(artist_name)
-        artist.start_new_album(album_name)
-        self._save()
-
     def unsign_artist(self, name):
         """Removed an artist."""
         if not self.is_represented(name):
@@ -54,8 +49,23 @@ class Wilder(BaseWildApi):
         del self._mgmt[name]
         self._save()
 
+    def update_artist(self, name, bio=None):
+        artist = self.get_artist_by_name(name)
+        artist.bio = bio or artist.bio
+        self._save()
+
+    def start_new_album(self, artist_name, album_name):
+        artist = self.get_artist_by_name(artist_name)
+        artist.start_new_album(album_name)
+        self._save()
+
     def _save(self):
         return save(self.get_mgmt())
+    
+    def focus_on_artist(self, artist_name):
+        artist = self.get_artist_by_name(artist_name)
+        self._mgmt.focus_artist = artist.name
+        self._save()
 
 
 def get_mgmt(obj=None):

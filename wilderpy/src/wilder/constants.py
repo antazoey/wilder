@@ -9,6 +9,8 @@ class Constants:
     COLLABORATORS = "collaborators"
     DESCRIPTION = "description"
     DISCOGRAPHY = "discography"
+    FOCUS = "focus"
+    FOCUS_ARTIST = "focusArtist"
     IS_ENABLED = "isEnabled"
     LAST_UPDATED = "lastUpdated"
     MGMT = "mgmt"
