@@ -27,7 +27,9 @@ def err_when_not_found(arg_key):
                 if f"{name} not found" in str(err):
                     raise ArtistNotFoundError(name)
                 raise
+
         return decorate
+
     return decorator
 
 
@@ -106,7 +108,7 @@ class WildClient(BaseWildApi):
         except WildNotFoundError as err:
             _handle_artist_not_found_bad_request(err, artist)
             raise
-    
+
     def focus_on_artist(self, artist_name):
         try:
             self._post(Constants.FOCUS, _make_artist_params(artist_name))

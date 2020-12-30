@@ -1,10 +1,10 @@
 import click
 from wildercli.clickext.types import FileOrString
-from wildercli.constants import ALL
 from wildercli.mgmt_factory import get_wilder_mgmt
 from wildercli.output_formats import OutputFormat
 
 
+name_arg = click.argument("name")
 yes_option = click.option(
     "-y",
     "--assume-yes",
@@ -45,9 +45,7 @@ pass_state = click.make_pass_decorator(CLIState, ensure=True)
 
 
 def artist_option(required=True):
-    return click.option(
-        "--artist", help="The name of an artist.", required=required, default=ALL
-    )
+    return click.option("--artist", help="The name of an artist.", required=required)
 
 
 def album_option(required=True):

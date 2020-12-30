@@ -30,7 +30,11 @@ def handle_not_found_wild_errors(err):
 @app.errorhandler(WildServerError)
 @app.errorhandler(Exception)
 def handle_server_errors(err):
-    response = jsonify(err.dict) if err.dict else jsonify({"error": "UNKNOWN", "message": str(err)})
+    response = (
+        jsonify(err.dict)
+        if err.dict
+        else jsonify({"error": "UNKNOWN", "message": str(err)})
+    )
     response.status_code = 500
     return response
 

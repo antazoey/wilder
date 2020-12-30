@@ -3,6 +3,7 @@ from wilder.constants import Constants
 from wilder.errors import ArtistAlreadySignedError
 from wilder.errors import ArtistNotFoundError
 from wilder.errors import ArtistNotSignedError
+from wilder.errors import NoArtistsFoundError
 from wilder.models import Artist
 from wilder.parser import parse_mgmt
 from wilder.parser import save
@@ -18,6 +19,16 @@ class Wilder(BaseWildApi):
 
     def get_mgmt(self):
         return self._mgmt.json
+
+    def get_focus_artist(self):
+        artists = self.get_artists()
+        artist_name = self._mgmt.focus_artist
+        if not artists:
+            raise NoArtistsFoundError()
+        for artist in artists:
+            if artist.name == artist_name:
+                return artist
+        return artists[0]
 
     def get_artist_by_name(self, name):
         """Returns an :class:`wilder.models.Artist` for the given name.
@@ -61,7 +72,7 @@ class Wilder(BaseWildApi):
 
     def _save(self):
         return save(self.get_mgmt())
-    
+
     def focus_on_artist(self, artist_name):
         artist = self.get_artist_by_name(artist_name)
         self._mgmt.focus_artist = artist.name
