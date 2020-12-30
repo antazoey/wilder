@@ -12,14 +12,14 @@ def set_client_config_settings(client_config_json):
     current_json = full_config.get(Constants.CLIENT_KEY)
 
     # If setting a host for the first time, enable it.
-    if not current_json:
+    if not current_json.get(Constants.HOST_KEY):
         default_enable = client_config_json.get(Constants.HOST_KEY) is not None
         current_json = {Constants.IS_ENABLED: default_enable} if default_enable else {}
 
     combined_client_json = _get_new_json(client_config_json, current_json)
     full_config[Constants.CLIENT_KEY] = combined_client_json
     _save_config_change(config_path, full_config)
-    return get_config(full_config)
+    _config = get_config(config_path)
 
 
 def _get_new_json(new_config, current_config):
@@ -34,7 +34,9 @@ def _get_new_json(new_config, current_config):
 
 
 def _get_new_json_value(new_config, current_config, key):
-    return new_config.get(Constants.HOST_KEY) or current_config.get(key)
+    new_val = new_config.get(key)
+    original_val = current_config.get(key)
+    return original_val if new_val is None else new_val
 
 
 def _get_config_json(config_path):
@@ -51,7 +53,12 @@ def _save_config_change(config_path, config_json):
 
 
 def get_config(path_to_config=None):
-    return WildClientConfig(path_to_config)
+    config_path = path_to_config or get_config_path()
+    if not os.path.exists(config_path):
+        raise ConfigFileNotFoundError(config_path)
+    with open(config_path) as config_file:
+        json_obj = json.load(config_file)
+        return WildClientConfig(json_obj)
 
 
 def delete_config_if_exists():
@@ -66,16 +73,11 @@ def using_config():
 
 
 class WildClientConfig:
-    def __init__(self, config_path=None):
-        config_path = config_path or get_config_path()
-        if not os.path.exists(config_path):
-            raise ConfigFileNotFoundError(config_path)
-        with open(config_path) as config_file:
-            json_obj = json.load(config_file)
-            client_settings = json_obj.get(Constants.CLIENT_KEY)
-            self.host = client_settings.get(Constants.HOST_KEY)
-            self.port = client_settings.get(Constants.PORT_KEY)
-            self.is_enabled = client_settings.get(Constants.IS_ENABLED)
+    def __init__(self, config_json=None):
+        client_settings = config_json.get(Constants.CLIENT_KEY)
+        self.host = client_settings.get(Constants.HOST_KEY)
+        self.port = client_settings.get(Constants.PORT_KEY)
+        self.is_enabled = client_settings.get(Constants.IS_ENABLED)
 
     def is_using_config(self):
         return self.host is not None

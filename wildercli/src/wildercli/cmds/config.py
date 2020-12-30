@@ -65,7 +65,7 @@ def disable():
 def _enable_or_disable(do_enable):
     _config = get_config()
     new_json = dict(_config.json)
-    new_json.is_enabled = do_enable
+    new_json[Constants.IS_ENABLED] = do_enable
     set_client_config_settings(new_json)
 
 

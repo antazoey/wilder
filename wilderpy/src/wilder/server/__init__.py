@@ -88,13 +88,7 @@ def unsign():
     return _successful_response()
 
 
-@app.route(f"<artist>/update")
-def update_artist(artist):
-    # TODO
-    pass
-
-
-@app.route(f"rename-artist")
+@app.route("/<artist>/update")
 def update_artist(artist):
     # TODO
     pass
@@ -122,7 +116,7 @@ def create_album(artist):
     return _successful_response()
 
 
-@app.route(f"<artist>/<album>/add-track")
+@app.route(f"/<artist>/<album>/add-track")
 def add_track(artist, album):
     # TODO
     pass
