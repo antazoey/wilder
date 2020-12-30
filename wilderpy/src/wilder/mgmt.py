@@ -1,3 +1,5 @@
+import os
+
 from wilder import BaseWildApi
 from wilder.constants import Constants
 from wilder.errors import ArtistAlreadySignedError
@@ -7,6 +9,7 @@ from wilder.errors import NoArtistsFoundError
 from wilder.models import Artist
 from wilder.parser import parse_mgmt
 from wilder.parser import save
+from wilder.util import get_mgmt_json_path
 
 
 class Wilder(BaseWildApi):
@@ -77,6 +80,11 @@ class Wilder(BaseWildApi):
         artist = self.get_artist_by_name(artist_name)
         self._mgmt.focus_artist = artist.name
         self._save()
+        
+    def nuke(self):
+        mgmt_path = get_mgmt_json_path()
+        if os.path.exists(mgmt_path):
+            os.remove(mgmt_path)
 
 
 def get_mgmt(obj=None):

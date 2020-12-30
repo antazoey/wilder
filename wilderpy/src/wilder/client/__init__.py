@@ -1,11 +1,11 @@
 from wilder import BaseWildApi
 from wilder.client.connection import Connection
 from wilder.client.connection import create_connection
-from wilder.client.errors import WildBadRequestError
+from wilder.client.errors import WildBadRequestError, OperationNotPermittedError
 from wilder.client.errors import WildClientError
 from wilder.client.errors import WildNotFoundError
 from wilder.constants import Constants
-from wilder.errors import ArtistAlreadySignedError
+from wilder.errors import ArtistAlreadySignedError, NoArtistsFoundError
 from wilder.errors import ArtistNotFoundError
 from wilder.errors import ArtistNotSignedError
 from wilder.parser import parse_artists
@@ -54,6 +54,15 @@ class WildClient(BaseWildApi):
     def get_mgmt(self):
         _json = self._get(Constants.MGMT)
         return parse_mgmt(_json)
+    
+    def get_focus_artist(self):
+        artist_json = self._get(Constants.FOCUS)
+        if artist_json:
+            json_to_parse = {Constants.ARTISTS: [artist_json]}
+            parse_result = parse_artists(json_to_parse)
+            if parse_result:
+                return parse_result[0]
+        raise NoArtistsFoundError()
 
     @err_when_not_found(Constants.NAME)
     def get_artist_by_name(self, name):
@@ -68,6 +77,9 @@ class WildClient(BaseWildApi):
 
     @err_when_not_found(Constants.ARTIST)
     def get_discography(self, artist):
+        artist = artist or self.get_focus_artist()
+        if not artist:
+            raise 
         url = f"{artist}/{Constants.DISCOGRAPHY}"
         return self._get(url)
 
@@ -111,7 +123,7 @@ class WildClient(BaseWildApi):
 
     def focus_on_artist(self, artist_name):
         try:
-            self._post(Constants.FOCUS, _make_artist_params(artist_name))
+            return self._post(Constants.FOCUS, _make_artist_params(artist_name))
         except WildNotFoundError as err:
             _handle_artist_not_found_bad_request(err, artist_name)
             raise
@@ -125,3 +137,6 @@ class WildClient(BaseWildApi):
         response = self.connection.post(f"/{endpoint}", json=params)
         if response:
             return response.json()
+
+    def nuke(self):
+        raise OperationNotPermittedError()

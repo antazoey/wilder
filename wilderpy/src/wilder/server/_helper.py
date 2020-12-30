@@ -1,19 +1,17 @@
 class HttpMethod:
     GET = "GET"
     POST = "POST"
+    
+
+class WildServerResponse:
+    def __init__(self, error, message):
+        self._error = error
+        self._message = message
+        
+    @property
+    def json(self):
+        return {"error": self._error, "message": self._message}
 
 
-def _verify_data_present(data, keys=None):
-    if not data:
-        raise MissingArtistError()
-
-    if isinstance(data, str):
-        return
-
-    for key in keys:
-        if key and not data.get(key):
-            raise MissingArtistError()
-
-
-def _successful_response():
-    return {"status": "successful"}
+def successful_response():
+    return WildServerResponse(None, "successful")

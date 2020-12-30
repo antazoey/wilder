@@ -22,4 +22,5 @@ class Constants:
     HOST_KEY = "host"
     PORT_KEY = "port"
     SIGN = "sign"
+    UPDATE = "update"
     UNSIGN = "unsign"
