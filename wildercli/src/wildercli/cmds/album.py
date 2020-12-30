@@ -1,7 +1,7 @@
 import click
 from wilder.constants import Constants
-from wildercli.cmds.util import echo_formatted_list
 from wildercli.cmds.util import artist_arg_required_if_given
+from wildercli.cmds.util import echo_formatted_list
 from wildercli.options import album_option
 from wildercli.options import artist_option
 from wildercli.options import format_option

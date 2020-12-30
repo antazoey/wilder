@@ -16,4 +16,5 @@ def artist_arg_required_if_given(artist_key):
                 return super().invoke(ctx)
             except ArtistNotFoundError:
                 click.echo(f"Artist '{artist}' not found.")
+
     return ArtistArgRequiredIfGivenCommand
