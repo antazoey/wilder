@@ -1,8 +1,8 @@
 import click
+from wilder.constants import Constants
 from wilder.errors import ArtistAlreadySignedError
 from wilder.errors import ArtistNotSignedError
-from wildercli.cmds.util import echo_formatted_list
-from wildercli.cmds.util import requires_existing_artist_if_given
+from wildercli.cmds.util import echo_formatted_list, artist_arg_required_if_given
 from wildercli.options import artist_option
 from wildercli.options import bio_option
 from wildercli.options import format_option
@@ -52,21 +52,22 @@ def unsign(state, name):
         click.echo(f"{name} is not signed.")
 
 
-@click.command("update")
+@click.command(cls=artist_arg_required_if_given(Constants.ARTIST))
 @mgmt_options()
-@artist_option
+@artist_option(required=False)
 @bio_option
-@requires_existing_artist_if_given
 def update(state, artist, bio):
     """Update artist information."""
+    if not bio:
+        click.echo("Nothing to do.")
+        return
     name = artist or state.mgmt.get_focus_artist().name
     state.mgmt.update_artist(name, bio)
 
 
-@click.command("focus")
+@click.command(cls=artist_arg_required_if_given(Constants.NAME))
 @mgmt_options()
 @name_arg
-@requires_existing_artist_if_given
 def focus(state, name):
     """Change the focus artist."""
     state.mgmt.focus_on_artist(name)

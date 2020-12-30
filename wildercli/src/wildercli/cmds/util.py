@@ -8,13 +8,12 @@ def echo_formatted_list(_format, _list):
     formatter.echo_formatted_list(_list)
 
 
-def requires_existing_artist_if_given(f):
-    def decorate(*args, **kwargs):
-        artist = kwargs.get("artist")
-        try:
-            return f(*args, **kwargs)
-        except ArtistNotFoundError:
-            click.echo(f"Artist '{artist}' not found.")
-
-    decorate.__doc__ = f.__doc__
-    return decorate
+def artist_arg_required_if_given(artist_key):
+    class ArtistArgRequiredIfGivenCommand(click.Command):
+        def invoke(self, ctx):
+            artist = ctx.params.get(artist_key)
+            try:
+                return super().invoke(ctx)
+            except ArtistNotFoundError:
+                click.echo(f"Artist '{artist}' not found.")
+    return ArtistArgRequiredIfGivenCommand
