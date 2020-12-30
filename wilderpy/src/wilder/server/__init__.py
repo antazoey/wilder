@@ -88,6 +88,18 @@ def unsign():
     return _successful_response()
 
 
+@app.route(f"<artist>/update")
+def update_artist(artist):
+    # TODO
+    pass
+
+
+@app.route(f"rename-artist")
+def update_artist(artist):
+    # TODO
+    pass
+
+
 """*****"""
 """ALBUM"""
 """*****"""
@@ -108,3 +120,9 @@ def create_album(artist):
     album = request.json.get(Consts.ALBUM)
     _mgmt.start_new_album(artist, album)
     return _successful_response()
+
+
+@app.route(f"<artist>/<album>/add-track")
+def add_track(artist, album):
+    # TODO
+    pass

@@ -1,9 +1,6 @@
 class WildError(Exception):
     """This base-error trips us all up."""
 
-    def __init__(self, msg):
-        Exception.__init__(self, msg)
-
 
 class WildNotFoundError(WildError):
     """A base error for when a resource is not found."""
@@ -14,7 +11,7 @@ class ArtistAlreadySignedError(WildError):
 
     def __init__(self, artist):
         msg = f"{artist} already signed."
-        WildError.__init__(self, msg)
+        super().__init__(self, msg)
 
 
 class ArtistNotSignedError(WildError):
@@ -22,7 +19,7 @@ class ArtistNotSignedError(WildError):
 
     def __init__(self, artist):
         msg = f"{artist} is not signed."
-        WildError.__init__(self, msg)
+        super().__init__(self, msg)
 
 
 class ArtistNotFoundError(WildNotFoundError):
@@ -30,7 +27,7 @@ class ArtistNotFoundError(WildNotFoundError):
 
     def __init__(self, artist):
         msg = f"{artist} not found."
-        WildError.__init__(self, msg)
+        super().__init__(self, msg)
 
 
 class ConfigFileNotFoundError(WildError):
@@ -38,12 +35,4 @@ class ConfigFileNotFoundError(WildError):
 
     def __init__(self, config_file):
         msg = f"{config_file} does not exist."
-        Exception.__init__(self, msg)
-
-
-class ConfigAlreadyExistsError(WildError):
-    """An error raised when trying to initialize a config when one already exists."""
-
-    def __init__(self):
-        msg = "Config already exists. Delete or reset first."
-        WildError.__init__(self, msg)
+        super().__init__(self, msg)

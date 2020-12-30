@@ -1,12 +1,16 @@
 from wilder.client import create_client
-from wilder.config import create_config_obj
+from wilder.config import get_config
 from wilder.mgmt import get_mgmt
 from wildercli.errors import WildServerConnectionError
 
 
 def get_wilder_mgmt():
-    config = create_config_obj()
-    mgmt = create_client(config) if config.is_using_config() else get_mgmt()
+    config = get_config()
+    mgmt = (
+        create_client(config)
+        if config.is_using_config() and config.is_enabled
+        else get_mgmt()
+    )
     return _test_connection(mgmt)
 
 
