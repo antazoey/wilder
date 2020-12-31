@@ -9,8 +9,7 @@ from wildercli.cmds import album
 from wildercli.cmds import artist
 from wildercli.cmds import config
 from wildercli.cmds import play
-from wildercli.cmds.dev import logs
-from wildercli.cmds.dev import nuke
+from wildercli.cmds.dev import dev
 
 
 BANNER = """\b
@@ -54,5 +53,4 @@ cli.add_command(album)
 cli.add_command(artist)
 cli.add_command(config)
 cli.add_command(mgmt)
-cli.add_command(nuke)
-cli.add_command(logs)
+cli.add_command(dev)

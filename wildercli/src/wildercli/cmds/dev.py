@@ -1,6 +1,8 @@
 import shutil
 
 import click
+from wilder.config import set_client_config_settings
+from wilder.constants import Constants
 from wildercli.argv import mgmt_options
 from wildercli.argv import yes_option
 from wildercli.logger import get_cli_error_log_path
@@ -8,7 +10,13 @@ from wildercli.util import does_user_agree
 from wildercli.util import get_user_project_path
 
 
-@click.command(hidden=True)
+@click.group(hidden=True)
+def dev():
+    """Developer tools."""
+    pass
+
+
+@click.command()
 @yes_option
 @mgmt_options()
 def nuke(state):
@@ -20,7 +28,7 @@ def nuke(state):
         shutil.rmtree(cli_proj_files_path)
 
 
-@click.command(hidden=True)
+@click.command()
 @click.option(
     "--last-n-lines", "-l", help="The last number of lines to show.", default=10
 )
@@ -37,3 +45,17 @@ def logs(last_n_lines):
                     click.echo(f"- {line_data}")
     except FileNotFoundError:
         return []
+
+
+@click.command()
+def set_test_server():
+    """Use the local dev server config."""
+    test_host = "http://127.0.0.1"
+    test_port = 5000
+    _json = {Constants.HOST_KEY: test_host, Constants.PORT_KEY: test_port}
+    set_client_config_settings(_json)
+
+
+dev.add_command(nuke)
+dev.add_command(logs)
+dev.add_command(set_test_server)
