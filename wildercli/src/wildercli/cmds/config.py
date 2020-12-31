@@ -3,7 +3,7 @@ from wilder.config import delete_config_if_exists
 from wilder.config import get_config
 from wilder.config import set_client_config_settings
 from wilder.constants import Constants
-from wildercli.options import yes_option
+from wildercli.argv import yes_option
 from wildercli.util import does_user_agree
 from wildercli.util import get_url_parts
 

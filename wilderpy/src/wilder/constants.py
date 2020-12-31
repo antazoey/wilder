@@ -13,6 +13,7 @@ class Constants:
     FOCUS_ARTIST = "focusArtist"
     IS_ENABLED = "isEnabled"
     LAST_UPDATED = "lastUpdated"
+    LIST = "list"
     MGMT = "mgmt"
     NAME = "name"
     STATE = "state"

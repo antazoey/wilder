@@ -2,10 +2,9 @@ import click
 from wilder.constants import Constants
 from wildercli.cmds.util import artist_arg_required_if_given
 from wildercli.cmds.util import echo_formatted_list
-from wildercli.options import album_option
-from wildercli.options import artist_option
-from wildercli.options import format_option
-from wildercli.options import mgmt_options
+from wildercli.argv import artist_name_option, album_name_arg
+from wildercli.argv import format_option
+from wildercli.argv import mgmt_options
 
 
 @click.group()
@@ -16,17 +15,17 @@ def album():
 
 @click.command(cls=artist_arg_required_if_given(Constants.ARTIST))
 @mgmt_options()
-@artist_option()
-@album_option()
-def new(state, artist, album):
+@artist_name_option(required=False)
+@album_name_arg
+def new(state, artist, album_name):
     """Start a new album."""
     artist = artist or state.mgmt.get_focus_artist().name
-    state.mgmt.start_new_album(artist, album)
+    state.mgmt.start_new_album(artist, album_name)
 
 
-@click.command("list", cls=artist_arg_required_if_given(Constants.ARTIST))
+@click.command(Constants.LIST, cls=artist_arg_required_if_given(Constants.ARTIST))
 @mgmt_options()
-@artist_option(required=False)
+@artist_name_option(required=False)
 @format_option
 def _list(state, artist, format):
     """List an artist's discography."""
@@ -35,8 +34,8 @@ def _list(state, artist, format):
         if artist
         else state.mgmt.get_focus_artist()
     )
-    _albums = artist_obj.discography
-    echo_formatted_list(format, _albums) if _albums else _handle_no_albums_found(
+    albums_json = [a.json for a in artist_obj.discography]
+    echo_formatted_list(format, albums_json) if albums_json else _handle_no_albums_found(
         artist_obj.name
     )
 

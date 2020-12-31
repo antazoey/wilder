@@ -4,7 +4,6 @@ from wildercli.mgmt_factory import get_wilder_mgmt
 from wildercli.output_formats import OutputFormat
 
 
-name_arg = click.argument("name")
 yes_option = click.option(
     "-y",
     "--assume-yes",
@@ -44,11 +43,11 @@ class CLIState:
 pass_state = click.make_pass_decorator(CLIState, ensure=True)
 
 
-def artist_option(required=True):
+def artist_name_option(required=True):
     return click.option("--artist", help="The name of an artist.", required=required)
 
 
-def album_option(required=True):
+def album_name_option(required=True):
     return click.option("--album", help="The name of an album.", required=required)
 
 
@@ -58,3 +57,7 @@ def mgmt_options(hidden=False):
         return f
 
     return decorator
+
+
+artist_name_arg = click.argument("artist-name")
+album_name_arg = click.argument("album-name")
