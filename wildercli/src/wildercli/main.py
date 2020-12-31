@@ -3,7 +3,7 @@ import signal
 import sys
 
 import click
-from wildercli.argv import mgmt_options
+from wildercli.argv import wild_options
 from wildercli.clickext.groups import ExceptionHandlingGroup
 from wildercli.cmds import album
 from wildercli.cmds import artist
@@ -13,16 +13,16 @@ from wildercli.cmds.dev import dev
 
 
 BANNER = """\b
- |#  |#  |#   |#   |#      |#----#   |#-----  |#-----#
- |#  |#  |#   |#   |#      |#    ##  |#       |#    ##
- |#  |#  |#   |#   |#      |#    ##  |#---    |#----#
- |#  |#  |#   |#   |#      |#    ##  |#       |#    ##
- |#__# #__#   |#   |#____  |#____#   |#_____  |#     #__
+ |#  |#  |#  |#  |#      |#----#   |#----  |#-----#
+ |#  |#  |#  |#  |#      |#    ##  |#      |#    ##
+ |#  |#  |#  |#  |#      |#    ##  |#---   |#----#
+ |#  |#  |#  |#  |#      |#    ##  |#      |#    ##
+ |#__# #__#  |#  |#____  |#____#   |#____  |#     #_
 """
 
 
-# Handle KeyboardInterrupts by just exiting instead of printing out a stack
 def exit_on_interrupt(signal, frame):
+    """Handle KeyboardInterrupts by just exiting instead of printing out a stack."""
     click.echo(err=True)
     sys.exit(1)
 
@@ -35,13 +35,14 @@ CONTEXT_SETTINGS = {
 
 
 @click.group(cls=ExceptionHandlingGroup, context_settings=CONTEXT_SETTINGS, help=BANNER)
-@mgmt_options(hidden=True)
+@wild_options()
 def cli(state):
+    """The Wild CLI."""
     pass
 
 
 @click.command()
-@mgmt_options()
+@wild_options()
 def mgmt(state):
     """Show the full MGMT JSON blob."""
     _json = json.dumps(state.mgmt.get_mgmt(), indent=2)

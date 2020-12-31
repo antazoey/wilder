@@ -6,7 +6,7 @@ from wildercli.argv import artist_name_arg
 from wildercli.argv import artist_name_option
 from wildercli.argv import bio_option
 from wildercli.argv import format_option
-from wildercli.argv import mgmt_options
+from wildercli.argv import wild_options
 from wildercli.cmds.util import artist_arg_required_if_given
 from wildercli.cmds.util import echo_formatted_list
 
@@ -18,7 +18,7 @@ def artist():
 
 
 @click.command(cls=artist_arg_required_if_given())
-@mgmt_options()
+@wild_options()
 @artist_name_option(required=False)
 def show(state, artist):
     """The artist information."""
@@ -27,7 +27,7 @@ def show(state, artist):
 
 
 @click.command(Constants.LIST)
-@mgmt_options()
+@wild_options()
 @format_option
 def _list(state, format):
     """List all your artists."""
@@ -43,7 +43,7 @@ def _list(state, format):
 
 
 @click.command()
-@mgmt_options()
+@wild_options()
 @artist_name_arg
 @bio_option
 def sign(state, artist_name, bio):
@@ -55,7 +55,7 @@ def sign(state, artist_name, bio):
 
 
 @click.command()
-@mgmt_options()
+@wild_options()
 @artist_name_arg
 def unsign(state, artist_name):
     """Stop managing an artist."""
@@ -66,7 +66,7 @@ def unsign(state, artist_name):
 
 
 @click.command(cls=artist_arg_required_if_given())
-@mgmt_options()
+@wild_options()
 @artist_name_option(required=False)
 @bio_option
 def update(state, artist_name, bio):
@@ -79,11 +79,22 @@ def update(state, artist_name, bio):
 
 
 @click.command(cls=artist_arg_required_if_given())
-@mgmt_options()
+@wild_options()
 @artist_name_arg
 def focus(state, artist_name):
     """Change the focus artist."""
     state.mgmt.focus_on_artist(artist_name)
+
+
+@click.command()
+@click.option(
+    "--forget-old-name",
+    help="To not retain any 'FKA' (formerly known-as) data.",
+    default=False,
+)
+def rename(forget_old_name):
+    """Rename an artist."""
+    pass
 
 
 artist.add_command(_list)
@@ -92,3 +103,4 @@ artist.add_command(unsign)
 artist.add_command(focus)
 artist.add_command(update)
 artist.add_command(show)
+artist.add_command(rename)

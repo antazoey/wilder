@@ -1,9 +1,9 @@
 import shutil
 
 import click
-from wilder.config import set_client_config_settings
+from wilder.config import set_client_settings
 from wilder.constants import Constants
-from wildercli.argv import mgmt_options
+from wildercli.argv import wild_options
 from wildercli.argv import yes_option
 from wildercli.logger import get_cli_error_log_path
 from wildercli.util import does_user_agree
@@ -18,7 +18,7 @@ def dev():
 
 @click.command()
 @yes_option
-@mgmt_options()
+@wild_options()
 def nuke(state):
     """Delete everything stored in MGMT."""
     if does_user_agree("Are you sure you wish to destroy everything? "):
@@ -53,7 +53,7 @@ def set_test_server():
     test_host = "http://127.0.0.1"
     test_port = 5000
     _json = {Constants.HOST_KEY: test_host, Constants.PORT_KEY: test_port}
-    set_client_config_settings(_json)
+    set_client_settings(_json)
 
 
 dev.add_command(nuke)

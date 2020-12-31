@@ -1,4 +1,5 @@
 import click
+from wilder.config import create_config_object
 from wilder.errors import NoArtistsFoundError
 from wildercli.clickext.types import FileOrString
 from wildercli.mgmt_factory import get_wilder_mgmt
@@ -29,6 +30,7 @@ bio_option = click.option("--bio", help="The artist biography.")
 class CLIState:
     def __init__(self):
         self._mgmt = None
+        self._config = None
         self.assume_yes = False
 
     @property
@@ -36,6 +38,12 @@ class CLIState:
         if self._mgmt is None:
             self._mgmt = get_wilder_mgmt()
         return self._mgmt
+    
+    @property
+    def config(self):
+        if self._config is None:
+            self._config = create_config_object()
+        return self._config
 
     def get_artist(self, artist_arg):
         try:
@@ -63,11 +71,19 @@ def album_name_option(required=True):
     return click.option("--album", help="The name of an album.", required=required)
 
 
-def mgmt_options(hidden=False):
+def wild_options():
     def decorator(f):
         f = pass_state(f)
         return f
 
+    return decorator
+
+
+def config_options():
+    def decorator(f):
+        f = pass_state(f)
+        return f
+    
     return decorator
 
 

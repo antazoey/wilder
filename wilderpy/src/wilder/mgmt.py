@@ -54,6 +54,11 @@ class Wilder(BaseWildApi):
             raise ArtistAlreadySignedError(name)
         artist = Artist(name=name, bio=bio)
         self._mgmt.artists.append(artist)
+
+        # Set focus artist if first artist signed
+        if len(self._mgmt.artists) == 1:
+            self._mgmt.focus_artist = artist.name
+
         self._save()
 
     def unsign_artist(self, name):

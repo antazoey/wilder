@@ -1,9 +1,8 @@
 import click
 from wilder.config import delete_config_if_exists
-from wilder.config import get_config
-from wilder.config import set_client_config_settings
+from wilder.config import set_client_settings
 from wilder.constants import Constants
-from wildercli.argv import yes_option
+from wildercli.argv import yes_option, wild_options
 from wildercli.util import does_user_agree
 from wildercli.util import get_url_parts
 
@@ -25,28 +24,28 @@ def _set(host):
     """Create a config file to re-use your Wilder connection parameters."""
     path_parts = get_url_parts(host)
     _json = {Constants.HOST_KEY: path_parts[0], Constants.PORT_KEY: path_parts[1]}
-    set_client_config_settings(_json)
+    set_client_settings(_json)
 
 
 @click.command()
-def show():
+@wild_options()
+def show(state):
     """Show the current client config settings."""
-    _config = get_config()
-    if _config.is_using_config():
+    if state.config.is_using_config():
         click.echo(
-            f"Host: {_config.host}, Port: {_config.port}. IsEnabled: {str(_config.is_enabled)}"
+            f"Host: {state.config.host}, Port: {state.config.port}. IsEnabled: {str(state.config.is_enabled)}"
         )
     else:
         click.echo("Not using config.")
 
 
 @click.command()
+@wild_options()
 @yes_option
-def reset():
+def reset(state):
     """Delete the config if it exists."""
-    _config = get_config()
     _prompt = "Are you sure you wish to delete your config (there is no undo)? "
-    if _config.is_using_config() and does_user_agree(_prompt):
+    if state.config.is_using_config() and does_user_agree(_prompt):
         delete_config_if_exists()
 
 
@@ -63,10 +62,7 @@ def disable():
 
 
 def _enable_or_disable(do_enable):
-    _config = get_config()
-    new_json = dict(_config.json)
-    new_json[Constants.IS_ENABLED] = do_enable
-    set_client_config_settings(new_json)
+    set_client_settings({Constants.IS_ENABLED: do_enable})
 
 
 config.add_command(_set)

@@ -35,11 +35,3 @@ class NoArtistsFoundError(WildNotFoundError):
 
     def __init__(self):
         super().__init__(self, "No artists found.")
-
-
-class ConfigFileNotFoundError(WildError):
-    """An error raised when the given config file is not found."""
-
-    def __init__(self, config_file):
-        msg = f"{config_file} does not exist."
-        super().__init__(self, msg)

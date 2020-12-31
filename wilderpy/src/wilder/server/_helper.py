@@ -3,15 +3,17 @@ class HttpMethod:
     POST = "POST"
 
 
-class WildServerResponse:
-    def __init__(self, error, message):
-        self._error = error
-        self._message = message
+ERROR_KEY = "error"
+MESSAGE_KEY = "message"
 
-    @property
-    def json(self):
-        return {"error": self._error, "message": self._message}
+
+def error_response(message, err):
+    return _response(message, err=err)
 
 
 def successful_response():
-    return WildServerResponse(None, "successful")
+    return _response("successful")
+
+
+def _response(message, err=None):
+    return {ERROR_KEY: err, MESSAGE_KEY: message}

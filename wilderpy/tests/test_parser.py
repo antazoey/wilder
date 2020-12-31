@@ -2,12 +2,7 @@ import json
 import os
 
 import pytest
-from wilder.constants import ARTISTS
-from wilder.constants import BIO
-from wilder.constants import DESCRIPTION
-from wilder.constants import DISCOGRAPHY
-from wilder.constants import NAME
-from wilder.constants import TRACKS
+from wilder.constants import Constants
 from wilder.enum import AlbumState
 from wilder.enum import AlbumType
 from wilder.parser import parse_mgmt
@@ -26,23 +21,23 @@ def mock_mgmt_json(schema_path):
 
 
 def test_parse_mgmt_parses_artist(schema_path, mock_mgmt_json):
-    mgmt = parse_mgmt(mgmt_path=schema_path)
+    mgmt = parse_mgmt(mock_mgmt_json)
     assert len(mgmt.artists) == 1
     actual_artist = mgmt.artists[0]
-    expected_artist = mock_mgmt_json[ARTISTS][0]
-    assert actual_artist.name == expected_artist[NAME]
-    assert actual_artist.bio == expected_artist[BIO]
+    expected_artist = mock_mgmt_json[Constants.ARTISTS][0]
+    assert actual_artist.name == expected_artist[Constants.NAME]
+    assert actual_artist.bio == expected_artist[Constants.BIO]
     assert len(actual_artist.discography) == 1
 
 
 def test_parse_mgmt_parses_album(schema_path, mock_mgmt_json):
-    mgmt = parse_mgmt(mgmt_path=schema_path)
+    mgmt = parse_mgmt(mock_mgmt_json)
     artist = mgmt.artists[0]
     actual_album = mgmt.artists[0].discography[0]
-    expected_album = mock_mgmt_json[ARTISTS][0][DISCOGRAPHY][0]
+    expected_album = mock_mgmt_json[Constants.ARTISTS][0][Constants.DISCOGRAPHY][0]
     assert actual_album.artist == artist
-    assert actual_album.name == expected_album[NAME]
-    assert actual_album.description == expected_album[DESCRIPTION]
+    assert actual_album.name == expected_album[Constants.NAME]
+    assert actual_album.description == expected_album[Constants.DESCRIPTION]
     assert actual_album.artwork is None
     assert actual_album.album_type == AlbumType.EP
     assert actual_album.state == AlbumState.IN_PROGRESS
@@ -50,9 +45,11 @@ def test_parse_mgmt_parses_album(schema_path, mock_mgmt_json):
 
 
 def test_parse_mgmt_parses_tracks(schema_path, mock_mgmt_json):
-    mgmt = parse_mgmt(mgmt_path=schema_path)
+    mgmt = parse_mgmt(mock_mgmt_json)
     actual_tracks = mgmt.artists[0].discography[0].tracks
-    expected_tracks = mock_mgmt_json[ARTISTS][0][DISCOGRAPHY][0][TRACKS]
+    expected_tracks = mock_mgmt_json[Constants.ARTISTS][0][Constants.DISCOGRAPHY][0][
+        Constants.TRACKS
+    ]
     assert len(actual_tracks) == len(expected_tracks) == 3
     actual_one = actual_tracks[0]
     actual_two = actual_tracks[1]
@@ -75,7 +72,7 @@ def _assert_equal_track(mgmt, actual, expected, num):
     album = mgmt.artists[0].discography[0]
     assert actual.artist == artist
     assert actual.album == album
-    assert actual.name == expected[NAME]
+    assert actual.name == expected[Constants.NAME]
     assert actual.description is None
     assert actual.track_number == num
     return True

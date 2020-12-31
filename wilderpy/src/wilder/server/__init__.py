@@ -5,8 +5,11 @@ from wilder.constants import Constants as Consts
 from wilder.errors import WildError
 from wilder.errors import WildNotFoundError as WildCoreNotFoundError
 from wilder.mgmt import get_mgmt
+from wilder.server._helper import error_response
 from wilder.server._helper import HttpMethod
 from wilder.server._helper import successful_response
+from wilder.server.error import get_response_error_data
+from wilder.server.error import ShortErrorMessages
 from wilder.server.error import WildServerError
 from wilder.util import get_mgmt_json
 
@@ -21,7 +24,8 @@ app = Flask(__name__)
 
 @app.errorhandler(WildCoreNotFoundError)
 def handle_not_found_wild_errors(err):
-    response = jsonify({"error": "NOT_FOUND", "message": str(err)})
+    _json = error_response(str(err), ShortErrorMessages.NOT_FOUND)
+    response = jsonify(_json)
     response.status_code = 404
     return response
 
@@ -30,27 +34,19 @@ def handle_not_found_wild_errors(err):
 @app.errorhandler(Exception)
 def handle_server_errors(err):
     msg = str(err)
+    sc, short_msg = get_response_error_data(msg)
     response = (
         jsonify(err.dict)
         if hasattr(err, "json")
-        else jsonify({"error": "UNKNOWN", "message": msg})
+        else jsonify(error_response(msg, short_msg))
     )
-    response.status_code = _get_status_code(msg)
+    response.status_code = sc
     return response
-
-
-def _get_status_code(msg):
-    msg = msg.lower()
-    if "bad request" in msg:
-        return 400
-    elif "not found" in msg:
-        return 404
-    return 500
 
 
 @app.errorhandler(WildError)
 def handle_wild_errors(err):
-    response = jsonify({"error": "BAD_REQUEST", "message": str(err)})
+    response = jsonify(error_response(str(err), ShortErrorMessages.BAD_REQUEST))
     response.status_code = 400
     return response
 
