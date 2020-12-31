@@ -39,7 +39,7 @@ class CLIState:
 
     def get_artist(self, artist_arg):
         try:
-            return(
+            return (
                 self.mgmt.get_artist_by_name(artist_arg)
                 if artist_arg
                 else self.mgmt.get_focus_artist()

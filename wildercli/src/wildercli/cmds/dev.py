@@ -39,7 +39,7 @@ def logs(last_n_lines):
         with open(logs_path) as log_file:
             lines = log_file.readlines()
             length = len(lines)
-            for line in lines[length-last_n_lines:]:
+            for line in lines[length - last_n_lines :]:
                 line_data = line.strip()
                 if line_data:
                     click.echo(f"- {line_data}")
