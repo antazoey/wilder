@@ -30,7 +30,7 @@ def new(state, artist, album_name):
 @format_option
 def _list(state, artist, format):
     """List an artist's discography."""
-    artist_obj = state.get_artist()
+    artist_obj = state.get_artist(artist)
     albums_json = [a.json for a in artist_obj.discography]
     print(albums_json)
     echo_formatted_list(

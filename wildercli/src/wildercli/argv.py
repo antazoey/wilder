@@ -1,4 +1,5 @@
 import click
+from wilder.errors import NoArtistsFoundError
 from wildercli.clickext.types import FileOrString
 from wildercli.mgmt_factory import get_wilder_mgmt
 from wildercli.output_formats import OutputFormat
@@ -37,11 +38,15 @@ class CLIState:
         return self._mgmt
 
     def get_artist(self, artist_arg):
-        return (
-            self.mgmt.get_artist_by_name(artist_arg)
-            if artist_arg
-            else self.mgmt.get_focus_artist()
-        )
+        try:
+            return(
+                self.mgmt.get_artist_by_name(artist_arg)
+                if artist_arg
+                else self.mgmt.get_focus_artist()
+            )
+        except NoArtistsFoundError:
+            click.echo("No artists found.")
+            exit(1)
 
     def set_assume_yes(self, param):
         self.assume_yes = param

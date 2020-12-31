@@ -30,7 +30,10 @@ def logs(last_n_lines):
     try:
         with open(logs_path) as log_file:
             lines = log_file.readlines()
-            for line in lines[:last_n_lines]:
-                click.echo(line)
+            length = len(lines)
+            for line in lines[length-last_n_lines:]:
+                line_data = line.strip()
+                if line_data:
+                    click.echo(f"- {line_data}")
     except FileNotFoundError:
         return []
