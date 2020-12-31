@@ -36,6 +36,13 @@ class CLIState:
             self._mgmt = get_wilder_mgmt()
         return self._mgmt
 
+    def get_artist(self, artist_arg):
+        return (
+            self.mgmt.get_artist_by_name(artist_arg)
+            if artist_arg
+            else self.mgmt.get_focus_artist()
+        )
+
     def set_assume_yes(self, param):
         self.assume_yes = param
 

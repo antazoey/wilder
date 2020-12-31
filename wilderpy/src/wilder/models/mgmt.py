@@ -27,4 +27,8 @@ class Mgmt:
 
     @property
     def json(self):
-        return {Constants.ARTISTS: [a.json for a in self.artists]}
+        return {
+            Constants.LAST_UPDATED: self.last_updated,
+            Constants.ARTISTS: [a.json for a in self.artists],
+            Constants.FOCUS_ARTIST: self.focus_artist,
+        }

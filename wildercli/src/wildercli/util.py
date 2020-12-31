@@ -25,7 +25,7 @@ def does_user_agree(prompt):
         return True
     ans = input(prompt)
     ans = ans.strip().lower()
-    return ans == "y"
+    return ans in ["y", "yes", "sure"]
 
 
 def get_user_project_path(*subdirs):

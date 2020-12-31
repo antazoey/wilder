@@ -1,13 +1,15 @@
 from wilder import BaseWildApi
 from wilder.client.connection import Connection
 from wilder.client.connection import create_connection
-from wilder.client.errors import WildBadRequestError, OperationNotPermittedError
+from wilder.client.errors import OperationNotPermittedError
+from wilder.client.errors import WildBadRequestError
 from wilder.client.errors import WildClientError
 from wilder.client.errors import WildNotFoundError
 from wilder.constants import Constants
-from wilder.errors import ArtistAlreadySignedError, NoArtistsFoundError
+from wilder.errors import ArtistAlreadySignedError
 from wilder.errors import ArtistNotFoundError
 from wilder.errors import ArtistNotSignedError
+from wilder.errors import NoArtistsFoundError
 from wilder.parser import parse_artists
 from wilder.parser import parse_mgmt
 
@@ -54,7 +56,7 @@ class WildClient(BaseWildApi):
     def get_mgmt(self):
         _json = self._get(Constants.MGMT)
         return parse_mgmt(_json)
-    
+
     def get_focus_artist(self):
         artist_json = self._get(Constants.FOCUS)
         if artist_json:
@@ -79,7 +81,7 @@ class WildClient(BaseWildApi):
     def get_discography(self, artist):
         artist = artist or self.get_focus_artist()
         if not artist:
-            raise 
+            raise
         url = f"{artist}/{Constants.DISCOGRAPHY}"
         return self._get(url)
 

@@ -1,13 +1,16 @@
+import json
 import signal
 import sys
 
 import click
+from wildercli.argv import mgmt_options
 from wildercli.clickext.groups import ExceptionHandlingGroup
 from wildercli.cmds import album
 from wildercli.cmds import artist
 from wildercli.cmds import config
 from wildercli.cmds import play
-from wildercli.argv import mgmt_options
+from wildercli.cmds.dev import logs
+from wildercli.cmds.dev import nuke
 
 
 BANNER = """\b
@@ -38,7 +41,18 @@ def cli(state):
     pass
 
 
+@click.command()
+@mgmt_options()
+def mgmt(state):
+    """Show the full MGMT JSON blob."""
+    _json = json.dumps(state.mgmt.get_mgmt(), indent=2)
+    click.echo(_json)
+
+
 cli.add_command(play)
 cli.add_command(album)
 cli.add_command(artist)
 cli.add_command(config)
+cli.add_command(mgmt)
+cli.add_command(nuke)
+cli.add_command(logs)

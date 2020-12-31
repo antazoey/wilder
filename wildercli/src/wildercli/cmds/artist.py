@@ -2,12 +2,13 @@ import click
 from wilder.constants import Constants
 from wilder.errors import ArtistAlreadySignedError
 from wilder.errors import ArtistNotSignedError
-from wildercli.cmds.util import artist_arg_required_if_given
-from wildercli.cmds.util import echo_formatted_list
-from wildercli.argv import artist_name_option, artist_name_arg
+from wildercli.argv import artist_name_arg
+from wildercli.argv import artist_name_option
 from wildercli.argv import bio_option
 from wildercli.argv import format_option
 from wildercli.argv import mgmt_options
+from wildercli.cmds.util import artist_arg_required_if_given
+from wildercli.cmds.util import echo_formatted_list
 
 
 @click.group()
@@ -16,13 +17,25 @@ def artist():
     pass
 
 
+@click.command(cls=artist_arg_required_if_given())
+@mgmt_options()
+@artist_name_option(required=False)
+def show(state, artist):
+    """The artist information."""
+    _artist = state.get_artist(artist)
+    click.echo(f"{Constants.NAME}: {_artist.name}, {Constants.BIO}: {_artist.bio}")
+
+
 @click.command(Constants.LIST)
 @mgmt_options()
 @format_option
 def _list(state, format):
     """List all your artists."""
     _artists = state.mgmt.get_artists()
-    artists_list = [{Constants.NAME.capitalize(): a.name, Constants.BIO.capitalize(): a.bio} for a in _artists]
+    artists_list = [
+        {Constants.NAME.capitalize(): a.name, Constants.BIO.capitalize(): a.bio}
+        for a in _artists
+    ]
     if not artists_list:
         click.echo("There are no artists currently being managed.")
     else:
@@ -52,7 +65,7 @@ def unsign(state, artist_name):
         click.echo(f"{artist_name} is not signed.")
 
 
-@click.command(cls=artist_arg_required_if_given(Constants.ARTIST))
+@click.command(cls=artist_arg_required_if_given())
 @mgmt_options()
 @artist_name_option(required=False)
 @bio_option
@@ -61,11 +74,11 @@ def update(state, artist_name, bio):
     if not bio:
         click.echo("Nothing to do.")
         return
-    name = artist_name or state.mgmt.get_focus_artist().name
+    name = state.get_artist(artist_name).name
     state.mgmt.update_artist(name, bio)
 
 
-@click.command(cls=artist_arg_required_if_given(Constants.NAME))
+@click.command(cls=artist_arg_required_if_given())
 @mgmt_options()
 @artist_name_arg
 def focus(state, artist_name):
@@ -78,3 +91,4 @@ artist.add_command(sign)
 artist.add_command(unsign)
 artist.add_command(focus)
 artist.add_command(update)
+artist.add_command(show)

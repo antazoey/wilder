@@ -5,8 +5,8 @@ from wilder.constants import Constants as Consts
 from wilder.errors import WildError
 from wilder.errors import WildNotFoundError as WildCoreNotFoundError
 from wilder.mgmt import get_mgmt
-from wilder.server._helper import successful_response
 from wilder.server._helper import HttpMethod
+from wilder.server._helper import successful_response
 from wilder.server.error import WildServerError
 from wilder.util import get_mgmt_json
 
@@ -24,7 +24,7 @@ def handle_not_found_wild_errors(err):
     response = jsonify({"error": "NOT_FOUND", "message": str(err)})
     response.status_code = 404
     return response
-    
+
 
 @app.errorhandler(WildServerError)
 @app.errorhandler(Exception)
@@ -34,7 +34,7 @@ def handle_server_errors(err):
         jsonify(err.dict)
         if hasattr(err, "json")
         else jsonify({"error": "UNKNOWN", "message": msg})
-    )   
+    )
     response.status_code = _get_status_code(msg)
     return response
 

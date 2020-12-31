@@ -23,7 +23,7 @@ class WildUnknownServerError(WildHttpError):
 
 class OperationNotPermittedError(WildClientError):
     """An error raised when an operation is not permitted for a client."""
-    
+
     def __init__(self):
         msg = "This operation is for Wild servers only."
         super().__init__(msg)
