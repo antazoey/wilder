@@ -2,7 +2,8 @@ import click
 from wilder.config import delete_config_if_exists
 from wilder.config import set_client_settings
 from wilder.constants import Constants
-from wildercli.argv import yes_option, wild_options
+from wildercli.argv import wild_options
+from wildercli.argv import yes_option
 from wildercli.util import does_user_agree
 from wildercli.util import get_url_parts
 

@@ -38,7 +38,7 @@ class CLIState:
         if self._mgmt is None:
             self._mgmt = get_wilder_mgmt()
         return self._mgmt
-    
+
     @property
     def config(self):
         if self._config is None:
@@ -83,7 +83,7 @@ def config_options():
     def decorator(f):
         f = pass_state(f)
         return f
-    
+
     return decorator
 
 
