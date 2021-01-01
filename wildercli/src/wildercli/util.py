@@ -182,6 +182,8 @@ class warn_interrupt:
 
 
 def get_abridged_str(val, up_to=12):
+    if not val:
+        return None
     return f"{val[:up_to]}..."
 
 
