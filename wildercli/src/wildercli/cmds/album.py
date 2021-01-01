@@ -14,7 +14,7 @@ def album():
     pass
 
 
-@click.command(cls=artist_arg_required_if_given(Constants.ARTIST))
+@click.command(cls=artist_arg_required_if_given())
 @wild_options()
 @artist_name_option(required=False)
 @album_name_arg
@@ -24,7 +24,7 @@ def new(state, artist, album_name):
     state.wilder.start_new_album(artist, album_name)
 
 
-@click.command(Constants.LIST, cls=artist_arg_required_if_given(Constants.ARTIST))
+@click.command(Constants.LIST, cls=artist_arg_required_if_given())
 @wild_options()
 @artist_name_option(required=False)
 @format_option
@@ -32,9 +32,11 @@ def _list(state, artist, format):
     """List an artist's discography."""
     artist_obj = state.get_artist(artist)
     albums_json = [a.to_json() for a in artist_obj.discography]
-    echo_formatted_list(
-        format, albums_json
-    ) if albums_json else _handle_no_albums_found(artist_obj.name)
+    if albums_json:
+        click.echo(f"Albums by '{artist_obj.name}':\n")
+        echo_formatted_list(format, albums_json)
+    else:
+        _handle_no_albums_found(artist_obj.name)
 
 
 def _handle_no_albums_found(name):

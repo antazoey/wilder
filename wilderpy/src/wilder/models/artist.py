@@ -19,7 +19,7 @@ class Artist:
         self.discography = discography or []
         self.name = name
         self.bio = bio
-        self.also_known_as = also_known_as
+        self.also_known_as = also_known_as or []
 
     @classmethod
     def from_json(cls, artist_json):
@@ -37,6 +37,7 @@ class Artist:
             Constants.NAME: self.name,
             Constants.BIO: self.bio,
             Constants.DISCOGRAPHY: [a.to_json() for a in self.discography],
+            Constants.ALSO_KNOWN_AS: self.also_known_as
         }
 
     def start_new_album(self, name=None):

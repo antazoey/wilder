@@ -26,7 +26,7 @@ class ArtistNotFoundError(WildNotFoundError):
     """An error raised when an artist is not found in the local mgmt.json file."""
 
     def __init__(self, artist):
-        msg = f"{artist} not found."
+        msg = f"Artist '{artist}' not found."
         super().__init__(msg)
 
 

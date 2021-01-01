@@ -24,7 +24,11 @@ def artist():
 def show(state, artist):
     """The artist information."""
     _artist = state.get_artist(artist)
-    click.echo(f"{Constants.NAME}: {_artist.name}, {Constants.BIO}: {_artist.bio}")
+    also_known_as = ", ".join(_artist.also_known_as)
+    click.echo(f"{Constants.NAME}: {_artist.name}")
+    click.echo(f"{Constants.BIO}: {_artist.bio}")
+    if also_known_as:
+        click.echo(f"Also known as: '{also_known_as}'")
 
 
 @click.command(Constants.LIST)
@@ -91,18 +95,20 @@ def focus(state, artist_name):
 @wild_options()
 @artist_name_option(required=False)
 @alias_arg
-def add_alias(state, artist_name, alias):
+def add_alias(state, artist, alias):
     """Add an artist alias."""
-    state.wilder.add_alias(artist_name, alias)
+    _artist = state.get_artist(artist).name
+    state.wilder.add_alias(_artist, alias)
 
 
 @click.command(cls=artist_arg_required_if_given())
 @wild_options()
 @artist_name_option(required=False)
 @alias_arg
-def remove_alias(state, artist_name, alias):
+def remove_alias(state, artist, alias):
     """Remove an artist alias."""
-    state.wilder.remove_alias(artist_name, alias)
+    _artist = state.get_artist(artist).name
+    state.wilder.remove_alias(_artist, alias)
 
 
 @click.command()
