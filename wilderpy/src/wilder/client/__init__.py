@@ -65,14 +65,7 @@ class WildClient(BaseWildApi):
 
     @err_when_not_found(Constants.NAME)
     def get_artist_by_name(self, name):
-        """Returns an :class:`wilder.models.Artist` for the given name.
-        Raises :class:`wilder.errors.ArtistNotFoundError` when the name does not exist.
-        """
-        mgmt = self.get_mgmt_json()
-        artist = mgmt.get_artist_by_name(name)
-        if not artist:
-            raise ArtistNotFoundError(name)
-        return artist
+        return self._get(f"{Constants.ARTIST}/{name}")
 
     def get_discography(self, artist):
         artist = artist or self.get_focus_artist()
@@ -80,9 +73,6 @@ class WildClient(BaseWildApi):
         return self._get(url)
 
     def sign_new_artist(self, artist, bio):
-        """Creates a new artist.
-        Raises :class:`wilder.errors.ArtistAlreadySignedError` if the artist already exists.
-        """
         try:
             params = _make_artist_params(artist)
             params[Constants.BIO] = bio
@@ -93,7 +83,6 @@ class WildClient(BaseWildApi):
             raise
 
     def unsign_artist(self, artist):
-        """Removed an artist."""
         try:
             return self._post(Constants.UNSIGN, _make_artist_params(artist))
         except WildBadRequestError as err:

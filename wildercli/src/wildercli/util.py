@@ -55,7 +55,7 @@ def get_url_parts(url_str):
     return host, port
 
 
-def find_format_width(record, header, include_header=True):
+def find_format_width(record, header, include_header=True, max_size=15):
     """Fetches needed keys/items to be displayed based on header keys.
 
     Finds the largest string against each column so as to decide the padding size for the column.
@@ -74,18 +74,18 @@ def find_format_width(record, header, include_header=True):
         if not header:
             header = _get_default_header(record)
         rows.append(header)
-    max_width_item = dict(header.items())  # Copy
+    widths = dict(header.items())  # Copy
     for record_row in record:
         row = OrderedDict()
         for header_key in header.keys():
             item = record_row.get(header_key)
             row[header_key] = item
-            max_width_item[header_key] = max(
-                max_width_item[header_key], str(item), key=len
+            widths[header_key] = max(
+                widths[header_key], str(item), key=len
             )
         rows.append(row)
-    column_size = {key: len(value) for key, value in max_width_item.items()}
-    return rows, column_size
+    column_sizes = {key: len(value) for key, value in widths.items()}
+    return rows, column_sizes
 
 
 def read_large_file(file_handler, block_size=10000):
@@ -107,7 +107,11 @@ def format_to_table(rows, column_size):
     for row in rows:
         line = ""
         for key in row.keys():
-            line += str(row[key]).ljust(column_size[key] + _PADDING_SIZE)
+            val = row[key]
+            if not val and not isinstance(val, bool):
+                val = " - "
+
+            line += str(val).ljust(column_size[key] + _PADDING_SIZE)
         lines.append(line)
     return "\n".join(lines)
 
@@ -122,7 +126,7 @@ def format_string_list_to_columns(string_list, max_width=None):
     num_columns = int(max_width / column_width) or 1
     format_string = "{{:<{0}}}".format(column_width) * num_columns
     batches = [
-        string_list[i : i + num_columns]
+        string_list[i: i + num_columns]
         for i in range(0, len(string_list), num_columns)
     ]
     padding = ["" for _ in range(num_columns)]
@@ -177,6 +181,10 @@ class warn_interrupt:
         return inner
 
 
+def get_abridged_str(val, up_to=12):
+    return f"{val[:up_to]}..."
+
+
 def _get_default_header(header_items):
     if not header_items:
         return
@@ -189,9 +197,3 @@ def _get_default_header(header_items):
             if key not in header and isinstance(key, str):
                 header[key] = key
     return header
-
-
-def hash_event(event):
-    if isinstance(event, dict):
-        event = json.dumps(event, sort_keys=True)
-    return md5(event.encode()).hexdigest()

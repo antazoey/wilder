@@ -24,7 +24,7 @@ format_option = click.option(
     help="The output format of the result. Defaults to table format.",
     default=OutputFormat.TABLE,
 )
-bio_option = click.option("--bio", help="The artist biography.")
+bio_option = click.option("--bio", "--biography", help="The artist biography.")
 
 
 class CLIState:
@@ -71,11 +71,22 @@ def album_name_option(required=True):
     return click.option("--album", help="The name of an album.", required=required)
 
 
+def description_option(_help):
+    return click.option("--description", "--desc", help=_help)
+
+
 def wild_options():
     def decorator(f):
         f = pass_state(f)
         return f
 
+    return decorator
+
+
+def album_options():
+    def decorator(f):
+        f = description_option(_help="A description for the album.")(f)
+        return f
     return decorator
 
 

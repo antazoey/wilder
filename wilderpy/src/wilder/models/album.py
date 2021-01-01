@@ -28,8 +28,9 @@ class Album:
     # The state of the album, such as RELEASED.
     state = None
 
-    def __init__(self, name=None):
+    def __init__(self, name=None, description=None):
         self.name = name
+        self.description = description
 
     @classmethod
     def from_json(cls, artist_name, album_json):

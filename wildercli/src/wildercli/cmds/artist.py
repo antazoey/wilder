@@ -10,6 +10,7 @@ from wildercli.argv import format_option
 from wildercli.argv import wild_options
 from wildercli.cmds.util import artist_arg_required_if_given
 from wildercli.cmds.util import echo_formatted_list
+from wildercli.util import get_abridged_str
 
 
 @click.group()
@@ -38,7 +39,7 @@ def _list(state, format):
     """List all your artists."""
     _artists = state.wilder.get_artists()
     artists_list = [
-        {Constants.NAME.capitalize(): a.name, Constants.BIO.capitalize(): a.bio}
+        {Constants.NAME.capitalize(): a.name, Constants.BIO.capitalize(): get_abridged_str(a.bio)}
         for a in _artists
     ]
     if not artists_list:

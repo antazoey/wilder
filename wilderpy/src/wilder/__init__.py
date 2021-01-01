@@ -4,7 +4,7 @@ import shutil
 from datetime import datetime
 
 from wilder.constants import Constants as Consts
-from wilder.errors import ArtistAlreadySignedError
+from wilder.errors import ArtistAlreadySignedError, AlbumNotFoundError
 from wilder.errors import ArtistNotFoundError
 from wilder.errors import ArtistNotSignedError
 from wilder.errors import NoArtistsFoundError
@@ -65,6 +65,13 @@ class Wilder(BaseWildApi):
         artist = self.get_artist_by_name(artist)
         return artist.discography
 
+    def get_album_by_name(self, artist_name, name):
+        artist = self.get_artist_by_name(artist_name)
+        album = artist.get_album_by_name(name)
+        if not album:
+            raise AlbumNotFoundError(artist_name, name)
+        return album
+
     def sign_new_artist(self, name, bio=None, also_known_as=None):
         """Creates a new artist.
         Raises :class:`wilder.errors.ArtistAlreadySignedError` if the artist already exists.
@@ -102,9 +109,14 @@ class Wilder(BaseWildApi):
         artist.also_known_as = filter(lambda x: x != alias, artist.also_known_as)
         self._save()
 
-    def start_new_album(self, artist_name, album_name):
+    def start_new_album(self, artist_name, album_name, description=None):
         artist = self.get_artist_by_name(artist_name)
-        artist.start_new_album(album_name)
+        artist.start_new_album(album_name, description=description)
+        self._save()
+    
+    def update_album(self, artist_name, album_name, description=None):
+        album = self.get_album_by_name(artist_name, album_name)
+        album.description = description
         self._save()
 
     def focus_on_artist(self, artist_name):

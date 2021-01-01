@@ -40,14 +40,20 @@ class Artist:
             Constants.ALSO_KNOWN_AS: self.also_known_as
         }
 
-    def start_new_album(self, name=None):
+    def start_new_album(self, name=None, description=None):
         name = name or self._get_default_album_name()
-        album = Album(name)
+        album = Album(name=name, description=description)
         self.discography.append(album)
+    
+    def get_album_by_name(self, name):
+        for alb in self.discography:
+            if alb.name == name:
+                return alb
+        return None
 
     def _get_default_album_name(self):
-        album_count = len(self.discography)
-        return f"{self.name} {album_count}"
+        album_number = len(self.discography) + 1
+        return f"{self.name} {album_number}"
 
     @classmethod
     def parse_discography(cls, artist_name, disco_json):
