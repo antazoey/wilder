@@ -89,3 +89,4 @@ def config_options():
 
 artist_name_arg = click.argument("artist-name")
 album_name_arg = click.argument("album-name")
+alias_arg = click.argument("alias")

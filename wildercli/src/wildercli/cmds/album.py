@@ -31,7 +31,7 @@ def new(state, artist, album_name):
 def _list(state, artist, format):
     """List an artist's discography."""
     artist_obj = state.get_artist(artist)
-    albums_json = [a.json for a in artist_obj.discography]
+    albums_json = [a.to_json() for a in artist_obj.discography]
     echo_formatted_list(
         format, albums_json
     ) if albums_json else _handle_no_albums_found(artist_obj.name)

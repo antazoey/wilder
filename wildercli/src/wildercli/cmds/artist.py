@@ -2,6 +2,7 @@ import click
 from wilder.constants import Constants
 from wilder.errors import ArtistAlreadySignedError
 from wilder.errors import ArtistNotSignedError
+from wildercli.argv import alias_arg
 from wildercli.argv import artist_name_arg
 from wildercli.argv import artist_name_option
 from wildercli.argv import bio_option
@@ -86,6 +87,24 @@ def focus(state, artist_name):
     state.mgmt.focus_on_artist(artist_name)
 
 
+@click.command(cls=artist_arg_required_if_given())
+@wild_options()
+@artist_name_option(required=False)
+@alias_arg
+def add_alias(state, artist_name, alias):
+    """Add an artist alias."""
+    state.mgmt.add_alias(artist_name, alias)
+
+
+@click.command(cls=artist_arg_required_if_given())
+@wild_options()
+@artist_name_option(required=False)
+@alias_arg
+def remove_alias(state, artist_name, alias):
+    """Remove an artist alias."""
+    state.mgmt.remove_alias(artist_name, alias)
+
+
 @click.command()
 @click.option(
     "--forget-old-name",
@@ -104,3 +123,5 @@ artist.add_command(focus)
 artist.add_command(update)
 artist.add_command(show)
 artist.add_command(rename)
+artist.add_command(add_alias)
+artist.add_command(remove_alias)

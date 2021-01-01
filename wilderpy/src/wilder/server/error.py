@@ -10,7 +10,7 @@ class WildServerError(Exception):
         self.status_code = status_code
         self.message = message
         self.payload = payload
-        Exception.__init__(self, message)
+        super().__init__(message)
 
     @property
     def dict(self):

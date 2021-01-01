@@ -24,7 +24,7 @@ def config():
 def _set(host):
     """Create a config file to re-use your Wilder connection parameters."""
     path_parts = get_url_parts(host)
-    _json = {Constants.HOST_KEY: path_parts[0], Constants.PORT_KEY: path_parts[1]}
+    _json = {Constants.HOST: path_parts[0], Constants.PORT: path_parts[1]}
     set_client_settings(_json)
 
 

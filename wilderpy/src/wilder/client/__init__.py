@@ -1,4 +1,6 @@
+from wilder import Artist
 from wilder import BaseWildApi
+from wilder import parse_mgmt
 from wilder.client.connection import Connection
 from wilder.client.connection import create_connection
 from wilder.client.errors import OperationNotPermittedError
@@ -10,13 +12,12 @@ from wilder.errors import ArtistAlreadySignedError
 from wilder.errors import ArtistNotFoundError
 from wilder.errors import ArtistNotSignedError
 from wilder.errors import NoArtistsFoundError
-from wilder.parser import parse_artists
-from wilder.parser import parse_mgmt
 
 
 def create_client(config):
     conn = create_connection(config.host, config.port)
-    return WildClient(conn)
+    if conn:
+        return WildClient(conn)
 
 
 def err_when_not_found(arg_key):
@@ -25,8 +26,8 @@ def err_when_not_found(arg_key):
             name = kwargs.get(arg_key)
             try:
                 return f(*args, **kwargs)
-            except WildNotFoundError as err:
-                if f"{name} not found" in str(err):
+            except Exception as err:
+                if f"not found" in str(err):
                     raise ArtistNotFoundError(name)
                 raise
 
@@ -39,31 +40,27 @@ def _make_artist_params(artist_name):
     return {Constants.ARTIST: artist_name}
 
 
-def _handle_artist_not_found_bad_request(err, artist):
-    if f"{artist} not found" in str(err):
-        raise ArtistNotFoundError(artist)
+def _make_artist_resource(artist, resource):
+    return f"{artist}/{resource}"
 
 
 class WildClient(BaseWildApi):
-    def __init__(self, conn=None):
-        self.connection = conn or create_connection("127.0.0.1", 443)
-        BaseWildApi.__init__(self)
+    def __init__(self, conn):
+        self.connection = conn
+        super().__init__()
 
     def get_artists(self):
         _json = self._get(Constants.ARTISTS)
-        return parse_artists(_json)
+        return [Artist.from_json(a_json) for a_json in _json]
 
-    def get_mgmt(self):
+    def get_mgmt_json(self):
         _json = self._get(Constants.MGMT)
         return parse_mgmt(_json)
 
     def get_focus_artist(self):
         artist_json = self._get(Constants.FOCUS)
         if artist_json:
-            json_to_parse = {Constants.ARTISTS: [artist_json]}
-            parse_result = parse_artists(json_to_parse)
-            if parse_result:
-                return parse_result[0]
+            return Artist.from_json(artist_json)
         raise NoArtistsFoundError()
 
     @err_when_not_found(Constants.NAME)
@@ -71,17 +68,14 @@ class WildClient(BaseWildApi):
         """Returns an :class:`wilder.models.Artist` for the given name.
         Raises :class:`wilder.errors.ArtistNotFoundError` when the name does not exist.
         """
-        mgmt = self.get_mgmt()
+        mgmt = self.get_mgmt_json()
         artist = mgmt.get_artist_by_name(name)
         if not artist:
             raise ArtistNotFoundError(name)
         return artist
 
-    @err_when_not_found(Constants.ARTIST)
     def get_discography(self, artist):
         artist = artist or self.get_focus_artist()
-        if not artist:
-            raise
         url = f"{artist}/{Constants.DISCOGRAPHY}"
         return self._get(url)
 
@@ -107,38 +101,42 @@ class WildClient(BaseWildApi):
                 raise ArtistNotSignedError(artist)
             raise
 
+    @err_when_not_found(Constants.NAME)
     def update_artist(self, name, bio=None):
-        resource = f"{name}/update"
-        try:
-            return self._post(resource, {Constants.BIO: bio})
-        except WildBadRequestError as err:
-            _handle_artist_not_found_bad_request(err, name)
-            raise
+        resource = _make_artist_resource(name, "update")
+        return self._post(resource, {Constants.BIO: bio})
 
-    def start_new_album(self, artist, album):
-        try:
-            resource = f"{artist}/{Constants.CREATE_ALBUM}"
-            return self._post(resource, {Constants.ALBUM: album})
-        except WildNotFoundError as err:
-            _handle_artist_not_found_bad_request(err, artist)
-            raise
+    @err_when_not_found("artist_name")
+    def start_new_album(self, artist_name, album):
+        resource = _make_artist_resource(artist_name, Constants.CREATE_ALBUM)
+        return self._post(resource, {Constants.ALBUM: album})
 
+    @err_when_not_found("artist_name")
     def focus_on_artist(self, artist_name):
-        try:
-            return self._post(Constants.FOCUS, _make_artist_params(artist_name))
-        except WildNotFoundError as err:
-            _handle_artist_not_found_bad_request(err, artist_name)
-            raise
+        return self._post(Constants.FOCUS, _make_artist_params(artist_name))
+
+    def add_alias(self, artist_name, alias):
+        resource = _make_artist_resource(artist_name, Constants.ALIAS)
+        return self._post(resource, alias)
+
+    def remove_alias(self, artist_name, alias):
+        resource = _make_artist_resource(artist_name, Constants.ALIAS)
+        return self._delete(resource, alias)
 
     def _get(self, endpoint):
         response = self.connection.get(f"/{endpoint}")
         if response:
-            return response.json()
+            return response.to_json()
 
     def _post(self, endpoint, params=None):
         response = self.connection.post(f"/{endpoint}", json=params)
         if response:
-            return response.json()
+            return response.to_json()
+
+    def _delete(self, endpoint, params=None):
+        response = self.connection.delete(f"/{endpoint}", json=params)
+        if response:
+            return response.to_json()
 
     def nuke(self):
         raise OperationNotPermittedError()

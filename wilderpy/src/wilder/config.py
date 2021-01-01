@@ -12,8 +12,8 @@ def set_client_settings(client_config_json):
     current_config_json = get_config_json()
     _config = create_config_object(current_config_json)
 
-    new_host = client_config_json.get(Constants.HOST_KEY)
-    new_port = client_config_json.get(Constants.PORT_KEY)
+    new_host = client_config_json.get(Constants.HOST)
+    new_port = client_config_json.get(Constants.PORT)
     new_is_enabled = client_config_json.get(Constants.IS_ENABLED)
 
     # If setting for first time and not given is_enabled, set to True
@@ -44,7 +44,7 @@ def get_config_json():
 
 
 def _create_init_config_json():
-    return {Constants.CLIENT_KEY: {Constants.HOST_KEY: None, Constants.PORT_KEY: None}}
+    return {Constants.CLIENT: {Constants.HOST: None, Constants.PORT: None}}
 
 
 def create_config_object(config_json=None):
@@ -72,26 +72,26 @@ class WildConfig:
 
     @property
     def client_settings(self):
-        return self.json.get(Constants.CLIENT_KEY)
+        return self.json.get(Constants.CLIENT)
 
     @property
     def host(self):
-        return self.client_settings.get(Constants.HOST_KEY)
+        return self.client_settings.get(Constants.HOST)
 
     @host.setter
     def host(self, host):
         if host:
-            self.client_settings[Constants.HOST_KEY] = host
+            self.client_settings[Constants.HOST] = host
 
     @property
     def port(self):
-        return self.client_settings.get(Constants.PORT_KEY)
+        return self.client_settings.get(Constants.PORT)
 
     @port.setter
     def port(self, port):
         port = to_int(port)
         if port:
-            self.client_settings[Constants.PORT_KEY] = port
+            self.client_settings[Constants.PORT] = port
 
     @property
     def is_enabled(self):

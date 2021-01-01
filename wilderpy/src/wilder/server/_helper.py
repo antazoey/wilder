@@ -1,6 +1,7 @@
 class HttpMethod:
     GET = "GET"
     POST = "POST"
+    DELETE = "DELETE"
 
 
 ERROR_KEY = "error"

@@ -11,7 +11,7 @@ class ArtistAlreadySignedError(WildError):
 
     def __init__(self, artist):
         msg = f"{artist} already signed."
-        super().__init__(self, msg)
+        super().__init__(msg)
 
 
 class ArtistNotSignedError(WildError):
@@ -19,7 +19,7 @@ class ArtistNotSignedError(WildError):
 
     def __init__(self, artist):
         msg = f"{artist} is not signed."
-        super().__init__(self, msg)
+        super().__init__(msg)
 
 
 class ArtistNotFoundError(WildNotFoundError):
@@ -27,11 +27,11 @@ class ArtistNotFoundError(WildNotFoundError):
 
     def __init__(self, artist):
         msg = f"{artist} not found."
-        super().__init__(self, msg)
+        super().__init__(msg)
 
 
 class NoArtistsFoundError(WildNotFoundError):
     """An error raised when there are no artists."""
 
     def __init__(self):
-        super().__init__(self, "No artists found.")
+        super().__init__("No artists found.")

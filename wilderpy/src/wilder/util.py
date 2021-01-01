@@ -34,7 +34,7 @@ def get_config_path(create_if_not_exists=True):
     if create_if_not_exists and not os.path.exists(config_path):
         with open(config_path, "w") as config_file:
             config_initial_dict = {
-                Consts.CLIENT_KEY: {Consts.HOST_KEY: None, Consts.PORT_KEY: None}
+                Consts.CLIENT: {Consts.HOST: None, Consts.PORT: None}
             }
             config_content = f"{json.dumps(config_initial_dict)}\n"
             config_file.write(config_content)

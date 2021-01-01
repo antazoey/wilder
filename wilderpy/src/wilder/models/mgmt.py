@@ -1,4 +1,6 @@
 from wilder.constants import Constants
+from wilder.models.artist import Artist
+from wilder.util import get_mgmt_json
 
 
 class Mgmt:
@@ -25,10 +27,23 @@ class Mgmt:
                 return artist
         return None
 
-    @property
-    def json(self):
+    @classmethod
+    def from_json(cls, mgmt_json):
+        if mgmt_json is None or isinstance(mgmt_json, str):
+            mgmt_json = get_mgmt_json(mgmt_path=mgmt_json)
+        last_updated = mgmt_json.get(Constants.LAST_UPDATED)
+        focus_artist = mgmt_json.get(Constants.FOCUS_ARTIST)
+        artists = cls.parse_artists(mgmt_json)
+        return cls(artists, last_updated=last_updated, focus_artist=focus_artist)
+
+    def to_json(self):
         return {
             Constants.LAST_UPDATED: self.last_updated,
-            Constants.ARTISTS: [a.json for a in self.artists],
+            Constants.ARTISTS: [a.to_json for a in self.artists],
             Constants.FOCUS_ARTIST: self.focus_artist,
         }
+
+    @classmethod
+    def parse_artists(cls, mgmt_json):
+        artists = mgmt_json.get(Constants.ARTISTS) or []
+        return [Artist.from_json(a) for a in artists]

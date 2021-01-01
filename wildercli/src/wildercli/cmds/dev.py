@@ -50,9 +50,13 @@ def logs(last_n_lines):
 @click.command()
 def set_test_server():
     """Use the local dev server config."""
+    _set_test_server()
+
+
+def _set_test_server():
     test_host = "http://127.0.0.1"
     test_port = 5000
-    _json = {Constants.HOST_KEY: test_host, Constants.PORT_KEY: test_port}
+    _json = {Constants.HOST: test_host, Constants.PORT: test_port}
     set_client_settings(_json)
 
 

@@ -1,10 +1,12 @@
 {
-    "lastUpdated": "",
+    "lastUpdated": 1234,
+    "focusArtist": "Wilder",
     "artists":
     [
         {
             "name": "Wilder",
             "bio": "A wild one who lives deep in the mountains and composes music as if it were witchcraft.",
+            "alsoKnownAs": ["Yingthi"],
             "discography":
             [
                 {

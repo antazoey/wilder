@@ -48,5 +48,5 @@ class WildServerConnectionError(WilderCLIError):
     """Exception raised when unable to connect to the Wild server."""
 
     def __init__(self, base_err):
-        msg = f"Unable to connect. Reason: f{str(base_err)}."
+        msg = f"Unable to connect. Reason: {str(base_err)}."
         super().__init__(msg)

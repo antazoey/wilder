@@ -23,8 +23,18 @@ class Track:
     # Additional collaborators on the track.
     collaborators = []
 
-    @property
-    def json(self):
+    @classmethod
+    def from_json(cls, artist_name, album_name, track_json):
+        track = cls()
+        track.artist = artist_name
+        track.album = album_name
+        track.name = track_json.get(Constants.NAME)
+        track.description = track_json.get(Constants.DESCRIPTION)
+        track.track_number = track_json.get(Constants.TRACK_NUMBER)
+        track.collaborators = track_json.get(Constants.COLLABORATORS)
+        return track
+
+    def to_json(self):
         return {
             Constants.NAME: self.name,
             Constants.DESCRIPTION: self.description,
