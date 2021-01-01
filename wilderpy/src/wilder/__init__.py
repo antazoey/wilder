@@ -40,7 +40,7 @@ class Wilder(BaseWildApi):
         return self._mgmt.artists
 
     def get_mgmt_json(self):
-        return self._mgmt.to_json
+        return self._mgmt.to_json()
 
     def get_focus_artist(self):
         artists = self.get_artists()
@@ -107,9 +107,6 @@ class Wilder(BaseWildApi):
         artist.start_new_album(album_name)
         self._save()
 
-    def _save(self):
-        return save(self.get_mgmt_json())
-
     def focus_on_artist(self, artist_name):
         artist = self.get_artist_by_name(artist_name)
         self._mgmt.focus_artist = artist.name
@@ -118,6 +115,9 @@ class Wilder(BaseWildApi):
     @staticmethod
     def nuke():
         shutil.rmtree(get_project_path())
+    
+    def _save(self):
+        return save(self.get_mgmt_json())
 
 
 def get_wilder_sdk(obj=None):

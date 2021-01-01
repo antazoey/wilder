@@ -21,7 +21,7 @@ def album():
 def new(state, artist, album_name):
     """Start a new album."""
     artist = state.get_artist(artist).name
-    state.mgmt.start_new_album(artist, album_name)
+    state.wilder.start_new_album(artist, album_name)
 
 
 @click.command(Constants.LIST, cls=artist_arg_required_if_given(Constants.ARTIST))

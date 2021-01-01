@@ -3,6 +3,7 @@ import signal
 import sys
 
 import click
+from wildercli.logger import get_cli_error_log_path
 from wildercli.argv import wild_options
 from wildercli.clickext.groups import ExceptionHandlingGroup
 from wildercli.cmds import album
@@ -45,8 +46,27 @@ def cli(state):
 @wild_options()
 def mgmt(state):
     """Show the full MGMT JSON blob."""
-    _json = json.dumps(state.mgmt.get_mgmt_json(), indent=2)
+    _json = json.dumps(state.wilder.get_mgmt_json(), indent=2)
     click.echo(_json)
+
+
+@click.command()
+@click.option(
+    "--last-n-lines", "-l", help="The last number of lines to show.", default=10
+)
+def logs(last_n_lines):
+    """Show the last n lines of the CLI error logs."""
+    logs_path = get_cli_error_log_path()
+    try:
+        with open(logs_path) as log_file:
+            lines = log_file.readlines()
+            length = len(lines)
+            for line in lines[length - last_n_lines :]:
+                line_data = line.strip()
+                if line_data:
+                    click.echo(f"- {line_data}")
+    except FileNotFoundError:
+        return []
 
 
 cli.add_command(play)
@@ -55,3 +75,4 @@ cli.add_command(artist)
 cli.add_command(config)
 cli.add_command(mgmt)
 cli.add_command(dev)
+cli.add_command(logs)

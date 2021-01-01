@@ -32,7 +32,7 @@ def show(state, artist):
 @format_option
 def _list(state, format):
     """List all your artists."""
-    _artists = state.mgmt.get_artists()
+    _artists = state.wilder.get_artists()
     artists_list = [
         {Constants.NAME.capitalize(): a.name, Constants.BIO.capitalize(): a.bio}
         for a in _artists
@@ -50,7 +50,7 @@ def _list(state, format):
 def sign(state, artist_name, bio):
     """Manage a new artist."""
     try:
-        state.mgmt.sign_new_artist(artist_name, bio=bio)
+        state.wilder.sign_new_artist(artist_name, bio=bio)
     except ArtistAlreadySignedError:
         click.echo(f"{artist_name} is already signed.")
 
@@ -61,7 +61,7 @@ def sign(state, artist_name, bio):
 def unsign(state, artist_name):
     """Stop managing an artist."""
     try:
-        state.mgmt.unsign_artist(artist_name)
+        state.wilder.unsign_artist(artist_name)
     except ArtistNotSignedError:
         click.echo(f"{artist_name} is not signed.")
 
@@ -76,7 +76,7 @@ def update(state, artist_name, bio):
         click.echo("Nothing to do.")
         return
     name = state.get_artist(artist_name).name
-    state.mgmt.update_artist(name, bio)
+    state.wilder.update_artist(name, bio)
 
 
 @click.command(cls=artist_arg_required_if_given())
@@ -84,7 +84,7 @@ def update(state, artist_name, bio):
 @artist_name_arg
 def focus(state, artist_name):
     """Change the focus artist."""
-    state.mgmt.focus_on_artist(artist_name)
+    state.wilder.focus_on_artist(artist_name)
 
 
 @click.command(cls=artist_arg_required_if_given())
@@ -93,7 +93,7 @@ def focus(state, artist_name):
 @alias_arg
 def add_alias(state, artist_name, alias):
     """Add an artist alias."""
-    state.mgmt.add_alias(artist_name, alias)
+    state.wilder.add_alias(artist_name, alias)
 
 
 @click.command(cls=artist_arg_required_if_given())
@@ -102,7 +102,7 @@ def add_alias(state, artist_name, alias):
 @alias_arg
 def remove_alias(state, artist_name, alias):
     """Remove an artist alias."""
-    state.mgmt.remove_alias(artist_name, alias)
+    state.wilder.remove_alias(artist_name, alias)
 
 
 @click.command()

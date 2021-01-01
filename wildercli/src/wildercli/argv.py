@@ -2,7 +2,7 @@ import click
 from wilder.config import create_config_object
 from wilder.errors import NoArtistsFoundError
 from wildercli.clickext.types import FileOrString
-from wildercli.mgmt_factory import get_wilder_mgmt
+from wildercli.wild_factory import get_wilder
 from wildercli.output_formats import OutputFormat
 
 
@@ -29,15 +29,15 @@ bio_option = click.option("--bio", help="The artist biography.")
 
 class CLIState:
     def __init__(self):
-        self._mgmt = None
+        self._sdk = None
         self._config = None
         self.assume_yes = False
 
     @property
-    def mgmt(self):
-        if self._mgmt is None:
-            self._mgmt = get_wilder_mgmt()
-        return self._mgmt
+    def wilder(self):
+        if self._sdk is None:
+            self._sdk = get_wilder()
+        return self._sdk
 
     @property
     def config(self):
@@ -48,9 +48,9 @@ class CLIState:
     def get_artist(self, artist_arg):
         try:
             return (
-                self.mgmt.get_artist_by_name(artist_arg)
+                self.wilder.get_artist_by_name(artist_arg)
                 if artist_arg
-                else self.mgmt.get_focus_artist()
+                else self.wilder.get_focus_artist()
             )
         except NoArtistsFoundError:
             click.echo("No artists found.")
@@ -72,14 +72,6 @@ def album_name_option(required=True):
 
 
 def wild_options():
-    def decorator(f):
-        f = pass_state(f)
-        return f
-
-    return decorator
-
-
-def config_options():
     def decorator(f):
         f = pass_state(f)
         return f

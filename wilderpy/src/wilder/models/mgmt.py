@@ -39,7 +39,7 @@ class Mgmt:
     def to_json(self):
         return {
             Constants.LAST_UPDATED: self.last_updated,
-            Constants.ARTISTS: [a.to_json for a in self.artists],
+            Constants.ARTISTS: [a.to_json() for a in self.artists],
             Constants.FOCUS_ARTIST: self.focus_artist,
         }
 
