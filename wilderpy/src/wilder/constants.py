@@ -24,7 +24,7 @@ class Constants:
     RELEASE_DATE = "releaseDate"
     RELEASE_TYPE = "releaseType"
     RELEASES = "releases"
-    STATE = "state"
+    STATUS = "status"
     TRACK_NUMBER = "trackNumber"
     TRACKS = "tracks"
     SIGN = "sign"

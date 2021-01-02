@@ -1,5 +1,7 @@
 import click
 from wilder.config import create_config_object
+from wilder.enum import AlbumState
+from wilder.enum import AlbumType
 from wilder.errors import NoArtistsFoundError
 from wildercli.clickext.types import FileOrString
 from wildercli.output_formats import OutputFormat
@@ -86,6 +88,16 @@ def wild_options():
 def album_options():
     def decorator(f):
         f = description_option(_help="A description for the album.")(f)
+        f = click.option(
+            "--album-type",
+            help="The type of album.",
+            type=click.Choice(AlbumType.choices()),
+        )(f)
+        f = click.option(
+            "--status",
+            help="The current status of the album.",
+            type=click.Choice(AlbumState.choices()),
+        )(f)
         return f
 
     return decorator

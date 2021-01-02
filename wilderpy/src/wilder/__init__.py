@@ -110,14 +110,35 @@ class Wilder(BaseWildApi):
         artist.also_known_as = filter(lambda x: x != alias, artist.also_known_as)
         self._save()
 
-    def start_new_album(self, artist_name, album_name, description=None):
+    def start_new_album(
+        self,
+        artist_name,
+        album_name,
+        description=None,
+        album_type=None,
+        album_state=None,
+    ):
         artist = self.get_artist_by_name(artist_name)
-        artist.start_new_album(album_name, description=description)
+        artist.start_new_album(
+            album_name,
+            description=description,
+            album_state=album_state,
+            album_type=album_type,
+        )
         self._save()
 
-    def update_album(self, artist_name, album_name, description=None):
+    def update_album(
+        self,
+        artist_name,
+        album_name,
+        description=None,
+        album_type=None,
+        status=None,
+    ):
         album = self.get_album_by_name(artist_name, album_name)
-        album.description = description
+        album.description = description or album.description
+        album.album_type = album_type or album.album_type
+        album.status = status or album.status
         self._save()
 
     def focus_on_artist(self, artist_name):

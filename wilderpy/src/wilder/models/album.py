@@ -25,8 +25,8 @@ class Album:
     # The type of the album, such as GREATEST_HIST.
     album_type = None
 
-    # The state of the album, such as RELEASED.
-    state = None
+    # The status of the album, such as RELEASED.
+    status = None
 
     def __init__(self, name=None, description=None):
         self.name = name
@@ -40,7 +40,7 @@ class Album:
         album.description = album_json.get(Constants.DESCRIPTION)
         album.artwork = album_json.get(Constants.ARTWORK)
         album.album_type = album_json.get(Constants.ALBUM_TYPE)
-        album.state = album_json.get(Constants.STATE)
+        album.status = album_json.get(Constants.STATUS)
         tracks = album_json.get(Constants.TRACKS) or []
         album.tracks = cls.parse_tracks(artist_name, album.name, tracks)
         releases = album_json.get(Constants.RELEASES)
@@ -52,6 +52,8 @@ class Album:
             Constants.NAME: self.name,
             Constants.DESCRIPTION: self.description,
             Constants.ARTWORK: self.artwork,
+            Constants.ALBUM_TYPE: self.album_type,
+            Constants.STATUS: self.status,
             Constants.TRACKS: [t.to_json() for t in self.tracks],
             Constants.RELEASES: [r.to_json() for r in self.releases],
         }

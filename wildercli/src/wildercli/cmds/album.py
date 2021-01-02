@@ -22,10 +22,24 @@ def album():
 @artist_name_option(required=False)
 @album_name_arg
 @album_options()
-def new(state, artist, album_name, description):
+def new(state, artist, album_name, description, album_type, status):
     """Start a new album."""
     artist = state.get_artist(artist).name
-    state.wilder.start_new_album(artist, album_name, description=description)
+    state.wilder.start_new_album(
+        artist,
+        album_name,
+        description=description,
+        album_type=album_type,
+        status=status,
+    )
+
+
+ALBUM_HEADER = {
+    Constants.NAME: "Name",
+    Constants.DESCRIPTION: "Description",
+    Constants.ALBUM_TYPE: "Album Type",
+    Constants.STATUS: "Status",
+}
 
 
 @click.command(Constants.LIST, cls=artist_arg_required_if_given())
@@ -47,7 +61,7 @@ def _list(state, artist, format):
             alb[Constants.DESCRIPTION] = abridge(full_desc)
 
     click.echo(f"Albums by '{artist_obj.name}':\n")
-    echo_formatted_list(format, albums_json_list)
+    echo_formatted_list(format, albums_json_list, header=ALBUM_HEADER)
 
 
 @click.command(cls=artist_arg_required_if_given())
@@ -55,10 +69,16 @@ def _list(state, artist, format):
 @artist_name_option(required=False)
 @album_name_arg
 @album_options()
-def update(state, artist, album_name, description):
+def update(state, artist, album_name, description, album_type, status):
     """Update an album."""
     artist = state.get_artist(artist).name
-    state.wilder.update_album(artist, album_name, description=description)
+    state.wilder.update_album(
+        artist,
+        album_name,
+        description=description,
+        album_type=album_type,
+        status=status,
+    )
 
 
 def _handle_no_albums_found(name):
