@@ -20,10 +20,10 @@ def create_client(config):
         return WildClient(conn)
 
 
-def err_when_not_found(arg_key):
+def err_when_not_found(arg_keys):
     def decorator(f):
         def decorate(*args, **kwargs):
-            name = kwargs.get(arg_key)
+            name = kwargs.get(arg_keys)
             try:
                 return f(*args, **kwargs)
             except Exception as err:
@@ -95,6 +95,14 @@ class WildClient(BaseWildApi):
         resource = _make_artist_resource(name, "update")
         return self._post(resource, {Constants.BIO: bio})
 
+    def add_alias(self, artist_name, alias):
+        resource = _make_artist_resource(artist_name, Constants.ALIAS)
+        return self._post(resource, alias)
+
+    def remove_alias(self, artist_name, alias):
+        resource = _make_artist_resource(artist_name, Constants.ALIAS)
+        return self._delete(resource, alias)
+
     @err_when_not_found("artist_name")
     def start_new_album(self, artist_name, album):
         resource = _make_artist_resource(artist_name, Constants.CREATE_ALBUM)
@@ -104,13 +112,9 @@ class WildClient(BaseWildApi):
     def focus_on_artist(self, artist_name):
         return self._post(Constants.FOCUS, _make_artist_params(artist_name))
 
-    def add_alias(self, artist_name, alias):
-        resource = _make_artist_resource(artist_name, Constants.ALIAS)
-        return self._post(resource, alias)
-
-    def remove_alias(self, artist_name, alias):
-        resource = _make_artist_resource(artist_name, Constants.ALIAS)
-        return self._delete(resource, alias)
+    @err_when_not_found("artist_name")
+    def update_album(self):
+        pass
 
     def _get(self, endpoint):
         response = self.connection.get(f"/{endpoint}")

@@ -128,12 +128,7 @@ class Wilder(BaseWildApi):
         self._save()
 
     def update_album(
-        self,
-        artist_name,
-        album_name,
-        description=None,
-        album_type=None,
-        status=None,
+        self, artist_name, album_name, description=None, album_type=None, status=None,
     ):
         album = self.get_album_by_name(artist_name, album_name)
         album.description = description or album.description

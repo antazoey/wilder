@@ -8,6 +8,28 @@ from wildercli.util import does_user_agree
 from wildercli.util import get_url_parts
 
 
+class ConfigRequiredCommand(click.Command):
+    @staticmethod
+    def _require_config(_config):
+        def decorator(f):
+            def decorated(*args, **kwargs):
+                if not _config.is_using_config():
+                    click.echo("Not using config.")
+                    exit(1)
+                f(*args, **kwargs)
+
+            return decorated
+
+        return decorator
+
+    def invoke(self, ctx):
+        @ConfigRequiredCommand._require_config(ctx.obj.config)
+        def run():
+            return super().invoke(ctx)
+
+        run()
+
+
 @click.group()
 def config():
     """Adjust settings."""
@@ -28,35 +50,34 @@ def _set(host):
     set_client_settings(_json)
 
 
-@click.command()
+@click.command(cls=ConfigRequiredCommand)
 @wild_options()
 def show(state):
     """Show the current client config settings."""
-    if state.config.is_using_config():
-        click.echo(
-            f"Host: {state.config.host}, Port: {state.config.port}. IsEnabled: {str(state.config.is_enabled)}"
-        )
-    else:
-        click.echo("Not using config.")
+    click.echo(
+        f"Host: {state.config.host}, "
+        f"Port: {state.config.port}. "
+        f"IsEnabled: {str(state.config.is_enabled)}"
+    )
 
 
-@click.command()
+@click.command(cls=ConfigRequiredCommand)
 @wild_options()
 @yes_option
 def reset(state):
     """Delete the config if it exists."""
     _prompt = "Are you sure you wish to delete your config (there is no undo)? "
-    if state.config.is_using_config() and does_user_agree(_prompt):
+    if does_user_agree(_prompt):
         delete_config_if_exists()
 
 
-@click.command()
+@click.command(cls=ConfigRequiredCommand)
 def enable():
     """Enable the config."""
     _enable_or_disable(True)
 
 
-@click.command()
+@click.command(cls=ConfigRequiredCommand)
 def disable():
     """Disable the config."""
     _enable_or_disable(False)
