@@ -24,10 +24,9 @@ def album():
 @album_options()
 def new(state, artist, album_name, description, album_type, status):
     """Start a new album."""
-    artist = state.get_artist(artist).name
     state.wilder.start_new_album(
-        artist,
         album_name,
+        artist_name=artist,
         description=description,
         album_type=album_type,
         status=status,
@@ -71,10 +70,9 @@ def _list(state, artist, format):
 @album_options()
 def update(state, artist, album_name, description, album_type, status):
     """Update an album."""
-    artist = state.get_artist(artist).name
     state.wilder.update_album(
-        artist,
         album_name,
+        artist_name=artist,
         description=description,
         album_type=album_type,
         status=status,

@@ -54,20 +54,22 @@ class Wilder(BaseWildApi):
         return artists[0]
 
     def get_artist_by_name(self, name):
-        """Returns an :class:`wilder.models.Artist` for the given name.
-        Raises :class:`wilder.errors.ArtistNotFoundError` when the name does not exist.
-        """
+        if not name:
+            return None
         artist = self._mgmt.get_artist_by_name(name)
         if not artist:
             raise ArtistNotFoundError(name)
         return artist
 
+    def get_artist(self, name=None):
+        return self.get_artist_by_name(name=name) or self.get_focus_artist()
+
     def get_discography(self, artist):
-        artist = self.get_artist_by_name(artist)
+        artist = self.get_artist(name=artist)
         return artist.discography
 
-    def get_album_by_name(self, artist_name, name):
-        artist = self.get_artist_by_name(artist_name)
+    def get_album_by_name(self, name, artist_name=None):
+        artist = self.get_artist(name=artist_name)
         album = artist.get_album_by_name(name)
         if not album:
             raise AlbumNotFoundError(artist_name, name)
@@ -95,30 +97,38 @@ class Wilder(BaseWildApi):
         del self._mgmt[name]
         self._save()
 
-    def update_artist(self, name, bio=None):
-        artist = self.get_artist_by_name(name)
+    def update_artist(self, name=None, bio=None):
+        artist = self.get_artist(name=name)
         artist.bio = bio or artist.bio
         self._save()
 
-    def add_alias(self, artist_name, alias):
-        artist = self.get_artist_by_name(artist_name)
+    def add_alias(self, alias, artist_name=None):
+        artist = self.get_artist(name=artist_name)
         artist.also_known_as.append(alias)
         self._save()
 
-    def remove_alias(self, artist_name, alias):
-        artist = self.get_artist_by_name(artist_name)
+    def remove_alias(self, alias, artist_name=None):
+        artist = self.get_artist(name=artist_name)
         artist.also_known_as = filter(lambda x: x != alias, artist.also_known_as)
+        self._save()
+
+    def rename_artist(self, new_name, artist_name=None, forget_old_name=False):
+        artist = self.get_artist(name=artist_name)
+        old_name = artist.name
+        artist.name = new_name
+        if not forget_old_name and old_name not in artist.also_known_as:
+            artist.also_known_as.append(old_name)
         self._save()
 
     def start_new_album(
         self,
-        artist_name,
         album_name,
+        artist_name=None,
         description=None,
         album_type=None,
         album_state=None,
     ):
-        artist = self.get_artist_by_name(artist_name)
+        artist = self.get_artist(name=artist_name)
         artist.start_new_album(
             album_name,
             description=description,
@@ -128,9 +138,14 @@ class Wilder(BaseWildApi):
         self._save()
 
     def update_album(
-        self, artist_name, album_name, description=None, album_type=None, status=None,
+        self,
+        album_name,
+        artist_name=None,
+        description=None,
+        album_type=None,
+        status=None,
     ):
-        album = self.get_album_by_name(artist_name, album_name)
+        album = self.get_album_by_name(album_name, artist_name=artist_name)
         album.description = description or album.description
         album.album_type = album_type or album.album_type
         album.status = status or album.status

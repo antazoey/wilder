@@ -49,11 +49,7 @@ class CLIState:
 
     def get_artist(self, artist_arg):
         try:
-            return (
-                self.wilder.get_artist_by_name(artist_arg)
-                if artist_arg
-                else self.wilder.get_focus_artist()
-            )
+            return self.wilder.get_artist(name=artist_arg)
         except NoArtistsFoundError:
             click.echo("No artists found.")
             exit(1)

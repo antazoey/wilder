@@ -9,7 +9,7 @@ from wildercli.argv import artist_name_option
 from wildercli.argv import bio_option
 from wildercli.argv import format_option
 from wildercli.argv import wild_options
-from wildercli.cmds.util import artist_arg_required_if_given
+from wildercli.cmds.util import ArtistArgRequiredIfGivenCommand
 from wildercli.cmds.util import echo_formatted_list
 from wildercli.output_formats import OutputFormat
 from wildercli.util import abridge
@@ -21,7 +21,7 @@ def artist():
     pass
 
 
-@click.command(cls=artist_arg_required_if_given())
+@click.command(cls=ArtistArgRequiredIfGivenCommand)
 @wild_options()
 @artist_name_option(required=False)
 def show(state, artist):
@@ -77,20 +77,19 @@ def unsign(state, artist_name):
         click.echo(f"{artist_name} is not signed.")
 
 
-@click.command(cls=artist_arg_required_if_given())
+@click.command(cls=ArtistArgRequiredIfGivenCommand)
 @wild_options()
 @artist_name_option(required=False)
 @bio_option
-def update(state, artist_name, bio):
+def update(state, artist, bio):
     """Update artist information."""
     if not bio:
         click.echo("Nothing to do.")
         return
-    name = state.get_artist(artist_name).name
-    state.wilder.update_artist(name, bio)
+    state.wilder.update_artist(artist, bio)
 
 
-@click.command(cls=artist_arg_required_if_given())
+@click.command(cls=ArtistArgRequiredIfGivenCommand)
 @wild_options()
 @artist_name_arg
 def focus(state, artist_name):
@@ -98,35 +97,36 @@ def focus(state, artist_name):
     state.wilder.focus_on_artist(artist_name)
 
 
-@click.command(cls=artist_arg_required_if_given())
+@click.command(cls=ArtistArgRequiredIfGivenCommand)
 @wild_options()
 @artist_name_option(required=False)
 @alias_arg
 def add_alias(state, artist, alias):
     """Add an artist alias."""
-    _artist = state.get_artist(artist).name
-    state.wilder.add_alias(_artist, alias)
+    state.wilder.add_alias(alias, artist_name=artist)
 
 
-@click.command(cls=artist_arg_required_if_given())
+@click.command(cls=ArtistArgRequiredIfGivenCommand)
 @wild_options()
 @artist_name_option(required=False)
 @alias_arg
 def remove_alias(state, artist, alias):
     """Remove an artist alias."""
-    _artist = state.get_artist(artist).name
-    state.wilder.remove_alias(_artist, alias)
+    state.wilder.remove_alias(alias, artist_name=artist)
 
 
 @click.command()
+@wild_options()
+@click.argument("new_name")
+@artist_name_option(required=False)
 @click.option(
-    "--forget-old-name",
-    help="To not retain any 'FKA' (formerly known-as) data.",
-    default=False,
+    "--forget-old-name", help="To not store in 'Also known as'.", default=False,
 )
-def rename(forget_old_name):
+def rename(state, new_name, artist, forget_old_name):
     """Rename an artist."""
-    pass
+    state.wilder.rename_artist(
+        new_name, artist_name=artist, forget_old_name=forget_old_name
+    )
 
 
 artist.add_command(_list)
