@@ -53,7 +53,7 @@ class Album:
             Constants.DESCRIPTION: self.description,
             Constants.ARTWORK: self.artwork,
             Constants.TRACKS: [t.to_json() for t in self.tracks],
-            Constants.RELEASES: [r.to_json() for r in self.releases]
+            Constants.RELEASES: [r.to_json() for r in self.releases],
         }
 
     @classmethod

@@ -1,9 +1,7 @@
-import json
 import os
 import shutil
 from collections import OrderedDict
 from functools import wraps
-from hashlib import md5
 from os import path
 from signal import getsignal
 from signal import SIGINT
@@ -28,13 +26,13 @@ def does_user_agree(prompt):
     return ans in ["y", "yes", "sure"]
 
 
-def get_user_project_path(*subdirs):
+def get_user_project_path(*sub_dirs):
     """The path on your user dir to /.wildercli/[subdir]."""
     package_name = __name__.split(".")[0]
     home = path.expanduser("~")
     hidden_package_name = ".{}".format(package_name)
     user_project_path = path.join(home, hidden_package_name)
-    result_path = path.join(user_project_path, *subdirs)
+    result_path = path.join(user_project_path, *sub_dirs)
     if not path.exists(result_path):
         os.makedirs(result_path)
     return result_path
@@ -80,9 +78,7 @@ def find_format_width(record, header, include_header=True, max_size=15):
         for header_key in header.keys():
             item = record_row.get(header_key)
             row[header_key] = item
-            widths[header_key] = max(
-                widths[header_key], str(item), key=len
-            )
+            widths[header_key] = max(widths[header_key], str(item), key=len)
         rows.append(row)
     column_sizes = {key: len(value) for key, value in widths.items()}
     return rows, column_sizes
@@ -126,7 +122,7 @@ def format_string_list_to_columns(string_list, max_width=None):
     num_columns = int(max_width / column_width) or 1
     format_string = "{{:<{0}}}".format(column_width) * num_columns
     batches = [
-        string_list[i: i + num_columns]
+        string_list[i : i + num_columns]
         for i in range(0, len(string_list), num_columns)
     ]
     padding = ["" for _ in range(num_columns)]
@@ -181,10 +177,12 @@ class warn_interrupt:
         return inner
 
 
-def get_abridged_str(val, up_to=12):
+def abridge(val, up_to=12):
     if not val:
         return None
-    return f"{val[:up_to]}..."
+    if len(val) > up_to:
+        return f"{val[:up_to]}..."
+    return val
 
 
 def _get_default_header(header_items):

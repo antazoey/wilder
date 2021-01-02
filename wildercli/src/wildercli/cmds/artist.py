@@ -2,6 +2,7 @@ import click
 from wilder.constants import Constants
 from wilder.errors import ArtistAlreadySignedError
 from wilder.errors import ArtistNotSignedError
+from wilder.util import noop
 from wildercli.argv import alias_arg
 from wildercli.argv import artist_name_arg
 from wildercli.argv import artist_name_option
@@ -10,7 +11,8 @@ from wildercli.argv import format_option
 from wildercli.argv import wild_options
 from wildercli.cmds.util import artist_arg_required_if_given
 from wildercli.cmds.util import echo_formatted_list
-from wildercli.util import get_abridged_str
+from wildercli.output_formats import OutputFormat
+from wildercli.util import abridge
 
 
 @click.group()
@@ -38,8 +40,12 @@ def show(state, artist):
 def _list(state, format):
     """List all your artists."""
     _artists = state.wilder.get_artists()
+    bio_func = abridge if format == OutputFormat.TABLE else noop
     artists_list = [
-        {Constants.NAME.capitalize(): a.name, Constants.BIO.capitalize(): get_abridged_str(a.bio)}
+        {
+            Constants.NAME.capitalize(): a.name,
+            Constants.BIO.capitalize(): bio_func(a.bio),
+        }
         for a in _artists
     ]
     if not artists_list:

@@ -2,8 +2,8 @@ import click
 from wilder.config import create_config_object
 from wilder.errors import NoArtistsFoundError
 from wildercli.clickext.types import FileOrString
-from wildercli.wild_factory import get_wilder
 from wildercli.output_formats import OutputFormat
+from wildercli.wild_factory import get_wilder
 
 
 yes_option = click.option(
@@ -87,6 +87,7 @@ def album_options():
     def decorator(f):
         f = description_option(_help="A description for the album.")(f)
         return f
+
     return decorator
 
 

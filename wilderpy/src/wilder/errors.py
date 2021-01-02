@@ -35,10 +35,10 @@ class NoArtistsFoundError(WildNotFoundError):
 
     def __init__(self):
         super().__init__("No artists found.")
-    
+
 
 class AlbumNotFoundError(WildNotFoundError):
     """An error raised when an album is not found."""
-    
+
     def __init__(self, artist_name, album_name):
         super().__init__(f"Album '{album_name}' by '{artist_name}' was not found.")

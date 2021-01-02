@@ -4,7 +4,8 @@ import shutil
 from datetime import datetime
 
 from wilder.constants import Constants as Consts
-from wilder.errors import ArtistAlreadySignedError, AlbumNotFoundError
+from wilder.errors import AlbumNotFoundError
+from wilder.errors import ArtistAlreadySignedError
 from wilder.errors import ArtistNotFoundError
 from wilder.errors import ArtistNotSignedError
 from wilder.errors import NoArtistsFoundError
@@ -113,7 +114,7 @@ class Wilder(BaseWildApi):
         artist = self.get_artist_by_name(artist_name)
         artist.start_new_album(album_name, description=description)
         self._save()
-    
+
     def update_album(self, artist_name, album_name, description=None):
         album = self.get_album_by_name(artist_name, album_name)
         album.description = description
@@ -127,7 +128,7 @@ class Wilder(BaseWildApi):
     @staticmethod
     def nuke():
         shutil.rmtree(get_project_path())
-    
+
     def _save(self):
         return save(self.get_mgmt_json())
 

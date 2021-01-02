@@ -160,7 +160,9 @@ def create_album(artist):
     return successful_response()
 
 
-@app.route(f"/<artist>/{Consts.DISCOGRAPHY}/<album>/{Consts.UPDATE}", methods=[HttpMethod.POST])
+@app.route(
+    f"/<artist>/{Consts.DISCOGRAPHY}/<album>/{Consts.UPDATE}", methods=[HttpMethod.POST]
+)
 def update_album(artist, album):
     """Update an album"""
     description = _get_request_param(Consts.DESCRIPTION)

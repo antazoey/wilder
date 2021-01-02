@@ -8,6 +8,10 @@ _PADDING_SIZE = 3
 CONFIG_FILE_NAME = "config.json"
 
 
+def noop(thing):
+    return thing
+
+
 def get_mgmt_json(mgmt_path=None, as_dict=True):
     mgmt_path = mgmt_path or get_mgmt_json_path()
     with open(mgmt_path) as mgmt_file:

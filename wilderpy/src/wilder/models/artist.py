@@ -37,14 +37,14 @@ class Artist:
             Constants.NAME: self.name,
             Constants.BIO: self.bio,
             Constants.DISCOGRAPHY: [a.to_json() for a in self.discography],
-            Constants.ALSO_KNOWN_AS: self.also_known_as
+            Constants.ALSO_KNOWN_AS: self.also_known_as,
         }
 
     def start_new_album(self, name=None, description=None):
         name = name or self._get_default_album_name()
         album = Album(name=name, description=description)
         self.discography.append(album)
-    
+
     def get_album_by_name(self, name):
         for alb in self.discography:
             if alb.name == name:

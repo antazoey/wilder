@@ -1,5 +1,6 @@
 from wilder.util import to_bool
 from wilder.util import to_int
+from wildercli.util import abridge
 
 
 def test_to_bool_when_given_none_returns_none():
@@ -66,3 +67,19 @@ def test_to_int_when_given_none_returns_none():
 
 def test_to_int_when_given_int_returns_int():
     assert to_int(5050) == 5050
+
+
+def test_abridge_when_given_none_returns_none():
+    assert abridge(None) is None
+
+
+def test_abridge_when_given_str_shorter_than_up_to_does_not_abridge():
+    assert abridge("Test", up_to=5) == "Test"
+
+
+def test_abridge_when_given_str_equal_to_up_to_does_not_abridge():
+    assert abridge("Test", up_to=4) == "Test"
+
+
+def test_abridge_when_given_str_longer_than_up_to_abridges():
+    assert abridge("Test", up_to=3) == "Tes..."
