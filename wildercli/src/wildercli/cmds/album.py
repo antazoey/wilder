@@ -5,7 +5,7 @@ from wildercli.argv import album_options
 from wildercli.argv import artist_name_option
 from wildercli.argv import format_option
 from wildercli.argv import wild_options
-from wildercli.cmds.util import artist_arg_required_if_given
+from wildercli.cmds.util import ArtistArgRequiredIfGivenCommand
 from wildercli.cmds.util import echo_formatted_list
 from wildercli.output_formats import OutputFormat
 from wildercli.util import abridge
@@ -17,7 +17,7 @@ def album():
     pass
 
 
-@click.command(cls=artist_arg_required_if_given())
+@click.command(cls=ArtistArgRequiredIfGivenCommand)
 @wild_options()
 @artist_name_option(required=False)
 @album_name_arg
@@ -42,7 +42,7 @@ ALBUM_HEADER = {
 }
 
 
-@click.command(Constants.LIST, cls=artist_arg_required_if_given())
+@click.command(Constants.LIST, cls=ArtistArgRequiredIfGivenCommand)
 @wild_options()
 @artist_name_option(required=False)
 @format_option
@@ -64,7 +64,7 @@ def _list(state, artist, format):
     echo_formatted_list(format, albums_json_list, header=ALBUM_HEADER)
 
 
-@click.command(cls=artist_arg_required_if_given())
+@click.command(cls=ArtistArgRequiredIfGivenCommand)
 @wild_options()
 @artist_name_option(required=False)
 @album_name_arg

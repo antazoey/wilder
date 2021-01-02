@@ -9,25 +9,12 @@ from wildercli.util import get_url_parts
 
 
 class ConfigRequiredCommand(click.Command):
-    @staticmethod
-    def _require_config(_config):
-        def decorator(f):
-            def decorated(*args, **kwargs):
-                if not _config.is_using_config():
-                    click.echo("Not using config.")
-                    exit(1)
-                f(*args, **kwargs)
-
-            return decorated
-
-        return decorator
-
     def invoke(self, ctx):
-        @ConfigRequiredCommand._require_config(ctx.obj.config)
-        def run():
-            return super().invoke(ctx)
-
-        run()
+        _config = ctx.obj.config
+        if not _config.is_using_config():
+            click.echo("Not using config.")
+            return
+        super().invoke(ctx)
 
 
 @click.group()
