@@ -1,6 +1,7 @@
 class Constants:
     ALIAS = "alias"
     ALBUM = "album"
+    ALBUMS = "albums"
     ALBUM_TYPE = "albumType"
     ALSO_KNOWN_AS = "alsoKnownAs"
     ARTIST = "artist"

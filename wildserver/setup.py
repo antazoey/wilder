@@ -7,14 +7,14 @@ from setuptools import setup
 here = path.abspath(path.dirname(__file__))
 
 about = {}
-with open(path.join(here, "src", "wildercli", "__version__.py"), encoding="utf8") as fh:
+with open(path.join(here, "src", "wildserver", "__version__.py"), encoding="utf8") as fh:
     exec(fh.read(), about)
 
 with open(path.join(here, "README.md"), "r", "utf-8") as f:
     readme = f.read()
 
 setup(
-    name="wildercli",
+    name="wildserver",
     version=about["__version__"],
     url="https://github.com/unparalleled-js/wilder",
     project_urls={
@@ -28,8 +28,8 @@ setup(
     package_dir={"": "src"},
     include_package_data=True,
     zip_safe=False,
-    python_requires=">3, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4",
-    install_requires=["click>=7.1.1", "wilder==0.1.0", "wildclient==0.1.0"],
+    python_requires=">3, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*, !=3.6.*, !=3.7.*<4",
+    install_requires=["Flask==1.1.2", "wilder==0.1.0"],
     extras_require={
         "dev": [
             "flake8==3.8.3",
@@ -44,12 +44,8 @@ setup(
         "Natural Language :: English",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: Implementation :: CPython",
     ],
-    entry_points={"console_scripts": ["wild=wildercli.main:cli"]},
+    scripts=["bin/start-wild-server.sh"],
 )

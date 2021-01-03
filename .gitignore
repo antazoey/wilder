@@ -5,7 +5,6 @@
 
 .DS_Store
 obj
-bin
 
 # User-specific files
 *.suo
