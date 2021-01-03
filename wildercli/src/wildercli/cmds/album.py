@@ -53,11 +53,11 @@ def _list(state, artist, format):
         _handle_no_albums_found(artist_obj.name)
         return
 
-    for alb in albums_json_list:
-        full_desc = alb.get(Constants.DESCRIPTION)
-
-        if full_desc and format == OutputFormat.TABLE:
-            alb[Constants.DESCRIPTION] = abridge(full_desc)
+    if format == OutputFormat.TABLE:
+        for alb in albums_json_list:
+            full_desc = alb.get(Constants.DESCRIPTION)
+            if full_desc:
+                alb[Constants.DESCRIPTION] = abridge(full_desc)
 
     click.echo(f"Albums by '{artist_obj.name}':\n")
     echo_formatted_list(format, albums_json_list, header=ALBUM_HEADER)
