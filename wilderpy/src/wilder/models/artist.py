@@ -40,9 +40,13 @@ class Artist:
             Constants.ALSO_KNOWN_AS: self.also_known_as,
         }
 
-    def start_new_album(self, name=None, description=None):
+    def start_new_album(
+        self, name=None, description=None, album_type=None, status=None
+    ):
         name = name or self._get_default_album_name()
-        album = Album(name=name, description=description)
+        album = Album(
+            name=name, description=description, album_type=album_type, status=status
+        )
         self.discography.append(album)
 
     def get_album_by_name(self, name):

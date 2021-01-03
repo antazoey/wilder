@@ -1,5 +1,6 @@
 import click
 from wilder.errors import ArtistNotFoundError
+from wilder.errors import NoArtistsFoundError
 from wildercli.output_formats import OutputFormatter
 
 
@@ -12,5 +13,5 @@ class ArtistArgRequiredIfGivenCommand(click.Command):
     def invoke(self, ctx):
         try:
             return super().invoke(ctx)
-        except ArtistNotFoundError as err:
+        except (ArtistNotFoundError, NoArtistsFoundError) as err:
             click.echo(str(err))

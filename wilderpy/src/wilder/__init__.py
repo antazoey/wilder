@@ -37,13 +37,15 @@ class Wilder(BaseWildApi):
         self._mgmt = mgmt_obj or parse_mgmt()
 
     def get_artists(self):
-        """The artists represented."""
+        """Get all artists."""
         return self._mgmt.artists
 
     def get_mgmt_json(self):
+        """Get the full MGMT JSON blob."""
         return self._mgmt.to_json()
 
     def get_focus_artist(self):
+        """Get the Wilder focus artist."""
         artists = self.get_artists()
         artist_name = self._mgmt.focus_artist
         if not artists:
@@ -54,6 +56,7 @@ class Wilder(BaseWildApi):
         return artists[0]
 
     def get_artist_by_name(self, name):
+        """Get an artist by their performer name."""
         if not name:
             return None
         artist = self._mgmt.get_artist_by_name(name)
@@ -62,13 +65,16 @@ class Wilder(BaseWildApi):
         return artist
 
     def get_artist(self, name=None):
+        """Get an artist."""
         return self.get_artist_by_name(name=name) or self.get_focus_artist()
 
     def get_discography(self, artist):
+        """Get all the albums for an artist."""
         artist = self.get_artist(name=artist)
         return artist.discography
 
     def get_album_by_name(self, name, artist_name=None):
+        """Get an album by its title."""
         artist = self.get_artist(name=artist_name)
         album = artist.get_album_by_name(name)
         if not album:
@@ -76,9 +82,7 @@ class Wilder(BaseWildApi):
         return album
 
     def sign_new_artist(self, name, bio=None, also_known_as=None):
-        """Creates a new artist.
-        Raises :class:`wilder.errors.ArtistAlreadySignedError` if the artist already exists.
-        """
+        """Create a new artist."""
         if self.is_represented(name):
             raise ArtistAlreadySignedError(name)
         artist = Artist(name=name, bio=bio, also_known_as=also_known_as)
@@ -94,7 +98,13 @@ class Wilder(BaseWildApi):
         """Removed an artist."""
         if not self.is_represented(name):
             raise ArtistNotSignedError(name)
+        focus_artist_name = self._mgmt.focus_artist
         del self._mgmt[name]
+        if not len(self._mgmt.artists):
+            self._mgmt.focus_artist = None
+        elif len(self._mgmt.artists) == 1 or focus_artist_name == name:
+            name = self._mgmt.artists[0].name
+            self._mgmt.focus_artist = name
         self._save()
 
     def update_artist(self, name=None, bio=None):
@@ -126,14 +136,11 @@ class Wilder(BaseWildApi):
         artist_name=None,
         description=None,
         album_type=None,
-        album_state=None,
+        status=None,
     ):
         artist = self.get_artist(name=artist_name)
         artist.start_new_album(
-            album_name,
-            description=description,
-            album_state=album_state,
-            album_type=album_type,
+            album_name, description=description, album_type=album_type, status=status,
         )
         self._save()
 

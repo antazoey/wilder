@@ -42,8 +42,7 @@ def _get_error_file_logger():
 
 def get_view_error_details_message():
     """Returns the error message that is printed when errors occur."""
-    path = get_cli_error_log_path()
-    return "View details in {}".format(path)
+    return "View details using the command `wild logs`."
 
 
 class CliLogger:
