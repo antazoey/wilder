@@ -31,3 +31,4 @@ class Constants:
     SIGN = "sign"
     UPDATE = "update"
     UNSIGN = "unsign"
+    WILDER = "wilder"

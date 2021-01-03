@@ -6,12 +6,10 @@ from urllib.parse import urlparse
 from requests.adapters import HTTPAdapter
 from requests.models import Request
 from requests.sessions import Session
-from wilder.client.errors import WildBadRequestError
-from wilder.client.errors import WildClientError
-from wilder.client.errors import WildNotFoundError
-from wilder.client.errors import WildUnknownServerError
-from wilder.server.logger import get_server_logger
-from wilder.util import format_dict
+from wildclient.errors import WildBadRequestError
+from wildclient.errors import WildClientError
+from wildclient.errors import WildNotFoundError
+from wildclient.errors import WildUnknownServerError
 
 
 SESSION_ADAPTER = HTTPAdapter(pool_connections=200, pool_maxsize=4, pool_block=True)
@@ -134,8 +132,6 @@ class Connection:
             cookies=cookies,
             hooks=hooks,
         )
-
-        _print_request(method, url, params=params, data=data)
         return self._session.prepare_request(request)
 
 
@@ -158,12 +154,3 @@ def _try_get_response_data(response):
     except JSONDecodeError:
         return str(response)
     return response_json.get("message") or str(response)
-
-
-def _print_request(method, url, params=None, data=None):
-    logger = get_server_logger()
-    logger.info(f"{method.ljust(8)}{url}")
-    if params:
-        logger.debug(format_dict(params, "  params"))
-    if data:
-        logger.debug(format_dict(data, "  data"))
