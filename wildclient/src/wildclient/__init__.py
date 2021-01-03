@@ -43,7 +43,7 @@ class Wilder(BaseWildApi):
     def get_mgmt_json(self):
         """Get the full MGMT JSON blob."""
         return self._mgmt.to_json()
-    
+
     def get_artist(self, name=None):
         """Get an artist."""
         return self.get_artist_by_name(name=name) or self.get_focus_artist()

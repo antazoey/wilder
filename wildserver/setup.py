@@ -7,7 +7,9 @@ from setuptools import setup
 here = path.abspath(path.dirname(__file__))
 
 about = {}
-with open(path.join(here, "src", "wildserver", "__version__.py"), encoding="utf8") as fh:
+with open(
+    path.join(here, "src", "wildserver", "__version__.py"), encoding="utf8"
+) as fh:
     exec(fh.read(), about)
 
 with open(path.join(here, "README.md"), "r", "utf-8") as f:
@@ -47,5 +49,5 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: Implementation :: CPython",
     ],
-    scripts=["bin/start-wild-server.sh"],
+    scripts=["scripts/start-wild-server.sh"],
 )
