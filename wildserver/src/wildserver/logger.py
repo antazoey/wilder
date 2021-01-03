@@ -1,14 +1,12 @@
 import logging
-import os
-from logging.handlers import RotatingFileHandler
 from threading import Lock
 
+from log_util import add_handler_to_logger
+from log_util import create_error_file_handler
+from log_util import create_formatter_for_error_file
+from log_util import get_error_log_path
+from log_util import logger_has_handlers
 from wilder.util import get_project_path
-from wilder.wlog.log_util import add_handler_to_logger
-from wilder.wlog.log_util import create_error_file_handler
-from wilder.wlog.log_util import create_formatter_for_error_file
-from wilder.wlog.log_util import get_error_log_path
-from wilder.wlog.log_util import logger_has_handlers
 
 logger_deps_lock = Lock()
 

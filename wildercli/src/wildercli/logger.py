@@ -2,18 +2,17 @@ import logging
 import traceback
 from threading import Lock
 
-from wilder.server.logger import create_error_file_handler
-from wilder.server.logger import create_formatter_for_error_file
-from wilder.server.logger import get_error_log_path
-from wilder.server.logger import logger_has_handlers
+from wilder.log_util import add_handler_to_logger
+from wilder.log_util import create_error_file_handler
+from wilder.log_util import create_formatter_for_error_file
+from wilder.log_util import get_error_log_path
+from wilder.log_util import logger_has_handlers
 from wildercli.util import get_user_project_path
-from wildserver.logger import add_handler_to_logger
 
 # prevent loggers from printing stacks to stderr if a pipe is broken
 logging.raiseExceptions = False
 
 logger_deps_lock = Lock()
-ERROR_LOG_FILE_NAME = "wildercli_errors.log"
 
 
 def _create_error_file_handler():
@@ -23,7 +22,7 @@ def _create_error_file_handler():
 
 def get_cli_error_log_path():
     log_path = get_user_project_path("log")
-    return get_error_log_path(base_path=log_path)
+    return get_error_log_path(base_path=log_path, proj_suffix="cli")
 
 
 def _get_error_file_logger():

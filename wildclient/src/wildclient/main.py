@@ -1,14 +1,14 @@
 from wildclient.connection import create_connection
 from wildclient.errors import OperationNotPermittedError
 from wildclient.errors import WildBadRequestError
+from wilder import BaseWildApi
+from wilder import parse_mgmt
 from wilder.constants import Constants
 from wilder.errors import ArtistAlreadySignedError
 from wilder.errors import ArtistNotFoundError
 from wilder.errors import ArtistNotSignedError
 from wilder.errors import NoArtistsFoundError
-from wilder.model import parse_mgmt
 from wilder.models import Artist
-from wilder.models import BaseWildApi
 
 
 def create_client(config):

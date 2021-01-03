@@ -2,7 +2,7 @@ import logging
 import os
 from logging.handlers import RotatingFileHandler
 
-from wilder import get_project_path
+from wilder.util import get_project_path
 from wilder.constants import Constants
 
 
