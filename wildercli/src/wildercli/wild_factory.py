@@ -18,7 +18,7 @@ def _test_connection(sdk):
     try:
         if not sdk:
             raise WildServerConnectionError(Exception("Missing client."))
-        sdk.get_mgmt_json()
+        sdk.get_mgmt()
     except Exception as err:
         raise WildServerConnectionError(err)
     return sdk
