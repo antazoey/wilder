@@ -19,7 +19,7 @@
 
 ### /album
 
-- `/album/discrography`          : Get all albums for an artist.
-- `/album/create`                : Create a new album.
-- `/album/discography/<album>`   : Get an album.
-- `/album/discography/add-track` : Add a track to an album.
+- `/album/discrography` : Get all albums for an artist.
+- `/album/create`       : Create a new album.
+- `/album/update`       : Update an album.
+- `/album/discography`  : Get an album.

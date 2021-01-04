@@ -1,3 +1,4 @@
+from models import Album
 from wildclient.connection import create_connection
 from wildclient.errors import OperationNotPermittedError
 from wildclient.errors import WildBadRequestError
@@ -70,11 +71,16 @@ class WildClient(BaseWildApi):
         """Update artist information."""
         url = f"/{Constants.ARTIST}/update"
         self._post(url, json={Constants.ARTIST: name, Constants.BIO: bio})
-    
+
     def rename_artist(self, new_name, artist_name=None, forget_old_name=False):
         """Change an artist's performer name."""
         url = f"/{Constants.ARTIST}/rename"
-        self._post(url, json={Constants.ARTIST: artist_name, Constants.NEW_NAME: new_name, Constants.FORGET_OLD_NAME: forget_old_name})
+        _json = {
+            Constants.ARTIST: artist_name,
+            Constants.NEW_NAME: new_name,
+            Constants.FORGET_OLD_NAME: forget_old_name,
+        }
+        self._post(url, json=_json)
 
     def add_alias(self, alias, artist_name=None):
         """Add an additional artist name, such as a 'formerly known as'."""
@@ -88,16 +94,58 @@ class WildClient(BaseWildApi):
 
     """Album"""
 
-    def get_discography(self, artist=None):
+    def get_discography(self, artist_name=None):
+        """Get all the albums for an artist."""
         url = f"{Constants.ALBUM}/{Constants.DISCOGRAPHY}"
-        return self._get(url, params={Constants.ARTIST: artist})
+        albums = self._get(url, params={Constants.ARTIST: artist_name}).get(
+            Constants.ALBUMS
+        )
+        return [Album.from_json(artist_name, a_json) for a_json in albums]
 
-    def start_new_album(self, album, artist_name=None):
+    def get_album(self, name, artist_name=None):
+        """Get an album by its title."""
+        url = f"{Constants.ALBUM}"
+        return self._get(
+            url, params={Constants.ALBUM: name, Constants.ARTIST: artist_name}
+        )
+
+    def start_new_album(
+        self,
+        album_name,
+        artist_name=None,
+        description=None,
+        album_type=None,
+        status=None,
+    ):
+        """Start a new album."""
         url = f"{Constants.ALBUM}/{Constants.CREATE_ALBUM}"
-        return self._post(url, json={Constants.ALBUM: album, Constants.ARTIST: artist_name})
+        _json = {
+            Constants.ALBUM: album_name,
+            Constants.ARTIST: artist_name,
+            Constants.DESCRIPTION: description,
+            Constants.ALBUM_TYPE: album_type,
+            Constants.STATUS: status,
+        }
+        self._post(url, json=_json)
 
-    def update_album(self):
-        pass
+    def update_album(
+        self,
+        album_name,
+        artist_name=None,
+        description=None,
+        album_type=None,
+        status=None,
+    ):
+        """Update an existing album."""
+        url = f"{Constants.ALBUM}/{Constants.UPDATE}"
+        _json = {
+            Constants.ALBUM: album_name,
+            Constants.ARTIST: artist_name,
+            Constants.DESCRIPTION: description,
+            Constants.ALBUM_TYPE: album_type,
+            Constants.STATUS: status,
+        }
+        self._post(url, _json)
 
     """Internal"""
 

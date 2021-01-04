@@ -49,7 +49,7 @@ class Wilder(BaseWildApi):
     def get_artist(self, name=None):
         """Get an artist."""
         return self._get_artist_by_name(name=name) or self._get_focus_artist()
-    
+
     def focus_on_artist(self, artist_name):
         """Change the focus artist."""
         artist = self._get_artist_by_name(artist_name)
@@ -114,12 +114,12 @@ class Wilder(BaseWildApi):
 
     """Albums"""
 
-    def get_discography(self, artist=None):
+    def get_discography(self, artist_name=None):
         """Get all the albums for an artist."""
-        artist = self.get_artist(name=artist)
-        return artist.discography
+        artist_name = self.get_artist(name=artist_name)
+        return artist_name.discography
 
-    def get_album_by_name(self, name, artist_name=None):
+    def get_album(self, name, artist_name=None):
         """Get an album by its title."""
         artist = self.get_artist(name=artist_name)
         album = artist.get_album_by_name(name)
@@ -135,6 +135,7 @@ class Wilder(BaseWildApi):
         album_type=None,
         status=None,
     ):
+        """Start a new album."""
         artist = self.get_artist(name=artist_name)
         artist.start_new_album(
             album_name, description=description, album_type=album_type, status=status,
@@ -149,7 +150,8 @@ class Wilder(BaseWildApi):
         album_type=None,
         status=None,
     ):
-        album = self.get_album_by_name(album_name, artist_name=artist_name)
+        """Update an existing album."""
+        album = self.get_album(album_name, artist_name=artist_name)
         album.description = description or album.description
         album.album_type = album_type or album.album_type
         album.status = status or album.status
@@ -163,7 +165,7 @@ class Wilder(BaseWildApi):
 
     def _save(self):
         return save(self.get_mgmt_json())
-    
+
     def _get_artist_by_name(self, name):
         """Get an artist by their performer name."""
         if not name:

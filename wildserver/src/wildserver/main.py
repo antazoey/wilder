@@ -83,7 +83,7 @@ def list_artists():
 
 
 @app.route(_ARTIST, methods=[HttpMethod.GET])
-def artist():
+def get_artist():
     """Get an artist."""
     _mgmt = get_wilder_sdk()
     artist_name = _get_request_param(Consts.ARTIST)
@@ -157,7 +157,7 @@ def alias():
         alias_to_delete = _get_request_param(Consts.ALSO_KNOWN_AS)
         _mgmt.remove_alias(alias_to_delete, artist_name=artist_name)
     else:
-        _artist = _mgmt.get_artist_by_name(artist)
+        _artist = _mgmt.get_artist_by_name(artist_name)
         return {Consts.ALSO_KNOWN_AS: _artist.also_known_as}
 
 
@@ -171,35 +171,55 @@ def discography():
     """Get all albums for artist."""
     _mgmt = get_wilder_sdk()
     artist_name = _get_request_param(Consts.ARTIST)
-    albums = _mgmt.get_discography(artist=artist_name)
+    albums = _mgmt.get_discography(artist_name=artist_name)
     return {Consts.DISCOGRAPHY: [a.to_json for a in albums]}
 
 
-@app.route(f"/{Consts.ALBUM}/<artist>/{Consts.CREATE_ALBUM}", methods=[HttpMethod.POST])
-def create_album(artist):
+@app.route(_ALBUM, methods=[HttpMethod.GET])
+def get_album():
+    """Get an album."""
+    _mgmt = get_wilder_sdk()
+    artist_name = _get_request_param(Consts.ARTIST)
+    album_name = _get_request_param(Consts.ALBUM)
+    _album = _mgmt.get_album(album_name, artist_name=artist_name)
+    return _album.to_json()
+
+
+@app.route(f"{_ALBUM}/{Consts.CREATE_ALBUM}", methods=[HttpMethod.POST])
+def create_album():
     """Create a new album."""
+    _mgmt = get_wilder_sdk()
+    artist_name = _get_request_param(Consts.ARTIST)
     _album = _get_request_param(Consts.ALBUM)
-    _mgmt = get_wilder_sdk()
-    _mgmt.start_new_album(artist, _album)
-    return successful_response()
-
-
-@app.route(
-    f"/{Consts.ALBUM}/<artist>/{Consts.DISCOGRAPHY}/<album>/{Consts.UPDATE}",
-    methods=[HttpMethod.POST],
-)
-def update_album(artist, album):
-    """Update an album"""
     description = _get_request_param(Consts.DESCRIPTION)
-    _mgmt = get_wilder_sdk()
-    _mgmt.update_album(artist, album, description=description)
+    album_type = _get_request_param(Consts.ALBUM_TYPE)
+    status = _get_request_param(Consts.STATUS)
+    _mgmt.start_new_album(
+        _album,
+        artist_name=artist_name,
+        description=description,
+        album_type=album_type,
+        status=status,
+    )
     return successful_response()
 
 
-@app.route(f"/{Consts.ALBUM}/<artist>/{Consts.DISCOGRAPHY}/<album>/add-track")
-def add_track(artist, album):
-    # TODO
-    pass
+@app.route(f"{_ALBUM}/{Consts.UPDATE}", methods=[HttpMethod.POST])
+def update_album(album):
+    """Update an album"""
+    _mgmt = get_wilder_sdk()
+    artist_name = _get_request_param(Consts.ARTIST)
+    description = _get_request_param(Consts.DESCRIPTION)
+    album_type = _get_request_param(Consts.ALBUM_TYPE)
+    status = _get_request_param(Consts.STATUS)
+    _mgmt.update_album(
+        album,
+        artist_name=artist_name,
+        description=description,
+        album_type=album_type,
+        status=status,
+    )
+    return successful_response()
 
 
 def _get_request_param(key):
