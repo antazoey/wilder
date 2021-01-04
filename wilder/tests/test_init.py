@@ -7,7 +7,7 @@ from wilder.enum import AlbumType
 
 def test_get_wilder_sdk_returns_object_with_expected_props(parsed_mock_mgmt):
     wilder = get_wilder_sdk(parsed_mock_mgmt)
-    assert wilder.get_mgmt_json() == parsed_mock_mgmt.to_json
+    assert wilder.get_mgmt().to_json() == parsed_mock_mgmt.to_json
 
 
 def test_parse_mgmt_parses_last_updated(schema_path, mock_mgmt_json):

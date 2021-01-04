@@ -36,9 +36,9 @@ class Wilder(BaseWildApi):
     def __init__(self, mgmt_obj=None):
         self._mgmt = mgmt_obj or parse_mgmt()
 
-    def get_mgmt_json(self):
+    def get_mgmt(self):
         """Get the full MGMT JSON blob."""
-        return self._mgmt.to_json()
+        return self._mgmt
 
     """Artists"""
 
@@ -164,7 +164,9 @@ class Wilder(BaseWildApi):
         shutil.rmtree(get_project_path())
 
     def _save(self):
-        return save(self.get_mgmt_json())
+        mgmt = self.get_mgmt()
+        _json = mgmt.to_json()
+        return save(_json)
 
     def _get_artist_by_name(self, name):
         """Get an artist by their performer name."""

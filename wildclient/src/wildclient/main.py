@@ -1,4 +1,3 @@
-from models import Album
 from wildclient.connection import create_connection
 from wildclient.errors import OperationNotPermittedError
 from wildclient.errors import WildBadRequestError
@@ -6,9 +5,8 @@ from wilder import BaseWildApi
 from wilder import parse_mgmt
 from wilder.constants import Constants
 from wilder.errors import ArtistAlreadySignedError
-from wilder.errors import ArtistNotFoundError
 from wilder.errors import ArtistNotSignedError
-from wilder.errors import NoArtistsFoundError
+from wilder.models import Album
 from wilder.models import Artist
 
 
@@ -27,7 +25,7 @@ class WildClient(BaseWildApi):
         self.connection = conn
         super().__init__()
 
-    def get_mgmt_json(self):
+    def get_mgmt(self):
         _json = self._get(Constants.MGMT)
         return parse_mgmt(_json)
 

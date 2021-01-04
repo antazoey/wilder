@@ -30,7 +30,7 @@ class Mgmt:
     @classmethod
     def from_json(cls, mgmt_json):
         if mgmt_json is None or isinstance(mgmt_json, str):
-            mgmt_json = get_mgmt_json(mgmt_path=mgmt_json)
+            mgmt_json = get_mgmt_json()
         last_updated = mgmt_json.get(Constants.LAST_UPDATED)
         focus_artist = mgmt_json.get(Constants.FOCUS_ARTIST)
         artists = cls.parse_artists(mgmt_json)
