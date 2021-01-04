@@ -14,11 +14,11 @@ def get_wilder():
     return _test_connection(client)
 
 
-def _test_connection(mgmt):
+def _test_connection(sdk):
     try:
-        if not mgmt:
+        if not sdk:
             raise WildServerConnectionError(Exception("Missing client."))
-        mgmt.get_mgmt_json()
+        sdk.get_mgmt_json()
     except Exception as err:
         raise WildServerConnectionError(err)
-    return mgmt
+    return sdk

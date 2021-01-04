@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+main() {
+    export FLASK_APP="wildserver.main.py"
+    flask run
+}
+
+main "$@"

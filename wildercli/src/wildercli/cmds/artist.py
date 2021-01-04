@@ -13,6 +13,7 @@ from wildercli.cmds.util import ArtistArgRequiredIfGivenCommand
 from wildercli.cmds.util import echo_formatted_list
 from wildercli.output_formats import OutputFormat
 from wildercli.util import abridge
+from wildercli.util import convert_to_table_none_if_needed
 
 
 @click.group()
@@ -27,9 +28,10 @@ def artist():
 def show(state, artist):
     """The artist information."""
     _artist = state.get_artist(artist)
+    _bio = convert_to_table_none_if_needed(_artist.bio)
     also_known_as = ", ".join(_artist.also_known_as)
     click.echo(f"{Constants.NAME}: {_artist.name}")
-    click.echo(f"{Constants.BIO}: {_artist.bio}")
+    click.echo(f"{Constants.BIO}: {_bio}")
     if also_known_as:
         click.echo(f"Also known as: '{also_known_as}'")
 

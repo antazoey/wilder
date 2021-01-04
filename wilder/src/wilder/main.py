@@ -36,56 +36,31 @@ class Wilder(BaseWildApi):
     def __init__(self, mgmt_obj=None):
         self._mgmt = mgmt_obj or parse_mgmt()
 
-    def get_artists(self):
-        """Get all artists."""
-        return self._mgmt.artists
-
     def get_mgmt_json(self):
         """Get the full MGMT JSON blob."""
         return self._mgmt.to_json()
 
+    """Artists"""
+
+    def get_artists(self):
+        """Get all artists."""
+        return self._mgmt.artists
+
     def get_artist(self, name=None):
         """Get an artist."""
-        return self.get_artist_by_name(name=name) or self.get_focus_artist()
+        return self._get_artist_by_name(name=name) or self._get_focus_artist()
+    
+    def focus_on_artist(self, artist_name):
+        """Change the focus artist."""
+        artist = self._get_artist_by_name(artist_name)
+        self._mgmt.focus_artist = artist.name
+        self._save()
 
-    def get_focus_artist(self):
-        """Get the Wilder focus artist."""
-        artists = self.get_artists()
-        artist_name = self._mgmt.focus_artist
-        if not artists:
-            raise NoArtistsFoundError()
-        for artist in artists:
-            if artist.name == artist_name:
-                return artist
-        return artists[0]
-
-    def get_artist_by_name(self, name):
-        """Get an artist by their performer name."""
-        if not name:
-            return None
-        artist = self._mgmt.get_artist_by_name(name)
-        if not artist:
-            raise ArtistNotFoundError(name)
-        return artist
-
-    def get_discography(self, artist):
-        """Get all the albums for an artist."""
-        artist = self.get_artist(name=artist)
-        return artist.discography
-
-    def get_album_by_name(self, name, artist_name=None):
-        """Get an album by its title."""
-        artist = self.get_artist(name=artist_name)
-        album = artist.get_album_by_name(name)
-        if not album:
-            raise AlbumNotFoundError(artist_name, name)
-        return album
-
-    def sign_new_artist(self, name, bio=None, also_known_as=None):
+    def sign_new_artist(self, name, bio=None):
         """Create a new artist."""
         if self.is_represented(name):
             raise ArtistAlreadySignedError(name)
-        artist = Artist(name=name, bio=bio, also_known_as=also_known_as)
+        artist = Artist(name=name, bio=bio)
         self._mgmt.artists.append(artist)
 
         # Set focus artist if first artist signed
@@ -94,7 +69,7 @@ class Wilder(BaseWildApi):
         self._save()
 
     def unsign_artist(self, name):
-        """Removed an artist."""
+        """Remove an artist."""
         if not self.is_represented(name):
             raise ArtistNotSignedError(name)
         focus_artist_name = self._mgmt.focus_artist
@@ -107,27 +82,50 @@ class Wilder(BaseWildApi):
         self._save()
 
     def update_artist(self, name=None, bio=None):
+        """Update artist information."""
         artist = self.get_artist(name=name)
         artist.bio = bio or artist.bio
         self._save()
 
+    def rename_artist(self, new_name, artist_name=None, forget_old_name=False):
+        """Change an artist's performer name."""
+        artist = self.get_artist(name=artist_name)
+        focus_artist_name = self._get_focus_artist().name
+        old_name = artist.name
+        artist.name = new_name
+        if not forget_old_name and old_name not in artist.also_known_as:
+            artist.also_known_as.append(old_name)
+
+        if old_name == focus_artist_name:
+            self._mgmt.focus_artist = new_name
+        self._save()
+
     def add_alias(self, alias, artist_name=None):
+        """Add an additional artist name, such as a "formerly known as"."""
         artist = self.get_artist(name=artist_name)
         artist.also_known_as.append(alias)
         self._save()
 
     def remove_alias(self, alias, artist_name=None):
+        """Remove one of the additional artist names."""
         artist = self.get_artist(name=artist_name)
         artist.also_known_as = filter(lambda x: x != alias, artist.also_known_as)
         self._save()
 
-    def rename_artist(self, new_name, artist_name=None, forget_old_name=False):
+    """Albums"""
+
+    def get_discography(self, artist=None):
+        """Get all the albums for an artist."""
+        artist = self.get_artist(name=artist)
+        return artist.discography
+
+    def get_album_by_name(self, name, artist_name=None):
+        """Get an album by its title."""
         artist = self.get_artist(name=artist_name)
-        old_name = artist.name
-        artist.name = new_name
-        if not forget_old_name and old_name not in artist.also_known_as:
-            artist.also_known_as.append(old_name)
-        self._save()
+        album = artist.get_album_by_name(name)
+        if not album:
+            raise AlbumNotFoundError(artist_name, name)
+        return album
 
     def start_new_album(
         self,
@@ -157,10 +155,7 @@ class Wilder(BaseWildApi):
         album.status = status or album.status
         self._save()
 
-    def focus_on_artist(self, artist_name):
-        artist = self.get_artist_by_name(artist_name)
-        self._mgmt.focus_artist = artist.name
-        self._save()
+    """Other"""
 
     @staticmethod
     def nuke():
@@ -168,6 +163,26 @@ class Wilder(BaseWildApi):
 
     def _save(self):
         return save(self.get_mgmt_json())
+    
+    def _get_artist_by_name(self, name):
+        """Get an artist by their performer name."""
+        if not name:
+            return None
+        artist = self._mgmt.get_artist_by_name(name)
+        if not artist:
+            raise ArtistNotFoundError(name)
+        return artist
+
+    def _get_focus_artist(self):
+        """Get the Wilder focus artist."""
+        artists = self.get_artists()
+        artist_name = self._mgmt.focus_artist
+        if not artists:
+            raise NoArtistsFoundError()
+        for artist in artists:
+            if artist.name == artist_name:
+                return artist
+        return artists[0]
 
 
 def get_wilder_sdk(obj=None):

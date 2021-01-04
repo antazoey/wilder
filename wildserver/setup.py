@@ -49,5 +49,5 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: Implementation :: CPython",
     ],
-    scripts=["scripts/start-wild-server.sh"],
+    scripts=["scripts/start-wild-server"],
 )

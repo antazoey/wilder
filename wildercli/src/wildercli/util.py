@@ -12,6 +12,7 @@ from click import get_current_context
 from click import style
 
 _PADDING_SIZE = 3
+TABLE_NONE = " - "
 
 
 def does_user_agree(prompt):
@@ -97,16 +98,19 @@ def read_large_file(file_handler, block_size=10000):
         yield block
 
 
+def convert_to_table_none_if_needed(val):
+    if not val and not isinstance(val, bool):
+        return TABLE_NONE
+    return val
+
+
 def format_to_table(rows, column_size):
     """Formats given rows into a string of left justified table."""
     lines = []
     for row in rows:
         line = ""
         for key in row.keys():
-            val = row[key]
-            if not val and not isinstance(val, bool):
-                val = " - "
-
+            val = convert_to_table_none_if_needed(row[key])
             line += str(val).ljust(column_size[key] + _PADDING_SIZE)
         lines.append(line)
     return "\n".join(lines)
@@ -164,7 +168,7 @@ class warn_interrupt:
     def _handle_interrupts(self, sig, frame):
         if not self.interrupted:
             self.interrupted = True
-            echo("\n{}\n{}".format(self.warning, self.exit_instructions), err=True)
+            echo(f"\n{self.warning}\n{self.exit_instructions}", err=True)
         else:
             exit()
 
