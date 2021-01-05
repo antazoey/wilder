@@ -10,6 +10,7 @@ from wildclient.errors import WildBadRequestError
 from wildclient.errors import WildClientError
 from wildclient.errors import WildNotFoundError
 from wildclient.errors import WildUnknownServerError
+from wilder.errors import ArtistNotFoundError
 
 
 SESSION_ADAPTER = HTTPAdapter(pool_connections=200, pool_maxsize=4, pool_block=True)
@@ -144,6 +145,10 @@ def _handle_error(method, url, response):
     if response.status_code == 400:
         raise WildBadRequestError(response_data)
     elif response.status_code == 404:
+        _data_for_check = response_data.lower()
+        if "not found" in _data_for_check:
+            if "artist" in _data_for_check:
+                raise ArtistNotFoundError(response_data)
         raise WildNotFoundError(response_data)
     raise WildUnknownServerError(response_data)
 

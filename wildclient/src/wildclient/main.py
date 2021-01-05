@@ -20,6 +20,16 @@ def _make_artist_params(artist_name):
     return {Constants.ARTIST: artist_name}
 
 
+def _make_artist_url(endpoint):
+    return f"{Constants.ARTIST}/{endpoint}"
+
+
+def _send_alias_request(artist_name, alias, method):
+    url = _make_artist_url(Constants.ALIAS)
+    _json = {Constants.ARTIST: artist_name, Constants.ALIAS: alias}
+    method(url, json=_json)
+
+
 class WildClient(BaseWildApi):
     def __init__(self, conn):
         self.connection = conn
@@ -33,7 +43,8 @@ class WildClient(BaseWildApi):
 
     def get_artists(self):
         """Get all artists."""
-        _json = self._get(f"{Constants.ARTIST}/list").get(Constants.ARTISTS)
+        url = _make_artist_params(Constants.LIST)
+        _json = self._get(url).get(Constants.ARTISTS)
         return [Artist.from_json(a_json) for a_json in _json]
 
     def get_artist(self, name=None):
@@ -43,14 +54,16 @@ class WildClient(BaseWildApi):
 
     def focus_on_artist(self, artist_name):
         """Change the focus artist."""
-        self._post(Constants.FOCUS, _make_artist_params(artist_name))
+        url = _make_artist_url(Constants.FOCUS)
+        self._post(url, _make_artist_params(artist_name))
 
     def sign_new_artist(self, artist, bio=None):
         """Create a new artist."""
         try:
             params = _make_artist_params(artist)
             params[Constants.BIO] = bio
-            self._post(Constants.SIGN, params)
+            url = _make_artist_url(Constants.SIGN)
+            self._post(url, params)
         except WildBadRequestError as err:
             if f"{artist} already signed" in str(err):
                 raise ArtistAlreadySignedError(artist)
@@ -59,7 +72,8 @@ class WildClient(BaseWildApi):
     def unsign_artist(self, artist):
         """Remove a managed artist."""
         try:
-            self._post(Constants.UNSIGN, _make_artist_params(artist))
+            url = _make_artist_url(Constants.UNSIGN)
+            self._post(url, _make_artist_params(artist))
         except WildBadRequestError as err:
             if f"{artist} is not signed" in str(err):
                 raise ArtistNotSignedError(artist)
@@ -67,12 +81,12 @@ class WildClient(BaseWildApi):
 
     def update_artist(self, name=None, bio=None):
         """Update artist information."""
-        url = f"/{Constants.ARTIST}/update"
+        url = _make_artist_url(Constants.UPDATE)
         self._post(url, json={Constants.ARTIST: name, Constants.BIO: bio})
 
     def rename_artist(self, new_name, artist_name=None, forget_old_name=False):
         """Change an artist's performer name."""
-        url = f"/{Constants.ARTIST}/rename"
+        url = _make_artist_url(Constants.RENAME)
         _json = {
             Constants.ARTIST: artist_name,
             Constants.NEW_NAME: new_name,
@@ -82,13 +96,11 @@ class WildClient(BaseWildApi):
 
     def add_alias(self, alias, artist_name=None):
         """Add an additional artist name, such as a 'formerly known as'."""
-        url = f"/{Constants.ARTIST}/{Constants.ALIAS}"
-        self._post(url, json={Constants.ARTIST: artist_name, Constants.ALIAS: alias})
+        _send_alias_request(alias, artist_name, self._post)
 
     def remove_alias(self, alias, artist_name=None):
         """Remove one of the additional artist names."""
-        url = f"{Constants.ARTIST}/{Constants.ALIAS}"
-        self._delete(url, json={Constants.ARTIST: artist_name, Constants.ALIAS: alias})
+        _send_alias_request(alias, artist_name, self._delete)
 
     """Album"""
 

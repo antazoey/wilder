@@ -89,6 +89,8 @@ class Wilder(BaseWildApi):
 
     def rename_artist(self, new_name, artist_name=None, forget_old_name=False):
         """Change an artist's performer name."""
+        if not new_name:
+            raise ValueError("Must provide a new name when renaming an artist.")
         artist = self.get_artist(name=artist_name)
         focus_artist_name = self._get_focus_artist().name
         old_name = artist.name
