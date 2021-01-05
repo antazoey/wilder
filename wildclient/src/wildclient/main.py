@@ -38,7 +38,7 @@ class WildClient(BaseWildApi):
 
     def get_artist(self, name=None):
         """Get an artist."""
-        _json = self._get(f"{Constants.ARTIST}", params={"artist": name})
+        _json = self._get(Constants.ARTIST, params={"artist": name})
         return Artist.from_json(_json)
 
     def focus_on_artist(self, artist_name):

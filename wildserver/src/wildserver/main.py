@@ -74,7 +74,7 @@ def mgmt():
 """*********"""
 
 
-@app.route(f"{_ARTIST}/list", methods=[HttpMethod.GET])
+@app.route(f"{_ARTIST}/{Consts.LIST}", methods=[HttpMethod.GET])
 def list_artists():
     """Get all artists."""
     _mgmt = get_wilder_sdk()
@@ -129,7 +129,7 @@ def update_artist():
     return successful_response()
 
 
-@app.route(f"{_ARTIST}/rename", methods=[HttpMethod.POST])
+@app.route(f"{_ARTIST}/{Consts.RENAME}", methods=[HttpMethod.POST])
 def rename_artist():
     """Update artist information."""
     _mgmt = get_wilder_sdk()
@@ -223,6 +223,6 @@ def update_album(album):
 
 
 def _get_request_param(key):
-    _json = request.json
+    _json = request.values
     param = _json.get(key)
     return param
