@@ -24,15 +24,16 @@ def artist():
 
 @click.command(cls=ArtistArgRequiredIfGivenCommand)
 @wild_options()
-@artist_name_option(required=False)
+@artist_name_option
 def show(state, artist):
     """The artist information."""
     _artist = state.get_artist(artist)
     _bio = convert_to_table_none_if_needed(_artist.bio)
-    also_known_as = ", ".join(_artist.also_known_as)
+    also_known_as = _artist.also_known_as
     click.echo(f"{Constants.NAME}: {_artist.name}")
     click.echo(f"{Constants.BIO}: {_bio}")
     if also_known_as:
+        also_known_as = ", ".join(also_known_as)
         click.echo(f"Also known as: '{also_known_as}'")
 
 
@@ -81,7 +82,7 @@ def unsign(state, artist_name):
 
 @click.command(cls=ArtistArgRequiredIfGivenCommand)
 @wild_options()
-@artist_name_option(required=False)
+@artist_name_option
 @bio_option
 def update(state, artist, bio):
     """Update artist information."""
@@ -101,7 +102,7 @@ def focus(state, artist_name):
 
 @click.command(cls=ArtistArgRequiredIfGivenCommand)
 @wild_options()
-@artist_name_option(required=False)
+@artist_name_option
 @alias_arg
 def add_alias(state, artist, alias):
     """Add an artist alias."""
@@ -110,7 +111,7 @@ def add_alias(state, artist, alias):
 
 @click.command(cls=ArtistArgRequiredIfGivenCommand)
 @wild_options()
-@artist_name_option(required=False)
+@artist_name_option
 @alias_arg
 def remove_alias(state, artist, alias):
     """Remove an artist alias."""
@@ -120,7 +121,7 @@ def remove_alias(state, artist, alias):
 @click.command()
 @wild_options()
 @click.argument("new_name")
-@artist_name_option(required=False)
+@artist_name_option
 @click.option(
     "--forget-old-name", help="To not store in 'Also known as'.", default=False,
 )

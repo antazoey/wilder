@@ -27,6 +27,7 @@ format_option = click.option(
     default=OutputFormat.TABLE,
 )
 bio_option = click.option("--bio", "--biography", help="The artist biography.")
+artist_name_option = click.option("--artist", help="The name of an artist.")
 
 
 class CLIState:
@@ -61,12 +62,12 @@ class CLIState:
 pass_state = click.make_pass_decorator(CLIState, ensure=True)
 
 
-def artist_name_option(required=True):
-    return click.option("--artist", help="The name of an artist.", required=required)
-
-
-def album_name_option(required=True):
+def album_option(required=False):
     return click.option("--album", help="The name of an album.", required=required)
+
+
+def track_option(required=False):
+    return click.option("--track", "-t", help="The name of a track.", required=required)
 
 
 def description_option(_help):
@@ -81,7 +82,7 @@ def wild_options():
     return decorator
 
 
-def album_options():
+def update_album_options():
     def decorator(f):
         f = description_option(_help="A description for the album.")(f)
         f = click.option(
@@ -94,6 +95,9 @@ def album_options():
             help="The current status of the album.",
             type=click.Choice(AlbumState.choices()),
         )(f)
+        f = wild_options()(f)
+        f = artist_name_option(f)
+        f = album_name_arg(f)
         return f
 
     return decorator

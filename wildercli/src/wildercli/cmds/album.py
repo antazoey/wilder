@@ -1,9 +1,10 @@
 import click
 from wilder.constants import Constants
 from wildercli.argv import album_name_arg
-from wildercli.argv import album_options
+from wildercli.argv import album_option
 from wildercli.argv import artist_name_option
 from wildercli.argv import format_option
+from wildercli.argv import update_album_options
 from wildercli.argv import wild_options
 from wildercli.cmds.util import ArtistArgRequiredIfGivenCommand
 from wildercli.cmds.util import echo_formatted_list
@@ -18,10 +19,7 @@ def album():
 
 
 @click.command(cls=ArtistArgRequiredIfGivenCommand)
-@wild_options()
-@artist_name_option(required=False)
-@album_name_arg
-@album_options()
+@update_album_options()
 def new(state, artist, album_name, description, album_type, status):
     """Start a new album."""
     state.wilder.start_new_album(
@@ -43,7 +41,7 @@ ALBUM_HEADER = {
 
 @click.command(Constants.LIST, cls=ArtistArgRequiredIfGivenCommand)
 @wild_options()
-@artist_name_option(required=False)
+@artist_name_option
 @format_option
 def _list(state, artist, format):
     """List an artist's discography."""
@@ -64,10 +62,7 @@ def _list(state, artist, format):
 
 
 @click.command(cls=ArtistArgRequiredIfGivenCommand)
-@wild_options()
-@artist_name_option(required=False)
-@album_name_arg
-@album_options()
+@update_album_options()
 def update(state, artist, album_name, description, album_type, status):
     """Update an album."""
     state.wilder.update_album(
@@ -77,6 +72,15 @@ def update(state, artist, album_name, description, album_type, status):
         album_type=album_type,
         status=status,
     )
+
+
+@click.command(cls=ArtistArgRequiredIfGivenCommand)
+@wild_options()
+@artist_name_option
+@album_option(required=True)
+@click.option("--track", "-t", help="The path to a track.", required=True)
+def add_track(state, artist, album_name, track):
+    pass
 
 
 def _handle_no_albums_found(name):

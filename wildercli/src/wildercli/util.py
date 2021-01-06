@@ -27,6 +27,12 @@ def does_user_agree(prompt):
     return ans in ["y", "yes", "sure"]
 
 
+def get_bytes(file_path):
+    """Convert a file to its bytes."""
+    if not os.path.isfile(file_path):
+        raise ValueError("Expecting path to file.")
+
+
 def get_user_project_path(*sub_dirs):
     """The path on your user dir to /.wildercli/[subdir]."""
     package_name = __name__.split(".")[0]
