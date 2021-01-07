@@ -189,18 +189,22 @@ class _InfoBuilder:
         return self._type and self._ext and self._mime
 
     def _to_info(self):
-        builder = {self._TYPE_KEY: [], self._EXT_KEY: [], self._MIME_KEY: []}
+        builder = self._init_sub_builder()
         for key in self.keys:
-            builder[key] = [
-                element
-                for element in sorted(
-                    self.info[key], key=self.info[key].get, reverse=True
-                )
-            ]
+            builder[key] = self._get_elements(key)
         _type = builder[self._TYPE_KEY]
         ext = builder[self._EXT_KEY]
         mime = builder[self._MIME_KEY]
         return Info(_type, ext, mime)
+
+    def _init_sub_builder(self):
+        return {self._TYPE_KEY: [], self._EXT_KEY: [], self._MIME_KEY: []}
+
+    def _get_elements(self, key):
+        return [ele for ele in self._get_sorted_info(key)]
+
+    def _get_sorted_info(self, key):
+        return sorted(self.info[key], key=self.info[key].get, reverse=True)
 
 
 def _get_bytes(audio_file):
