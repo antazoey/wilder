@@ -191,13 +191,13 @@ class _InfoBuilder:
     def _to_info(self):
         lists = self._init_info_lists()
         for key in self.keys:
-            lists[key] = self._get_elements(key)
+            lists[key] = self._get_info(key)
         return Info(lists[self._TYPE_KEY], lists[self._EXT_KEY], lists[self._MIME_KEY])
 
     def _init_info_lists(self):
         return {self._TYPE_KEY: [], self._EXT_KEY: [], self._MIME_KEY: []}
 
-    def _get_elements(self, key):
+    def _get_info(self, key):
         return sorted(self.info[key], key=self.info[key].get, reverse=True)
 
 
