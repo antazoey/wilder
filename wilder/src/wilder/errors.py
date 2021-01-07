@@ -43,3 +43,10 @@ class AlbumNotFoundError(WildNotFoundError):
 
     def __init__(self, artist_name, album_name):
         super().__init__(f"Album '{album_name}' by '{artist_name}' was not found.")
+
+
+class InvalidAudioFileError(WildError):
+    """An error raised when receiving a file that has non-audio mime-type when expecting one."""
+
+    def __init__(self, file_path):
+        super().__init__(f"File at '{file_path}' is not a supported audio file.")

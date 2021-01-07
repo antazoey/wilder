@@ -1,7 +1,11 @@
+import os
+
+from wilder.errors import InvalidAudioFileError
+from wilder.errors import WildNotFoundError
+
 """
 Forked from fleep library by Mykyta Paliienko (https://github.com/floyernick/fleep-py).
 """
-
 
 AUDIO_FILE_DATA = [
     {
@@ -112,6 +116,18 @@ AUDIO_FILE_DATA = [
 ]
 
 
+def get_audio_file_info(audio_file_path):
+    """Determines file format and picks suitable file types, extensions and MIME types.
+
+    Args:
+        audio_file_path (str): The path to an audio file.
+
+    Returns: Instance of wilder.fleep.Info.
+    """
+    builder = _InfoBuilder(audio_file_path)
+    return builder.build()
+
+
 class Info:
     """Information about the file.
 
@@ -129,31 +145,72 @@ class Info:
         self.mime = mime
 
 
-def get_audio_file_info(audio_bytes):
-    """Determines file format and picks suitable file types, extensions and MIME types.
+class _InfoBuilder:
+    _TYPE_KEY = "type"
+    _EXT_KEY = "extension"
+    _MIME_KEY = "mime"
+    _KEYS = [_TYPE_KEY, _EXT_KEY, _MIME_KEY]
 
-    Args:
-        audio_bytes (bytes): Byte sequence (128 bytes are enough)
+    def __init__(self, audio_file_path):
+        self._path = audio_file_path
+        self.info = {self._TYPE_KEY: {}, self._EXT_KEY: {}, self._MIME_KEY: {}}
+        audio_bytes = _get_bytes(audio_file_path)
+        self._stream = _get_stream(audio_bytes)
 
-    Returns: Instance of wilder.fleep.Info.
-    """
+    def build(self):
+        for element in AUDIO_FILE_DATA:
+            for signature in element["signature"]:
+                sig_len = len(signature)
+                offset = element["offset"] * 2 + element["offset"]
+                if signature == self._stream[offset : sig_len + offset]:
+                    for key in self.keys:
+                        self.info[key][element[key]] = sig_len
+        if not self._is_audio():
+            raise InvalidAudioFileError(self._path)
+        return self._to_info()
 
-    if not isinstance(audio_bytes, bytes):
-        raise TypeError("object type must be bytes")
+    @property
+    def keys(self):
+        return self._KEYS
 
-    info = {"type": dict(), "extension": dict(), "mime": dict()}
-    stream = " ".join(["{:02X}".format(byte) for byte in audio_bytes])
+    @property
+    def _type(self):
+        return self.info[self._TYPE_KEY]
 
-    for element in AUDIO_FILE_DATA:
-        for signature in element["signature"]:
-            offset = element["offset"] * 2 + element["offset"]
-            if signature == stream[offset : len(signature) + offset]:
-                for key in ["type", "extension", "mime"]:
-                    info[key][element[key]] = len(signature)
+    @property
+    def _ext(self):
+        return self.info[self._EXT_KEY]
 
-    for key in ["type", "extension", "mime"]:
-        info[key] = [
-            element for element in sorted(info[key], key=info[key].get, reverse=True)
-        ]
+    @property
+    def _mime(self):
+        return self.info[self._MIME_KEY]
 
-    return Info(info["type"], info["extension"], info["mime"])
+    def _is_audio(self):
+        return self._type and self._ext and self._mime
+
+    def _to_info(self):
+        builder = {self._TYPE_KEY: [], self._EXT_KEY: [], self._MIME_KEY: []}
+        for key in self.keys:
+            builder[key] = [
+                element
+                for element in sorted(
+                    self.info[key], key=self.info[key].get, reverse=True
+                )
+            ]
+        _type = builder[self._TYPE_KEY]
+        ext = builder[self._EXT_KEY]
+        mime = builder[self._MIME_KEY]
+        return Info(_type, ext, mime)
+
+
+def _get_bytes(audio_file):
+    if isinstance(audio_file, str):
+        if os.path.isfile(audio_file):
+            with open(audio_file, "rb") as aud_file:
+                return aud_file.read(128)
+        raise WildNotFoundError(f"No audio file found at path '{audio_file}'.")
+    raise TypeError("Path must be a str.")
+
+
+def _get_stream(audio_bytes):
+    return " ".join(["{:02X}".format(byte) for byte in audio_bytes])
