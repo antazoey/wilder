@@ -132,7 +132,8 @@ def get_attribute_keys_from_class(cls):
 
 
 def expand_path(path):
-    return os.path.abspath(os.path.expanduser(path))
+    if path:
+        return os.path.abspath(os.path.expanduser(path))
 
 
 def add_src_file_to_track_dir(src_path, album, track):

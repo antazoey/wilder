@@ -45,7 +45,7 @@ class Artist:
     ):
         name = name or self._get_default_album_name()
         album = Album(
-            name=name, description=description, album_type=album_type, status=status
+            path_location, name=name, description=description, album_type=album_type, status=status
         )
         self.discography.append(album)
 

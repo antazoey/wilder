@@ -24,7 +24,7 @@ def new(state, artist, path, album_name, description, album_type, status):
     """Start a new album."""
     state.wilder.start_new_album(
         path,
-        name=album_name,
+        album_name=album_name,
         artist_name=artist,
         description=description,
         album_type=album_type,
@@ -34,6 +34,7 @@ def new(state, artist, path, album_name, description, album_type, status):
 
 ALBUM_HEADER = {
     Constants.NAME: "Name",
+    Constants.PATH: "Path",
     Constants.DESCRIPTION: "Description",
     Constants.ALBUM_TYPE: "Album Type",
     Constants.STATUS: "Status",
@@ -80,8 +81,19 @@ def update(state, artist, album_name, description, album_type, status):
 @artist_name_option
 @album_option(required=False)
 @click.option("--track", "-t", help="The path to a track.", required=True)
-def add_track(state, artist, path, album_name, track):
+def add_track(state, artist, path, album, track):
     pass
+
+
+@click.command(cls=ArtistArgRequiredIfGivenCommand)
+@wild_options()
+@artist_name_option
+@album_option(required=True)
+@yes_option
+def delete(state, artist, album):
+    """Delete an album."""
+    if does_user_agree():
+        state.wilder.remove_album(album, artist=artist)
 
 
 def _handle_no_albums_found(name):

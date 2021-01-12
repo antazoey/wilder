@@ -11,6 +11,7 @@ class Constants:
     CLIENT = "client"
     CREATE_ALBUM = "create-album"
     COLLABORATORS = "collaborators"
+    DELETE = "delete"
     DESCRIPTION = "description"
     DISCOGRAPHY = "discography"
     FOCUS = "focus"

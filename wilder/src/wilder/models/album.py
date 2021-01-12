@@ -57,6 +57,7 @@ class Album:
     def to_json(self):
         return {
             Constants.NAME: self.name,
+            Constants.PATH: self.path,
             Constants.DESCRIPTION: self.description,
             Constants.ARTWORK: self.artwork,
             Constants.ALBUM_TYPE: self.album_type,

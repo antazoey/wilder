@@ -225,6 +225,16 @@ def album_update():
     return successful_response()
 
 
+@app.route(f"{_ALBUM}/{Consts.DELETE}", methods=[HttpMethod.POST])
+def album_delete():
+    """Delete an album"""
+    wilder = get_wilder_sdk()
+    artist_name = _get_request_data_param(Consts.ARTIST)
+    _album = _get_request_data_param(Consts.ALBUM)
+    wilder.delete_album(_album, artist_name=artist_name)
+    return successful_response()
+
+
 def _get_request_query_param(key):
     return request.args.get(key)
 

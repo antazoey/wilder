@@ -183,6 +183,16 @@ class Wilder(BaseWildApi):
         album.add_track(track)
         self._save()
     
+    def delete_album(self, album_name, artist_name=None):
+        """Delete an album."""
+        artist = self.get_artist(artist_name)
+        album = self.get_album(album_name, artist_name=artist_name)
+        albums = []
+        for alb in artist.discography:
+            if alb.name != album.name:
+                albums.append(album)
+        
+    
     def play_track(self, album_name, track_name, artist_name=None):
         """Play a track from an album."""
         album = self.get_album(album_name, artist_name=artist_name)
