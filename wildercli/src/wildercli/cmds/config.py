@@ -5,7 +5,6 @@ from wilder.constants import Constants
 from wildercli.argv import wild_options
 from wildercli.argv import yes_option
 from wildercli.util import does_user_agree
-from wildercli.util import get_url_parts
 
 
 class ConfigRequiredCommand(click.Command):
@@ -24,16 +23,11 @@ def config():
 
 
 @click.command("set")
-@click.option(
-    "--host",
-    "-h",
-    help="The host address and port for the Wilder server.",
-    required=True,
-)
-def _set(host):
+def _set():
     """Create a config file to re-use your Wilder connection parameters."""
-    path_parts = get_url_parts(host)
-    _json = {Constants.HOST: path_parts[0], Constants.PORT: path_parts[1]}
+    host = "http://127.0.0.1"
+    port = 6660
+    _json = {Constants.HOST: host, Constants.PORT: port}
     set_client_settings(_json)
 
 

@@ -8,6 +8,7 @@ from wilder.errors import ArtistAlreadySignedError
 from wilder.errors import ArtistNotSignedError
 from wilder.models import Album
 from wilder.models import Artist
+from wilder.util import expand_path
 
 
 def create_client(config):
@@ -127,7 +128,8 @@ class WildClient(BaseWildApi):
 
     def start_new_album(
         self,
-        album_name,
+        path,
+        album_name=None,
         artist_name=None,
         description=None,
         album_type=None,
@@ -136,6 +138,7 @@ class WildClient(BaseWildApi):
         """Start a new album."""
         url = f"{Constants.ALBUM}/{Constants.CREATE_ALBUM}"
         data = _as_artist_dict(artist_name)
+        data[Constants.PATH] = expand_path(path)
         data[Constants.ALBUM] = album_name
         data[Constants.DESCRIPTION] = description
         data[Constants.ALBUM_TYPE] = album_type

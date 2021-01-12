@@ -190,12 +190,14 @@ def album_create():
     """Create a new album."""
     wilder = get_wilder_sdk()
     artist_name = _get_request_data_param(Consts.ARTIST)
+    path = _get_request_data_param(Consts.PATH)
     _album = _get_request_data_param(Consts.ALBUM)
     description = _get_request_data_param(Consts.DESCRIPTION)
     album_type = _get_request_data_param(Consts.ALBUM_TYPE)
     status = _get_request_data_param(Consts.STATUS)
     wilder.start_new_album(
-        _album,
+        path,
+        name=_album,
         artist_name=artist_name,
         description=description,
         album_type=album_type,

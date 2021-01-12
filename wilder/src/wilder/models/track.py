@@ -23,15 +23,23 @@ class Track:
     # Additional collaborators on the track.
     collaborators = []
 
+    def __init__(self, name, track_num, description=None, collaborators=None):
+        self.name = name
+        self.track_number = track_num
+        self.description = description
+        self.collaborators = collaborators
+
     @classmethod
     def from_json(cls, artist_name, album_name, track_json):
-        track = cls()
+        name = track_json.get(Constants.NAME)
+        track_number = track_json.get(Constants.TRACK_NUMBER)
+        description = track_json.get(Constants.DESCRIPTION)
+        collaborators = track_json.get(Constants.COLLABORATORS)
+        track = cls(name, track_number)
         track.artist = artist_name
         track.album = album_name
-        track.name = track_json.get(Constants.NAME)
-        track.description = track_json.get(Constants.DESCRIPTION)
-        track.track_number = track_json.get(Constants.TRACK_NUMBER)
-        track.collaborators = track_json.get(Constants.COLLABORATORS)
+        track.description = description
+        track.collaborators = collaborators
         return track
 
     def to_json(self):

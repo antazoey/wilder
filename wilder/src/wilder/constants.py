@@ -23,6 +23,7 @@ class Constants:
     MGMT = "mgmt"
     NAME = "name"
     NEW_NAME = "newName"
+    PATH = "path"
     PORT = "port"
     RELEASE_DATE = "releaseDate"
     RELEASE_TYPE = "releaseType"

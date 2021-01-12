@@ -1,6 +1,7 @@
 from wilder.util import to_bool
 from wilder.util import to_int
 from wildercli.util import abridge
+from wilder.util import expand_path
 
 
 def test_to_bool_when_given_none_returns_none():
@@ -83,3 +84,11 @@ def test_abridge_when_given_str_equal_to_up_to_does_not_abridge():
 
 def test_abridge_when_given_str_longer_than_up_to_abridges():
     assert abridge("Test", up_to=3) == "Tes..."
+
+
+def test_expand_path_when_given_unix_user_symbol_returns_abs_path():
+    assert len(expand_path("~")) > 1
+
+
+def test_expand_path_when_given_unix_dots_returns_abs_path():
+    assert len(expand_path(".")) > 1

@@ -1,6 +1,5 @@
 import json
 import os
-from os import path
 
 from wilder.constants import Constants as Consts
 
@@ -47,12 +46,16 @@ def get_config_path(create_if_not_exists=True):
 
 def get_project_path(*subdirs):
     """The path on your user dir to /.wilder/[subdir]."""
-    home = path.expanduser("~")
-    user_project_path = path.join(home, ".wilder")
-    result_path = path.join(user_project_path, *subdirs)
-    if not path.exists(result_path):
-        os.makedirs(result_path)
+    home = os.path.expanduser("~")
+    user_project_path = os.path.join(home, ".wilder")
+    result_path = os.path.join(user_project_path, *subdirs)
+    create_dir_if_not_exists(result_path)
     return result_path
+
+
+def create_dir_if_not_exists(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
 
 
 def format_dict(dict_, label=None):
@@ -126,3 +129,37 @@ def get_attribute_keys_from_class(cls):
         for attr in dir(cls)
         if not callable(cls().__getattribute__(attr)) and not attr.startswith("_")
     ]
+
+
+def expand_path(path):
+    return os.path.abspath(os.path.expanduser(path))
+
+
+def add_src_file_to_track_dir(src_path, album, track):
+    track_path = get_track_path(album, track.name)
+    _add_file_to_location(src_path, track_path, track_name)
+
+
+def get_track_path(album, track_name):
+    track_path = f"{album.path}/{track_name}"
+    create_dir_if_not_exists(track_path)
+    return track_path
+
+
+def _add_file_to_location(source_file, dest_path, filename):
+    new_file = f"{dest_path}/{filename}"
+    if not os.path.isfile(source_file):
+        raise WilderNotFoundError(f"File not found: {source_file}")
+    remove_file_if_exists(new_file)
+    shutil.copy(source_file, new_file)
+
+
+def remove_file_if_exists(file_path):
+    if os.path.isfile(file_path):
+        os.remove(file_path)
+
+
+def get_track_file_by_ext(album, track_name):
+    track_path = get_track_path(album, track_name)
+    wav
+    

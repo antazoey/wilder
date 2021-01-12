@@ -9,9 +9,10 @@ from wilder.errors import ArtistAlreadySignedError
 from wilder.errors import ArtistNotFoundError
 from wilder.errors import ArtistNotSignedError
 from wilder.errors import NoArtistsFoundError
+from wilder.models import Track
 from wilder.models.artist import Artist
 from wilder.models.mgmt import Mgmt
-from wilder.util import get_mgmt_json
+from wilder.util import get_mgmt_json, expand_path
 from wilder.util import get_mgmt_json_path
 from wilder.util import get_project_path
 
@@ -131,7 +132,8 @@ class Wilder(BaseWildApi):
 
     def start_new_album(
         self,
-        album_name,
+        path,
+        album_name=None,
         artist_name=None,
         description=None,
         album_type=None,
@@ -139,8 +141,13 @@ class Wilder(BaseWildApi):
     ):
         """Start a new album."""
         artist = self.get_artist(name=artist_name)
+        path = expand_path(path)
         artist.start_new_album(
-            album_name, description=description, album_type=album_type, status=status,
+            path,
+            name=album_name,
+            description=description,
+            album_type=album_type,
+            status=status,
         )
         self._save()
 
@@ -158,6 +165,31 @@ class Wilder(BaseWildApi):
         album.album_type = album_type or album.album_type
         album.status = status or album.status
         self._save()
+
+    def add_track(
+        self,
+        album_name,
+        track_name,
+        track_num,
+        artist_name=None,
+        description=None,
+        collaborators=None,
+    ):
+        """Add a track to an album."""
+        album = self.get_album(album_name, artist_name=artist_name)
+        track = Track(
+            track_name, track_num, description=description, collaborators=collaborators
+        )
+        album.add_track(track)
+        self._save()
+    
+    def play_track(self, album_name, track_name, artist_name=None):
+        """Play a track from an album."""
+        album = self.get_album(album_name, artist_name=artist_name)
+        track = album.get_track(track_name)
+        if not track:
+            raise TrackNotFoundError()
+        wav_file 
 
     """Other"""
 

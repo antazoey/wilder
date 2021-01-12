@@ -1,6 +1,5 @@
 import click
 from wilder.constants import Constants
-from wildercli.argv import album_name_arg
 from wildercli.argv import album_option
 from wildercli.argv import artist_name_option
 from wildercli.argv import format_option
@@ -20,10 +19,12 @@ def album():
 
 @click.command(cls=ArtistArgRequiredIfGivenCommand)
 @update_album_options()
-def new(state, artist, album_name, description, album_type, status):
+@click.option("--path", "-p", help=f"The path where to start an album.")
+def new(state, artist, path, album_name, description, album_type, status):
     """Start a new album."""
     state.wilder.start_new_album(
-        album_name,
+        path,
+        name=album_name,
         artist_name=artist,
         description=description,
         album_type=album_type,
@@ -77,9 +78,9 @@ def update(state, artist, album_name, description, album_type, status):
 @click.command(cls=ArtistArgRequiredIfGivenCommand)
 @wild_options()
 @artist_name_option
-@album_option(required=True)
+@album_option(required=False)
 @click.option("--track", "-t", help="The path to a track.", required=True)
-def add_track(state, artist, album_name, track):
+def add_track(state, artist, path, album_name, track):
     pass
 
 

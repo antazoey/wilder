@@ -4,6 +4,9 @@ from wilder.models.track import Track
 
 
 class Album:
+    # The path on the local machine for where the album got initialized.
+    path = None
+
     # The name of the album
     name = None
 
@@ -28,7 +31,8 @@ class Album:
     # The status of the album, such as RELEASED.
     status = None
 
-    def __init__(self, name=None, description=None, album_type=None, status=None):
+    def __init__(self, path, name=None, description=None, album_type=None, status=None):
+        self.path = f"{path}/{name}"
         self.name = name
         self.description = description
         self.album_type = album_type
@@ -36,7 +40,8 @@ class Album:
 
     @classmethod
     def from_json(cls, artist_name, album_json):
-        album = cls()
+        path = album_json.get(Constants.PATH)
+        album = cls(path)
         album.artist = artist_name
         album.name = album_json.get(Constants.NAME)
         album.description = album_json.get(Constants.DESCRIPTION)
@@ -70,3 +75,8 @@ class Album:
             Release.from_json(artist_name, album_name, release_json)
             for release_json in releases_json
         ]
+    
+    def get_track(self, name):
+        for track in self.tracks:
+            if track.name == name:
+                return track

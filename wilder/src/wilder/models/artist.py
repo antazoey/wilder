@@ -41,7 +41,7 @@ class Artist:
         }
 
     def start_new_album(
-        self, name=None, description=None, album_type=None, status=None
+        self, path_location, name=None, description=None, album_type=None, status=None
     ):
         name = name or self._get_default_album_name()
         album = Album(

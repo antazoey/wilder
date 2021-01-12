@@ -50,3 +50,10 @@ class InvalidAudioFileError(WildError):
 
     def __init__(self, file_path):
         super().__init__(f"File at '{file_path}' is not a supported audio file.")
+
+
+class TrackNotFoundError(WildNotFoundError):
+    """An error raised when the track was not found."""
+    
+    def __init__(self, album_name, track_name):
+        super().__init__(f"Track named {track_name} on album {album_name} was not found.")
