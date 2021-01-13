@@ -9,12 +9,15 @@ from wilder.errors import ArtistAlreadySignedError
 from wilder.errors import ArtistNotFoundError
 from wilder.errors import ArtistNotSignedError
 from wilder.errors import NoArtistsFoundError
+from wilder.errors import AlbumAlreadyExistsError
 from wilder.models import Track
 from wilder.models.artist import Artist
 from wilder.models.mgmt import Mgmt
-from wilder.util import get_mgmt_json, expand_path
+from wilder.util import expand_path
+from wilder.util import get_mgmt_json
 from wilder.util import get_mgmt_json_path
 from wilder.util import get_project_path
+from wilder.util import create_dir_if_not_exists
 
 
 class BaseWildApi:
@@ -141,7 +144,11 @@ class Wilder(BaseWildApi):
     ):
         """Start a new album."""
         artist = self.get_artist(name=artist_name)
+        for alb in artist.discography:
+            if alb.name == album_name:
+                raise AlbumAlreadyExistsError(alb.name)
         path = expand_path(path)
+        create_dir_if_not_exists(path)
         artist.start_new_album(
             path,
             name=album_name,
@@ -182,7 +189,7 @@ class Wilder(BaseWildApi):
         )
         album.add_track(track)
         self._save()
-    
+
     def delete_album(self, album_name, artist_name=None):
         """Delete an album."""
         artist = self.get_artist(artist_name)
@@ -191,15 +198,16 @@ class Wilder(BaseWildApi):
         for alb in artist.discography:
             if alb.name != album.name:
                 albums.append(album)
-        
-    
+        artist.discography = albums
+        self._save()
+
     def play_track(self, album_name, track_name, artist_name=None):
         """Play a track from an album."""
         album = self.get_album(album_name, artist_name=artist_name)
         track = album.get_track(track_name)
         if not track:
             raise TrackNotFoundError()
-        wav_file 
+        wav_file
 
     """Other"""
 

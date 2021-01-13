@@ -1,14 +1,17 @@
 import click
 from wilder.constants import Constants
+from wildercli.argv import album_name_arg
 from wildercli.argv import album_option
 from wildercli.argv import artist_name_option
 from wildercli.argv import format_option
 from wildercli.argv import update_album_options
 from wildercli.argv import wild_options
+from wildercli.argv import yes_option
 from wildercli.cmds.util import ArtistArgRequiredIfGivenCommand
 from wildercli.cmds.util import echo_formatted_list
 from wildercli.output_formats import OutputFormat
 from wildercli.util import abridge
+from wildercli.util import does_user_agree
 
 
 @click.group()
@@ -19,9 +22,9 @@ def album():
 
 @click.command(cls=ArtistArgRequiredIfGivenCommand)
 @update_album_options()
-@click.option("--path", "-p", help=f"The path where to start an album.")
-def new(state, artist, path, album_name, description, album_type, status):
-    """Start a new album."""
+@click.option("--path", "-p", help=f"The path where to start an album.", default=".")
+def init(state, artist, path, album_name, description, album_type, status):
+    """Start a new album at the given path."""
     state.wilder.start_new_album(
         path,
         album_name=album_name,
@@ -88,12 +91,13 @@ def add_track(state, artist, path, album, track):
 @click.command(cls=ArtistArgRequiredIfGivenCommand)
 @wild_options()
 @artist_name_option
-@album_option(required=True)
+@album_name_arg
 @yes_option
-def delete(state, artist, album):
+def delete(state, artist, album_name):
     """Delete an album."""
-    if does_user_agree():
-        state.wilder.remove_album(album, artist=artist)
+    album = state.wilder.get_album(album_name, artist_name=artist)
+    if does_user_agree(f"Are you sure you wish to delete the album '{album.name}'? "):
+        state.wilder.delete_album(album.name, artist_name=artist)
 
 
 def _handle_no_albums_found(name):
@@ -101,6 +105,7 @@ def _handle_no_albums_found(name):
     click.echo(msg)
 
 
-album.add_command(new)
+album.add_command(init)
 album.add_command(_list)
 album.add_command(update)
+album.add_command(delete)

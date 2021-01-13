@@ -63,10 +63,7 @@ def _list(state, format):
 @bio_option
 def sign(state, artist_name, bio):
     """Manage a new artist."""
-    try:
-        state.wilder.sign_new_artist(artist_name, bio=bio)
-    except ArtistAlreadySignedError:
-        click.echo(f"{artist_name} is already signed.")
+    state.wilder.sign_new_artist(artist_name, bio=bio)
 
 
 @click.command()
@@ -74,10 +71,7 @@ def sign(state, artist_name, bio):
 @artist_name_arg
 def unsign(state, artist_name):
     """Stop managing an artist."""
-    try:
-        state.wilder.unsign_artist(artist_name)
-    except ArtistNotSignedError:
-        click.echo(f"{artist_name} is not signed.")
+    state.wilder.unsign_artist(artist_name)
 
 
 @click.command(cls=ArtistArgRequiredIfGivenCommand)

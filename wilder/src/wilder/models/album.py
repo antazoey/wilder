@@ -76,7 +76,7 @@ class Album:
             Release.from_json(artist_name, album_name, release_json)
             for release_json in releases_json
         ]
-    
+
     def get_track(self, name):
         for track in self.tracks:
             if track.name == name:

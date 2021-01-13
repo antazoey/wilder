@@ -163,14 +163,11 @@ class WildClient(BaseWildApi):
             Constants.STATUS: status,
         }
         self._post(url, _json)
-    
+
     def delete_album(self, album_name, artist_name=None):
         """Delete an album."""
         url = f"{Constants.ALBUM}/{Constants.DELETE}"
-        _json = {
-            Constants.ALBUM: album_name,
-            Constants.ARTIST: artist_name
-        }
+        _json = {Constants.ALBUM: album_name, Constants.ARTIST: artist_name}
         self._post(url, _json)
 
     """Internal"""
