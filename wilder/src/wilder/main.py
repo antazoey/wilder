@@ -18,6 +18,8 @@ from wilder.util import get_mgmt_json
 from wilder.util import get_mgmt_json_path
 from wilder.util import get_project_path
 from wilder.util import create_dir_if_not_exists
+from wilder.util import get_default_artwork_image_path
+from wilder.util import add_src_file_to_album_dir
 
 
 class BaseWildApi:
@@ -130,12 +132,12 @@ class Wilder(BaseWildApi):
         artist = self.get_artist(name=artist_name)
         album = artist.get_album_by_name(name)
         if not album:
-            raise AlbumNotFoundError(artist_name, name)
+            raise AlbumNotFoundError(name)
         return album
 
     def start_new_album(
         self,
-        path,
+        album_path,
         album_name=None,
         artist_name=None,
         description=None,
@@ -147,10 +149,12 @@ class Wilder(BaseWildApi):
         for alb in artist.discography:
             if alb.name == album_name:
                 raise AlbumAlreadyExistsError(alb.name)
-        path = expand_path(path)
-        create_dir_if_not_exists(path)
+        album_path = expand_path(album_path)
+        album_path = f"{album_path}/{album_name}"
+        create_dir_if_not_exists(album_path)
+        add_src_file_to_album_dir(get_default_artwork_image_path(), album_path)
         artist.start_new_album(
-            path,
+            album_path,
             name=album_name,
             description=description,
             album_type=album_type,

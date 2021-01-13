@@ -32,7 +32,7 @@ class Album:
     status = None
 
     def __init__(self, path, name=None, description=None, album_type=None, status=None):
-        self.path = f"{path}/{name}"
+        self.path = path
         self.name = name
         self.description = description
         self.album_type = album_type

@@ -41,8 +41,8 @@ class NoArtistsFoundError(WildNotFoundError):
 class AlbumNotFoundError(WildNotFoundError):
     """An error raised when an album is not found."""
 
-    def __init__(self, artist_name, album_name):
-        super().__init__(f"Album '{album_name}' by '{artist_name}' was not found.")
+    def __init__(self, album_name):
+        super().__init__(f"Album '{album_name}' was not found.")
 
 
 class InvalidAudioFileError(WildError):

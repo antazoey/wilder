@@ -45,6 +45,11 @@ def get_config_path(create_if_not_exists=True):
     return config_path
 
 
+def get_default_artwork_image_path():
+    here = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(here, "artwork.png")
+
+
 def get_project_path(*subdirs):
     """The path on your user dir to /.wilder/[subdir]."""
     home = os.path.expanduser("~")
@@ -134,12 +139,18 @@ def get_attribute_keys_from_class(cls):
 
 def expand_path(path):
     if path:
-        return os.path.abspath(os.path.expanduser(path))
+        path = os.path.expanduser(path)
+        return os.path.abspath(path)
+
+
+def add_src_file_to_album_dir(src_path, album_path):
+    _add_file_to_location(src_path, album_path)
 
 
 def add_src_file_to_track_dir(src_path, album, track):
     track_path = get_track_path(album, track.name)
-    _add_file_to_location(src_path, track_path, track_name)
+    dest = f"{dest_path}/{filename}"
+    _add_file_to_location(src_path, dest)
 
 
 def get_track_path(album, track_name):
@@ -148,12 +159,11 @@ def get_track_path(album, track_name):
     return track_path
 
 
-def _add_file_to_location(source_file, dest_path, filename):
-    new_file = f"{dest_path}/{filename}"
+def _add_file_to_location(source_file, dest_path):
     if not os.path.isfile(source_file):
         raise WilderNotFoundError(f"File not found: {source_file}")
-    remove_file_if_exists(new_file)
-    shutil.copy(source_file, new_file)
+    remove_file_if_exists(dest_path)
+    shutil.copy(source_file, dest_path)
 
 
 def remove_file_if_exists(file_path):
