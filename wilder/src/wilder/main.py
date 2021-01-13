@@ -4,22 +4,22 @@ import shutil
 from datetime import datetime
 
 from wilder.constants import Constants as Consts
+from wilder.errors import AlbumAlreadyExistsError
 from wilder.errors import AlbumNotFoundError
 from wilder.errors import ArtistAlreadySignedError
 from wilder.errors import ArtistNotFoundError
 from wilder.errors import ArtistNotSignedError
 from wilder.errors import NoArtistsFoundError
-from wilder.errors import AlbumAlreadyExistsError
 from wilder.models import Track
 from wilder.models.artist import Artist
 from wilder.models.mgmt import Mgmt
+from wilder.util import add_src_file_to_album_dir
+from wilder.util import create_dir_if_not_exists
 from wilder.util import expand_path
+from wilder.util import get_default_artwork_image_path
 from wilder.util import get_mgmt_json
 from wilder.util import get_mgmt_json_path
 from wilder.util import get_project_path
-from wilder.util import create_dir_if_not_exists
-from wilder.util import get_default_artwork_image_path
-from wilder.util import add_src_file_to_album_dir
 
 
 class BaseWildApi:
@@ -177,7 +177,7 @@ class Wilder(BaseWildApi):
         album.status = status or album.status
         self._save()
 
-    def add_track(
+    def start_new_track(
         self,
         album_name,
         track_name,

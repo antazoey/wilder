@@ -225,6 +225,25 @@ def album_update():
     return successful_response()
 
 
+@app.route(f"{_ALBUM}/{Consts.CREATE_TRACK}")
+def album_create_track():
+    wilder = get_wilder_sdk()
+    artist_name = _get_request_data_param(Consts.ARTIST)
+    _album = _get_request_data_param(Consts.ALBUM)
+    track = _get_request_data_param(Consts.TRACK)
+    track_num = _get_request_data_param(Consts.TRACK_NUMBER)
+    description = _get_request_data_param(Consts.DESCRIPTION)
+    collaborators = _get_request_data_param(Consts.COLLABORATORS)
+    wilder.start_new_track(
+        album_name,
+        track,
+        track_num,
+        artist_name=artist_name,
+        description=description,
+        collaborators=collaborators,
+    )
+
+
 @app.route(f"{_ALBUM}/{Consts.DELETE}", methods=[HttpMethod.POST])
 def album_delete():
     """Delete an album"""

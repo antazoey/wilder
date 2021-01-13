@@ -3,11 +3,11 @@ import re
 from collections import OrderedDict
 
 import click
+from wilder.errors import AlbumAlreadyExistsError
 from wilder.errors import AlbumNotFoundError
 from wilder.errors import ArtistAlreadySignedError
 from wilder.errors import ArtistNotFoundError
 from wilder.errors import ArtistNotSignedError
-from wilder.errors import AlbumAlreadyExistsError
 from wildercli.errors import LoggedCLIError
 from wildercli.errors import WilderCLIError
 from wildercli.logger import get_main_cli_logger

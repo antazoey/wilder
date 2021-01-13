@@ -164,6 +164,27 @@ class WildClient(BaseWildApi):
         }
         self._post(url, _json)
 
+    def start_new_track(
+        self,
+        album_name,
+        track_name,
+        track_num,
+        artist_name=None,
+        description=None,
+        collaborators=None,
+    ):
+        """Add a track to an album."""
+        url = f"{Constants.ALBUM}/{Constants.CREATE_TRACK}"
+        _json = {
+            Constants.ALBUM: album_name, 
+            Constants.TRACK: track_name,
+            Constants.TRACK_NUMBER: track_num,
+            Constants.ARTIST: artist_name,
+            Constants.DESCRIPTION: description,
+            Constants.COLLABORATORS: collaborators
+        }
+        self._post(url, _json)
+
     def delete_album(self, album_name, artist_name=None):
         """Delete an album."""
         url = f"{Constants.ALBUM}/{Constants.DELETE}"
