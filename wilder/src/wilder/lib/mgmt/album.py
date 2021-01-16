@@ -1,16 +1,15 @@
 import json
 import os
-from pathlib import Path
 
-from wilder.constants import Constants
-from wilder.models.release import Release
-from wilder.models.track import Track
-from wilder.util.resources import get_album_json_path as get_default_album_json_path
-from wilder.util.resources import get_artwork_path
-from wilder.util.shellutil import copy_files_to_dir
-from wilder.util.shellutil import create_dir_if_not_exists
-from wilder.util.shellutil import remove_file_if_exists
-from wilder.util.shellutil import wopen
+from wilder.lib.constants import Constants
+from wilder.lib.mgmt.release import Release
+from wilder.lib.mgmt.track import Track
+from wilder.lib.util.resources import get_album_json_path as get_default_album_json_path
+from wilder.lib.util.resources import get_artwork_path
+from wilder.lib.util.sh import copy_files_to_dir
+from wilder.lib.util.sh import create_dir_if_not_exists
+from wilder.lib.util.sh import remove_file_if_exists
+from wilder.lib.util.sh import wopen
 
 
 class Album:

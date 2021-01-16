@@ -2,7 +2,7 @@ import os
 import shutil
 from pathlib import Path
 
-from wilder.errors import WildNotFoundError
+from wilder.lib.errors import WildNotFoundError
 
 # This module abstracts some OS shell operations.
 

@@ -1,6 +1,6 @@
-from wilder.wildclient import create_client
-from wilder import get_wilder_sdk
-from wilder.config import create_config_object
+from wilder.client.main import create_client
+from wilder.sdk import get_wilder_sdk
+from wilder.lib.config import create_config_object
 from wilder.cli.errors import WildServerConnectionError
 
 

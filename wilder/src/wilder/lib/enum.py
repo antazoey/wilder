@@ -1,4 +1,4 @@
-from wilder.util import get_attribute_keys_from_class
+from wilder.lib.util import get_attribute_keys_from_class
 
 
 class AlbumState:

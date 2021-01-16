@@ -6,11 +6,11 @@ from urllib.parse import urlparse
 from requests.adapters import HTTPAdapter
 from requests.models import Request
 from requests.sessions import Session
-from wilder.wildclient.errors import WildBadRequestError
-from wilder.wildclient.errors import WildClientError
-from wilder.wildclient.errors import WildNotFoundError
-from wilder.wildclient.errors import WildUnknownServerError
-from wilder.errors import ArtistNotFoundError
+from wilder.client.errors import WildBadRequestError
+from wilder.client.errors import WildClientError
+from wilder.client.errors import WildNotFoundError
+from wilder.client.errors import WildUnknownServerError
+from wilder.lib.errors import ArtistNotFoundError
 
 
 SESSION_ADAPTER = HTTPAdapter(pool_connections=200, pool_maxsize=4, pool_block=True)

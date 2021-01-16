@@ -1,14 +1,13 @@
-from wilder.wildclient import create_connection
-from wilder.wildclient.errors import OperationNotPermittedError
-from wilder.wildclient.errors import WildBadRequestError
-from wilder import BaseWildApi
-from wilder import parse_mgmt
-from wilder.constants import Constants
-from wilder.errors import ArtistAlreadySignedError
-from wilder.errors import ArtistNotSignedError
-from wilder.models import Album
-from wilder.models import Artist
-from wilder.util.shellutil import expand_path
+from wilder.client.connection import create_connection
+from wilder.client.errors import OperationNotPermittedError
+from wilder.client.errors import WildBadRequestError
+from wilder.sdk import BaseWildApi
+from wilder.lib.constants import Constants
+from wilder.lib.errors import ArtistAlreadySignedError
+from wilder.lib.errors import ArtistNotSignedError
+from wilder.lib.mgmt.album import Album
+from wilder.lib.mgmt.artist import Artist
+from wilder.lib.util.sh import expand_path
 
 
 def create_client(config):
@@ -45,8 +44,8 @@ class WildClient(BaseWildApi):
         super().__init__()
 
     def get_mgmt(self):
-        _json = self._get(Constants.MGMT)
-        return parse_mgmt(_json)
+        """Get the full MGMT JSON blob."""
+        return self._get(Constants.MGMT)
 
     """Artist"""
 

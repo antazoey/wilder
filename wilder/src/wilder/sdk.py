@@ -2,27 +2,19 @@ import json
 import shutil
 from datetime import datetime
 
-import asfasdf
 import wilder.lib.util.user as user
-from wilder.constants import Constants as Consts
-from wilder.errors import AlbumAlreadyExistsError
-from wilder.errors import AlbumNotFoundError
-from wilder.errors import ArtistAlreadySignedError
-from wilder.errors import ArtistNotFoundError
-from wilder.errors import ArtistNotSignedError
-from wilder.errors import NoArtistsFoundError
-from wilder.mgmt import Track
-from wilder.mgmt import Artist
-from wilder.util.resources import get_artwork_path
-from wilder.util.shellutil import create_dir_if_not_exists
-from wilder.util.shellutil import expand_path
-from wilder.util.shellutil import wopen
+from wilder.lib.constants import Constants as Constants
+from wilder.lib.errors import AlbumAlreadyExistsError, TrackNotFoundError
+from wilder.lib.errors import AlbumNotFoundError
+from wilder.lib.errors import ArtistAlreadySignedError
+from wilder.lib.errors import ArtistNotSignedError
+from wilder.lib.errors import NoArtistsFoundError
+from wilder.lib.mgmt.track import Track
+from wilder.lib.mgmt.artist import Artist
+from wilder.lib.util.sh import expand_path, save_as
 
 
 class BaseWildApi:
-    def __init__(self):
-        pass
-    
     def get_artists(self):
         """Override"""
         return []
@@ -39,9 +31,10 @@ class BaseWildApi:
 
 
 class Wilder(BaseWildApi):
-    artists = []
-    last_updated = None
-    focus_artist = None
+    def __init__(self, artists=None, last_updated=None, focus_artist=None):
+        self._artists = artists
+        self._last_updated = last_updated
+        self._focus_artist = focus_artist
     
     """Class"""
 
@@ -50,35 +43,54 @@ class Wilder(BaseWildApi):
         last_updated = mgmt_json.get(Constants.LAST_UPDATED)
         focus_artist = mgmt_json.get(Constants.FOCUS_ARTIST)
         artists = _parse_artists(mgmt_json)
-        return cls(artists, last_updated=last_updated, focus_artist=focus_artist)
-
-    def to_json(self):
-        return {
-            Constants.LAST_UPDATED: self.last_updated,
-            Constants.ARTISTS: [a.to_json() for a in self.artists],
-            Constants.FOCUS_ARTIST: self.focus_artist,
-        }
-    
-    """API"""
+        sdk = cls()
+        sdk._artists = artists
+        sdk.last_updated = last_updated
+        sdk.focus_artist = focus_artist
 
     def get_mgmt(self):
         """Get the full MGMT JSON blob."""
-        return self._mgmt
+        return {
+            Constants.LAST_UPDATED: self._last_updated,
+            Constants.ARTISTS: [a.to_json() for a in self._artists],
+            Constants.FOCUS_ARTIST: self._focus_artist,
+        }
 
     """Artists"""
 
     def get_artists(self):
         """Get all artists."""
-        return self.artists
+        return self._artists
 
     def get_artist(self, name=None):
         """Get an artist."""
-        return self._get_artist_by_name(name=name) or self._get_focus_artist()
+        return self._get_artist_by_name(name) or self._get_focus_artist()
+
+    def _get_artist_by_name(self, name):
+        for artist in self._artists:
+            if artist.name == name:
+                return artist
+
+    def _get_focus_artist(self):
+        """Get the Wilder focus artist."""
+        if not self._artists:
+            raise NoArtistsFoundError()
+        for artist in self._artists:
+            if artist.name == self._focus_artist:
+                return artist
+
+        # If for some we have artists but none set as focus, set the first one.
+        return self._set_first_artist_as_focus_artist()
+
+    def _set_first_artist_as_focus_artist(self):
+        first_artist = self._artists[0].name
+        self.focus_on_artist(first_artist)
+        return first_artist
 
     def focus_on_artist(self, artist_name):
         """Change the focus artist."""
         artist = self._get_artist_by_name(artist_name)
-        self._mgmt.focus_artist = artist.name
+        self._focus_artist = artist.name
         self._save()
 
     def sign_new_artist(self, name, bio=None):
@@ -86,25 +98,31 @@ class Wilder(BaseWildApi):
         if self.is_represented(name):
             raise ArtistAlreadySignedError(name)
         artist = Artist(name=name, bio=bio)
-        self._mgmt.artists.append(artist)
+        self._artists.append(artist)
 
         # Set focus artist if first artist signed
-        if len(self._mgmt.artists) == 1:
-            self._mgmt.focus_artist = artist.name
+        if len(self._artists) == 1:
+            self._focus_artist = artist.name
         self._save()
 
     def unsign_artist(self, name):
         """Remove an artist."""
         if not self.is_represented(name):
             raise ArtistNotSignedError(name)
-        focus_artist_name = self._mgmt.focus_artist
-        del self._mgmt[name]
-        if not len(self._mgmt.artists):
-            self._mgmt.focus_artist = None
-        elif len(self._mgmt.artists) == 1 or focus_artist_name == name:
-            name = self._mgmt.artists[0].name
-            self._mgmt.focus_artist = name
+
+        self._remove_artist_by_name(name)
+        if not self._artists:
+            self._focus_artist = None
+        elif self._focus_artist == name:
+            self._set_first_artist_as_focus_artist()
         self._save()
+
+    def _remove_artist_by_name(self, name):
+        new_artists = []
+        for artist in self._artists:
+            if artist.name != name:
+                new_artists.append(artist)
+        self._artists = new_artists
 
     def update_artist(self, name=None, bio=None):
         """Update artist information."""
@@ -117,14 +135,13 @@ class Wilder(BaseWildApi):
         if not new_name:
             raise ValueError("Must provide a new name when renaming an artist.")
         artist = self.get_artist(name=artist_name)
-        focus_artist_name = self._get_focus_artist().name
         old_name = artist.name
         artist.name = new_name
         if not forget_old_name and old_name not in artist.also_known_as:
             artist.also_known_as.append(old_name)
 
-        if old_name == focus_artist_name:
-            self._mgmt.focus_artist = new_name
+        if old_name == self._focus_artist:
+            self._focus_artist = new_name
         self._save()
 
     def add_alias(self, alias, artist_name=None):
@@ -232,29 +249,17 @@ class Wilder(BaseWildApi):
         album = self.get_album(album_name, artist_name=artist_name)
         track = album.get_track(track_name)
         if not track:
-            raise TrackNotFoundError()
+            raise TrackNotFoundError(album_name, track_name)
 
     """Other"""
 
     @staticmethod
     def nuke():
-        shutil.rmtree(get_project_path())
+        shutil.rmtree(user.get_project_path())
 
     def _save(self):
-        mgmt = self.get_mgmt()
-        _json = mgmt.to_json()
+        _json = self.get_mgmt()
         return save(_json)
-
-    def _get_focus_artist(self):
-        """Get the Wilder focus artist."""
-        artists = self.get_artists()
-        artist_name = self._mgmt.focus_artist
-        if not artists:
-            raise NoArtistsFoundError()
-        for artist in artists:
-            if artist.name == artist_name:
-                return artist
-        return artists[0]
 
 
 def _parse_artists(mgmt_json):
@@ -262,7 +267,7 @@ def _parse_artists(mgmt_json):
     return [Artist.from_path_json(a) for a in artist_paths]
 
 
-def get_wilder_sdk(obj=None):
+def get_wilder_sdk():
     """Parses the mgmt JSON file at the .wilder directory and returns the Mgmt object."""
     mgmt_json = user.get_mgmt_json()
     return Wilder.from_json(mgmt_json)
@@ -270,7 +275,7 @@ def get_wilder_sdk(obj=None):
 
 def save(mgmt_json_dict):
     """Save a MGMT dictionary to the .wilder/mgmt.json file."""
-    mgmt_json_dict[Consts.LAST_UPDATED] = datetime.utcnow().timestamp()
+    mgmt_json_dict[Constants.LAST_UPDATED] = datetime.utcnow().timestamp()
     mgmt_json = json.dumps(mgmt_json_dict, indent=2)
     mgmt_path = user.get_mgmt_json_path()
     save_as(mgmt_path, mgmt_json)

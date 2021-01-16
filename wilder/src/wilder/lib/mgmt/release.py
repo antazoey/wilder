@@ -1,4 +1,4 @@
-from wilder.constants import Constants
+from wilder.lib.constants import Constants
 
 
 class Release:

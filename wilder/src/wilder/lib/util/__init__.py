@@ -2,7 +2,7 @@ import json
 import os
 import shutil
 
-from wilder.constants import Constants as Consts
+from wilder.lib.constants import Constants as Consts
 
 _PADDING_SIZE = 3
 

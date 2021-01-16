@@ -2,8 +2,6 @@ import click
 from click._compat import get_text_stderr
 from wilder.cli.logger import get_view_error_details_message
 
-ERRORED = False
-
 
 class WilderCLIError(click.ClickException):
     """Base CLI exception. The `message` param automatically gets logged to error file and printed

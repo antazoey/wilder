@@ -1,5 +1,5 @@
-from wilder.constants import Constants
-from wilder.models.album import Album
+from wilder.lib.constants import Constants
+from wilder.lib.mgmt.album import Album
 
 
 class Artist:

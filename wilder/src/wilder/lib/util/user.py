@@ -1,7 +1,7 @@
 import json
 import os
 
-from wilder.util.shellutil import create_dir_if_not_exists
+from wilder.lib.util.sh import create_dir_if_not_exists
 
 CONFIG_FILE_NAME = "config.json"
 
