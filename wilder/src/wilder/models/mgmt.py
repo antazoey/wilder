@@ -1,6 +1,6 @@
 from wilder.constants import Constants
 from wilder.models.artist import Artist
-from wilder.util import get_mgmt_json
+from wilder.util.user import get_mgmt_json
 
 
 class Mgmt:

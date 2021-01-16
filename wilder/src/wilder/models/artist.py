@@ -36,7 +36,7 @@ class Artist:
         return {
             Constants.NAME: self.name,
             Constants.BIO: self.bio,
-            Constants.DISCOGRAPHY: [a.to_json() for a in self.discography],
+            Constants.DISCOGRAPHY: [a.to_json_for_mgmt() for a in self.discography],
             Constants.ALSO_KNOWN_AS: self.also_known_as,
         }
 
@@ -51,13 +51,13 @@ class Artist:
             album_type=album_type,
             status=status,
         )
+        album.init_dir()
         self.discography.append(album)
 
     def get_album_by_name(self, name):
         for alb in self.discography:
             if alb.name == name:
                 return alb
-        return None
 
     def _get_default_album_name(self):
         album_number = len(self.discography) + 1

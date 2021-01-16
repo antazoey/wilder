@@ -7,3 +7,5 @@ wildclient~=0.1.0
 requests~=2.25.1
 Flask~=1.1.2
 wildserver~=0.1.0
+PyInquirer~=1.0.3
+python-vlc~=3.0.11115

@@ -29,6 +29,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     python_requires=">3, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*, !=3.6.*, !=3.7.*<4",
+    install_requires=["python-vlc>=3.0.11115"],
     extras_require={
         "dev": [
             "flake8==3.8.3",

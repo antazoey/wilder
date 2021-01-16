@@ -2,9 +2,9 @@ import json
 import os
 
 from wilder.constants import Constants
-from wilder.util import get_config_path
-from wilder.util import to_bool
-from wilder.util import to_int
+from wilder.util.user import get_config_path
+from wilder.util.conversion import to_bool
+from wilder.util.conversion import to_int
 
 
 def set_client_settings(client_config_json):

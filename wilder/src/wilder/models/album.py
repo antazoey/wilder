@@ -1,6 +1,14 @@
+import json
+
 from wilder.constants import Constants
 from wilder.models.release import Release
 from wilder.models.track import Track
+from wilder.util.shellutil import create_dir_if_not_exists
+from wilder.util.shellutil import copy_files_to_dir
+from wilder.util.shellutil import wopen
+from wilder.util.shellutil import remove_file_if_exists
+from wilder.util.resources import get_artwork_path
+from wilder.util.resources import get_album_json_path
 
 
 class Album:
@@ -37,6 +45,12 @@ class Album:
         self.description = description
         self.album_type = album_type
         self.status = status
+    
+    def init_dir(self):
+        create_dir_if_not_exists(self.path)
+        artwork_path = get_artwork_path()
+        album_json_path = get_album_json_path()
+        copy_files_to_dir([artwork_path, album_json_path], self.path)
 
     @classmethod
     def from_json(cls, artist_name, album_json):
@@ -44,18 +58,25 @@ class Album:
         album = cls(path)
         album.artist = artist_name
         album.name = album_json.get(Constants.NAME)
-        album.description = album_json.get(Constants.DESCRIPTION)
-        album.artwork = album_json.get(Constants.ARTWORK)
-        album.album_type = album_json.get(Constants.ALBUM_TYPE)
-        album.status = album_json.get(Constants.STATUS)
-        tracks = album_json.get(Constants.TRACKS) or []
-        album.tracks = cls.parse_tracks(artist_name, album.name, tracks)
-        releases = album_json.get(Constants.RELEASES)
-        album.releases = cls.parse_releases(artist_name, album.name, releases)
+        cls._set_from_dir_json(artist_name)
         return album
+    
+    @classmethod
+    def _set_from_dir_json(cls, artist_name):
+        album_dir_json = get_album_json()
+        cls.description = album_dir_json.get(Constants.DESCRIPTION)      
+        cls.artwork = album_dir_json.get(Constants.ARTWORK)
+        cls.album_type = album_dir_json.get(Constants.ALBUM_TYPE)
+        cls.status = album_dir_json.get(Constants.STATUS)
+        tracks = album_dir_json.get(Constants.TRACKS) or []
+        cls.tracks = cls.parse_tracks(artist_name, cls.name, tracks)
+        releases = album_dir_json.get(Constants.RELEASES)
+        cls.releases = cls.parse_releases(artist_name, cls.name, releases)
+        return cls
 
-    def to_json(self):
+    def to_json_for_album_dir(self):
         return {
+            Constants.ARTIST: self.artist,
             Constants.NAME: self.name,
             Constants.PATH: self.path,
             Constants.DESCRIPTION: self.description,
@@ -65,6 +86,19 @@ class Album:
             Constants.TRACKS: [t.to_json() for t in self.tracks],
             Constants.RELEASES: [r.to_json() for r in self.releases],
         }
+    
+    def to_json_for_mgmt(self):
+        return {
+            Constants.ARTIST: self.artist,
+            Constants.PATH: self.path
+        }
+    
+    def save_album_metadata(self):
+        album_path = get_album_json_path()
+        remove_file_if_exists(album_path)
+        album_json = self.to_json_for_album_dir()
+        with wopen(album_path, "w") as album_file:
+            album_file.write(album_json)
 
     @classmethod
     def parse_tracks(cls, artist_name, album_name, tracks_json):
@@ -81,3 +115,16 @@ class Album:
         for track in self.tracks:
             if track.name == name:
                 return track
+
+
+def get_track_path(album, track_name):
+    track_path = f"{album.path}/{track_name}"
+    create_dir_if_not_exists(track_path)
+    return track_path
+
+
+def get_album_json():
+    album_path = get_album_json_path()
+    with wopen(album_path) as album_file:
+        return json.load(album_file)
+    return {}

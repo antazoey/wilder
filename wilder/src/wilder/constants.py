@@ -22,6 +22,7 @@ class Constants:
     IS_ENABLED = "isEnabled"
     LAST_UPDATED = "lastUpdated"
     LIST = "list"
+    LIST_TRACKS = "list-tracks"
     MGMT = "mgmt"
     NAME = "name"
     NEW_NAME = "newName"

@@ -13,13 +13,13 @@ from wilder.errors import NoArtistsFoundError
 from wilder.models import Track
 from wilder.models.artist import Artist
 from wilder.models.mgmt import Mgmt
-from wilder.util import add_src_file_to_album_dir
-from wilder.util import create_dir_if_not_exists
-from wilder.util import expand_path
-from wilder.util import get_default_artwork_image_path
-from wilder.util import get_mgmt_json
-from wilder.util import get_mgmt_json_path
-from wilder.util import get_project_path
+from wilder.util.shellutil import create_dir_if_not_exists
+from wilder.util.shellutil import expand_path
+from wilder.util.shellutil import wopen
+from wilder.util.resources import get_artwork_path
+from wilder.util.user import get_mgmt_json
+from wilder.util.user import get_mgmt_json_path
+from wilder.util.user import get_project_path
 
 
 class BaseWildApi:
@@ -151,8 +151,6 @@ class Wilder(BaseWildApi):
                 raise AlbumAlreadyExistsError(alb.name)
         album_path = expand_path(album_path)
         album_path = f"{album_path}/{album_name}"
-        create_dir_if_not_exists(album_path)
-        add_src_file_to_album_dir(get_default_artwork_image_path(), album_path)
         artist.start_new_album(
             album_path,
             name=album_name,
@@ -205,13 +203,17 @@ class Wilder(BaseWildApi):
         artist.discography = albums
         self._save()
 
+    def get_tracks(self, album_name, artist_name=None):
+        """Get all the tracks on an album."""
+        artist = self.get_artist(artist_name)
+        return artist.discography
+
     def play_track(self, album_name, track_name, artist_name=None):
         """Play a track from an album."""
         album = self.get_album(album_name, artist_name=artist_name)
         track = album.get_track(track_name)
         if not track:
             raise TrackNotFoundError()
-        wav_file
 
     """Other"""
 
@@ -268,5 +270,5 @@ def save(mgmt_json_dict):
     mgmt_json = json.dumps(mgmt_json_dict)
     mgmt_path = get_mgmt_json_path()
     os.remove(mgmt_path)
-    with open(mgmt_path, "w") as mgmt_file:
+    with wopen(mgmt_path, "w") as mgmt_file:
         mgmt_file.write(mgmt_json)

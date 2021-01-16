@@ -27,7 +27,7 @@ format_option = click.option(
     default=OutputFormat.TABLE,
 )
 bio_option = click.option("--bio", "--biography", help="The artist biography.")
-artist_name_option = click.option("--artist", help="The name of an artist.")
+artist_option = click.option("--artist", help="The name of an artist.")
 
 
 class CLIState:
@@ -96,8 +96,7 @@ def update_album_options():
             type=click.Choice(AlbumState.choices()),
         )(f)
         f = wild_options()(f)
-        f = artist_name_option(f)
-        f = album_name_arg(f)
+        f = artist_option(f)
         return f
 
     return decorator

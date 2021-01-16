@@ -8,7 +8,7 @@ from wilder.errors import ArtistAlreadySignedError
 from wilder.errors import ArtistNotSignedError
 from wilder.models import Album
 from wilder.models import Artist
-from wilder.util import expand_path
+from wilder.util.shellutil import expand_path
 
 
 def create_client(config):
@@ -124,7 +124,9 @@ class WildClient(BaseWildApi):
         url = f"{Constants.ALBUM}"
         params = _as_artist_dict(artist_name)
         params[Constants.ALBUM] = name
-        return self._get(url, params=params)
+        response = self._get(url, params=params)
+        artist_name = response[Constants.ARTIST]
+        return Album.from_json(artist_name, response)
 
     def start_new_album(
         self,
@@ -176,12 +178,12 @@ class WildClient(BaseWildApi):
         """Add a track to an album."""
         url = f"{Constants.ALBUM}/{Constants.CREATE_TRACK}"
         _json = {
-            Constants.ALBUM: album_name, 
+            Constants.ALBUM: album_name,
             Constants.TRACK: track_name,
             Constants.TRACK_NUMBER: track_num,
             Constants.ARTIST: artist_name,
             Constants.DESCRIPTION: description,
-            Constants.COLLABORATORS: collaborators
+            Constants.COLLABORATORS: collaborators,
         }
         self._post(url, _json)
 
@@ -190,6 +192,12 @@ class WildClient(BaseWildApi):
         url = f"{Constants.ALBUM}/{Constants.DELETE}"
         _json = {Constants.ALBUM: album_name, Constants.ARTIST: artist_name}
         self._post(url, _json)
+
+    def get_tracks(self, album_name, artist_name=None):
+        """Get all the tracks on an album."""
+        url = f"{Constants.ALBUM}/{Constants.LIST_TRACKS}"
+        _json = {Constants.ALBUM: album_name, Constants.ARTIST: artist_name}
+        response = self._post(url, _json)
 
     """Internal"""
 

@@ -254,6 +254,15 @@ def album_delete():
     return successful_response()
 
 
+@app.route(f"{_ALBUM}/{Consts.LIST_TRACKS}", methods=[HttpMethod.GET])
+def album_list_tracks():
+    """List the tracks on an album"""
+    wilder = get_wilder_sdk()
+    artist_name = _get_request_data_param(Consts.ARTIST)
+    _album = _get_request_data_param(Consts.ALBUM)
+    return {Consts.ALBUMS: [t.to_json() for t in _album.tracks]}
+
+
 def _get_request_query_param(key):
     return request.args.get(key)
 
