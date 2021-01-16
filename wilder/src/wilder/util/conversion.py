@@ -1,4 +1,3 @@
-
 def to_bool(val):
     """Converts some values to booleans.
 

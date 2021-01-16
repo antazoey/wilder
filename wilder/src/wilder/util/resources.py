@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
 
+# This module is for accessing default Wilder resources for creating albums.
+
 
 def get_resources_path():
     here = Path(os.path.dirname(os.path.abspath(__file__)))

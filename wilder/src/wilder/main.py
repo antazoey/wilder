@@ -3,6 +3,7 @@ import os
 import shutil
 from datetime import datetime
 
+import wilder.util.user as user
 from wilder.constants import Constants as Consts
 from wilder.errors import AlbumAlreadyExistsError
 from wilder.errors import AlbumNotFoundError
@@ -13,13 +14,10 @@ from wilder.errors import NoArtistsFoundError
 from wilder.models import Track
 from wilder.models.artist import Artist
 from wilder.models.mgmt import Mgmt
+from wilder.util.resources import get_artwork_path
 from wilder.util.shellutil import create_dir_if_not_exists
 from wilder.util.shellutil import expand_path
 from wilder.util.shellutil import wopen
-from wilder.util.resources import get_artwork_path
-from wilder.util.user import get_mgmt_json
-from wilder.util.user import get_mgmt_json_path
-from wilder.util.user import get_project_path
 
 
 class BaseWildApi:
@@ -248,27 +246,19 @@ class Wilder(BaseWildApi):
 
 
 def get_wilder_sdk(obj=None):
-    """Returns a new instance of an :class:`wilder.mgmt.ArtistMgmt`."""
+    """Returns a new instance of Wilder."""
     return Wilder(obj)
 
 
-def parse_mgmt(mgmt_json=None):
-    # Parses the given mgmt json.
-    # Give it a path to a JSON file to parse that file.
-    # Give it None (or no arg) to parse the user config file.
-    # Give it the raw dict to just use that.
-
-    if mgmt_json is None or isinstance(mgmt_json, str):
-        mgmt_json = get_mgmt_json(mgmt_path=mgmt_json)
-
+def parse_mgmt():
+    """Parses the mgmt JSON file at the .wilder directory and returns the Mgmt object."""
+    mgmt_json = user.get_mgmt_json()
     return Mgmt.from_json(mgmt_json)
 
 
 def save(mgmt_json_dict):
-    """Save a MGMT dictionary to the mgmt.json file."""
+    """Save a MGMT dictionary to the .wilder/mgmt.json file."""
     mgmt_json_dict[Consts.LAST_UPDATED] = datetime.utcnow().timestamp()
-    mgmt_json = json.dumps(mgmt_json_dict)
-    mgmt_path = get_mgmt_json_path()
-    os.remove(mgmt_path)
-    with wopen(mgmt_path, "w") as mgmt_file:
-        mgmt_file.write(mgmt_json)
+    mgmt_json = json.dumps(mgmt_json_dict, indent=2)
+    mgmt_path = user.get_mgmt_json_path()
+    save_as(mgmt_path, mgmt_json)

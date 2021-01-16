@@ -12,4 +12,3 @@ def play_track(track):
 
 def _create_player(song_path):
     return vlc.MediaPlayer(song_path)
-    

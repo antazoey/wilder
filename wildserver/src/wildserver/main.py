@@ -5,7 +5,7 @@ from wilder import get_wilder_sdk
 from wilder.constants import Constants as Consts
 from wilder.errors import WildError
 from wilder.errors import WildNotFoundError as WildCoreNotFoundError
-from wilder.util import get_mgmt_json
+from wilder.util.user import get_mgmt_json
 from wildserver._helper import error_response
 from wildserver._helper import HttpMethod
 from wildserver._helper import successful_response

@@ -1,12 +1,15 @@
-import os
 import json
+import os
+
 from wilder.util.shellutil import create_dir_if_not_exists
 
 CONFIG_FILE_NAME = "config.json"
 
+# This module exists for accessing the .wilder user directory.
 
-def get_mgmt_json(mgmt_path=None, as_dict=True):
-    mgmt_path = mgmt_path or get_mgmt_json_path()
+
+def get_mgmt_json(as_dict=True):
+    mgmt_path = get_mgmt_json_path()
     with open(mgmt_path) as mgmt_file:
         json_dict = json.load(mgmt_file)
         if as_dict:

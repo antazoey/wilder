@@ -11,7 +11,6 @@ def noop(thing):
     return thing
 
 
-
 def get_attribute_keys_from_class(cls):
     """Returns attribute names for the given class.
 
