@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-main() {
-    export FLASK_APP="wildserver.main.py"
-    export FLASK_RUN_PORT=6660
-    flask run
-}
-
-main "$@"

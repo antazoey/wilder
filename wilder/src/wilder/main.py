@@ -1,9 +1,9 @@
 import json
-import os
 import shutil
 from datetime import datetime
 
-import wilder.util.user as user
+import asfasdf
+import wilder.lib.util.user as user
 from wilder.constants import Constants as Consts
 from wilder.errors import AlbumAlreadyExistsError
 from wilder.errors import AlbumNotFoundError
@@ -11,9 +11,8 @@ from wilder.errors import ArtistAlreadySignedError
 from wilder.errors import ArtistNotFoundError
 from wilder.errors import ArtistNotSignedError
 from wilder.errors import NoArtistsFoundError
-from wilder.models import Track
-from wilder.models.artist import Artist
-from wilder.models.mgmt import Mgmt
+from wilder.mgmt import Track
+from wilder.mgmt import Artist
 from wilder.util.resources import get_artwork_path
 from wilder.util.shellutil import create_dir_if_not_exists
 from wilder.util.shellutil import expand_path
@@ -21,6 +20,9 @@ from wilder.util.shellutil import wopen
 
 
 class BaseWildApi:
+    def __init__(self):
+        pass
+    
     def get_artists(self):
         """Override"""
         return []
@@ -37,8 +39,27 @@ class BaseWildApi:
 
 
 class Wilder(BaseWildApi):
-    def __init__(self, mgmt_obj=None):
-        self._mgmt = mgmt_obj or parse_mgmt()
+    artists = []
+    last_updated = None
+    focus_artist = None
+    
+    """Class"""
+
+    @classmethod
+    def from_json(cls, mgmt_json):
+        last_updated = mgmt_json.get(Constants.LAST_UPDATED)
+        focus_artist = mgmt_json.get(Constants.FOCUS_ARTIST)
+        artists = _parse_artists(mgmt_json)
+        return cls(artists, last_updated=last_updated, focus_artist=focus_artist)
+
+    def to_json(self):
+        return {
+            Constants.LAST_UPDATED: self.last_updated,
+            Constants.ARTISTS: [a.to_json() for a in self.artists],
+            Constants.FOCUS_ARTIST: self.focus_artist,
+        }
+    
+    """API"""
 
     def get_mgmt(self):
         """Get the full MGMT JSON blob."""
@@ -48,7 +69,7 @@ class Wilder(BaseWildApi):
 
     def get_artists(self):
         """Get all artists."""
-        return self._mgmt.artists
+        return self.artists
 
     def get_artist(self, name=None):
         """Get an artist."""
@@ -224,15 +245,6 @@ class Wilder(BaseWildApi):
         _json = mgmt.to_json()
         return save(_json)
 
-    def _get_artist_by_name(self, name):
-        """Get an artist by their performer name."""
-        if not name:
-            return None
-        artist = self._mgmt.get_artist_by_name(name)
-        if not artist:
-            raise ArtistNotFoundError(name)
-        return artist
-
     def _get_focus_artist(self):
         """Get the Wilder focus artist."""
         artists = self.get_artists()
@@ -245,15 +257,15 @@ class Wilder(BaseWildApi):
         return artists[0]
 
 
+def _parse_artists(mgmt_json):
+    artist_paths = mgmt_json.get(Constants.ARTISTS) or []
+    return [Artist.from_path_json(a) for a in artist_paths]
+
+
 def get_wilder_sdk(obj=None):
-    """Returns a new instance of Wilder."""
-    return Wilder(obj)
-
-
-def parse_mgmt():
     """Parses the mgmt JSON file at the .wilder directory and returns the Mgmt object."""
     mgmt_json = user.get_mgmt_json()
-    return Mgmt.from_json(mgmt_json)
+    return Wilder.from_json(mgmt_json)
 
 
 def save(mgmt_json_dict):

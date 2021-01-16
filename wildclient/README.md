@@ -1,3 +1,0 @@
-# Wilder CLI
-
-# TODO

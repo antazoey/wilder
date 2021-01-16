@@ -1,7 +1,7 @@
 from wilder.util import expand_path
 from wilder.util import to_bool
 from wilder.util import to_int
-from wildercli.util import abridge
+from wilder.cli.util import abridge
 
 
 def test_to_bool_when_given_none_returns_none():
