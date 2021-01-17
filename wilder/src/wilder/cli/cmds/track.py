@@ -4,6 +4,7 @@ import click
 from PyInquirer import prompt
 from wilder.cli.argv import wild_options
 from wilder.lib.constants import Constants
+from wilder.lib.errors import NotInAlbumError
 from wilder.lib.util.sh import load_json_from_file
 
 
@@ -17,12 +18,7 @@ def _get_album_json():
     here = os.getcwd()
     album_json_path = os.path.join(here, "album.json")
     if not os.path.isfile(album_json_path):
-        click.echo(
-            "Error: all 'track' commands require being an album directory. "
-            "Do:\n\n\tcd $(wild album path <album-name>)\n\n"
-            "to change to the desired album directory.",
-            err=True,
-        )
+        raise NotInAlbumError()
     return load_json_from_file(album_json_path)
 
 

@@ -11,6 +11,7 @@ from wilder.lib.errors import AlbumNotFoundError
 from wilder.lib.errors import ArtistAlreadySignedError
 from wilder.lib.errors import ArtistNotFoundError
 from wilder.lib.errors import ArtistNotSignedError
+from wilder.lib.errors import NotInAlbumError
 
 _DIFFLIB_CUT_OFF = 0.6
 
@@ -44,6 +45,7 @@ class ExceptionHandlingGroup(click.Group):
             ArtistAlreadySignedError,
             ArtistNotFoundError,
             AlbumAlreadyExistsError,
+            NotInAlbumError,
         ) as err:
             click.echo(str(err))
 

@@ -4,8 +4,9 @@ import os
 from wilder.lib.constants import Constants
 from wilder.lib.resources import get_artwork_path
 from wilder.lib.resources import get_default_album_json
-from wilder.lib.util.sh import copy_files_to_dir, load_json_from_file
+from wilder.lib.util.sh import copy_files_to_dir
 from wilder.lib.util.sh import create_dir_if_not_exists
+from wilder.lib.util.sh import load_json_from_file
 from wilder.lib.util.sh import wopen
 
 

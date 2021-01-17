@@ -1,5 +1,5 @@
-import os
 import json
+import os
 import shutil
 from pathlib import Path
 
@@ -61,4 +61,3 @@ def get_file_dir(file=None):
 def load_json_from_file(file_path):
     with wopen(file_path) as json_file:
         return json.load(json_file)
-

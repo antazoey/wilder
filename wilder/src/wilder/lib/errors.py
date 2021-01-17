@@ -66,3 +66,15 @@ class AlbumAlreadyExistsError(WildError):
 
     def __init__(self, album_name):
         super().__init__(f"Album '{album_name}' already exists.")
+
+
+class NotInAlbumError(WildError):
+    """An error raised when trying to do an operation outside an album directory or there is no album.json when
+    there needs to be."""
+
+    def __init__(self):
+        super().__init__(
+            "Error: all 'track' commands require being an album directory. "
+            "Do:\n\n\tcd $(wild album path <album-name>)\n\n"
+            "to change to the desired album directory."
+        )
