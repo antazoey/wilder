@@ -51,3 +51,7 @@ def save_as(to, file_text):
     remove_file_if_exists(to)
     with wopen(to, "w") as file_to_save:
         file_to_save.write(file_text)
+
+
+def get_current_dir(file=None):
+    return os.path.dirname(os.path.abspath(file or __file__))
