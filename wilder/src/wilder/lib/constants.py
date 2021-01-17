@@ -1,4 +1,3 @@
-
 class Constants:
     ALIAS = "alias"
     ALBUM = "album"

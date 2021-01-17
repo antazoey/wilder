@@ -1,7 +1,5 @@
 import click
-from PyInquirer import prompt
 from wilder.cli.argv import album_name_arg
-from wilder.cli.argv import album_option
 from wilder.cli.argv import artist_option
 from wilder.cli.argv import format_option
 from wilder.cli.argv import update_album_options
@@ -44,6 +42,16 @@ ALBUM_HEADER = {
     Constants.ALBUM_TYPE: "Album Type",
     Constants.STATUS: "Status",
 }
+
+
+@click.command()
+@wild_options()
+@artist_option
+@album_name_arg
+def path(state, album_name, artist):
+    """Prints the path to the album."""
+    _album = state.wilder.get_album(album_name, artist_name=artist)
+    click.echo(_album.path)
 
 
 @click.command(Constants.LIST, cls=ArtistArgRequiredIfGivenCommand)
@@ -89,31 +97,6 @@ def update(state, artist, album_name, description, album_type, status):
 @click.command(cls=ArtistArgRequiredIfGivenCommand)
 @wild_options()
 @artist_option
-@album_option(required=False)
-@click.option("--track-num", help="The track number.", required=True)
-def add_track(state, artist, path, album, track):
-    """Add a track to an album."""
-    pass
-
-
-@click.command()
-def reorder():
-    """Reorder the tracks on an album."""
-    questions = [
-        {
-            "type": "list",
-            "name": "list_name",
-            "message": "Add task to which list?",
-            "choices": ["test", "foo"],
-        },
-        {"type": "input", "name": "task_name", "message": "Task description"},
-    ]
-    answers = prompt(questions)
-
-
-@click.command(cls=ArtistArgRequiredIfGivenCommand)
-@wild_options()
-@artist_option
 @album_name_arg
 @yes_option
 def delete(state, artist, album_name):
@@ -123,22 +106,6 @@ def delete(state, artist, album_name):
         state.wilder.delete_album(album.name, artist_name=artist)
 
 
-@click.command(cls=ArtistArgRequiredIfGivenCommand)
-@wild_options()
-@artist_option
-@album_name_arg
-def list_tracks(state, artist, album_name):
-    """List the tracks on an album."""
-    _artist = state.wilder.get_artist(artist)
-    _album = state.wilder.get_album(album_name, artist_name=artist)
-    if _album.tracks:
-        click.echo(f"'{album_name}' by {_artist.name}: \n")
-        for track in _album.tracks:
-            click.echo(f"{track.track_number}. {track.name}")
-    else:
-        click.echo(f"No tracks yet on album '{_album.name}'.")
-
-
 def _handle_no_albums_found(name):
     msg = f"{name} does not have any albums."
     click.echo(msg)
@@ -146,8 +113,6 @@ def _handle_no_albums_found(name):
 
 album.add_command(init)
 album.add_command(_list)
+album.add_command(path)
 album.add_command(update)
-album.add_command(add_track)
 album.add_command(delete)
-album.add_command(list_tracks)
-album.add_command(reorder)

@@ -9,10 +9,11 @@ from wilder.cli.cmds.album import album
 from wilder.cli.cmds.artist import artist
 from wilder.cli.cmds.config import config
 from wilder.cli.cmds.dev import dev
+from wilder.cli.cmds.track import track
 from wilder.cli.logger import get_cli_error_log_path
-from wilder.server.main import run
-from wilder.lib.constants import Constants
 from wilder.lib.config import get_config_json
+from wilder.lib.constants import Constants
+from wilder.server.main import run
 
 
 BANNER = """\b
@@ -75,6 +76,10 @@ def logs(last_n_lines):
 @click.command()
 def start_server():
     """Start the wilder server."""
+    import os
+
+    os.chdir("..")
+    exit(1)
     _config = get_config_json().get(Constants.CLIENT)
     host = _config.get(Constants.HOST, Constants.DEFAULT_HOST)
     port = _config.get(Constants.PORT, Constants.DEFAULT_PORT)
@@ -83,6 +88,7 @@ def start_server():
 
 cli.add_command(album)
 cli.add_command(artist)
+cli.add_command(track)
 cli.add_command(config)
 cli.add_command(mgmt)
 cli.add_command(dev)

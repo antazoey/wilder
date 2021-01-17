@@ -10,9 +10,9 @@ from wilder.client.errors import WildBadRequestError
 from wilder.client.errors import WildClientError
 from wilder.client.errors import WildNotFoundError
 from wilder.client.errors import WildUnknownServerError
-from wilder.lib.errors import ArtistNotFoundError
 from wilder.lib.config import get_config_json
 from wilder.lib.constants import Constants
+from wilder.lib.errors import ArtistNotFoundError
 
 
 SESSION_ADAPTER = HTTPAdapter(pool_connections=200, pool_maxsize=4, pool_block=True)
