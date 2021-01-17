@@ -1,7 +1,9 @@
 import json
 import os
 
-from wilder.lib.util.sh import create_dir_if_not_exists
+from wilder.lib.constants import Constants
+from wilder.lib.util.sh import create_dir_if_not_exists, load_json_from_file, file_exists_with_data
+from wilder.lib.util.sh import wopen
 
 CONFIG_FILE_NAME = "config.json"
 
@@ -10,19 +12,18 @@ CONFIG_FILE_NAME = "config.json"
 
 def get_mgmt_json(as_dict=True):
     mgmt_path = get_mgmt_json_path()
-    with open(mgmt_path) as mgmt_file:
-        json_dict = json.load(mgmt_file)
-        if as_dict:
-            return json_dict
-        return json.dumps(json_dict)
+    _json = load_json_from_file(mgmt_path)
+    if as_dict:
+        return _json
+    return json.dumps(_json)
 
 
 def get_mgmt_json_path():
     proj_path = get_project_path()
     mgmt_path = os.path.join(proj_path, "mgmt.json")
     if not os.path.exists(mgmt_path):
-        with open(mgmt_path, "w") as mgmt_file:
-            json_dict = {Consts.ARTISTS: []}
+        with wopen(mgmt_path, "w") as mgmt_file:
+            json_dict = {Constants.ARTISTS: []}
             json_str = json.dumps(json_dict, indent=2)
             mgmt_file.write(json_str)
     return mgmt_path
@@ -31,10 +32,10 @@ def get_mgmt_json_path():
 def get_config_path(create_if_not_exists=True):
     proj_path = get_project_path()
     config_path = os.path.join(proj_path, CONFIG_FILE_NAME)
-    if create_if_not_exists and not os.path.exists(config_path):
-        with open(config_path, "w") as config_file:
+    if create_if_not_exists and not file_exists_with_data(config_path):
+        with wopen(config_path, "w") as config_file:
             config_initial_dict = {
-                Consts.CLIENT: {Consts.HOST: None, Consts.PORT: None}
+                Constants.CLIENT: {Constants.HOST: None, Constants.PORT: None}
             }
             config_content = f"{json.dumps(config_initial_dict)}\n"
             config_file.write(config_content)

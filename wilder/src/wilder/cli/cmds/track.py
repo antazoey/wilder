@@ -14,17 +14,28 @@ def track():
     pass
 
 
-def _get_album_json():
+def _get_album_json(wilder):
     here = os.getcwd()
     album_json_path = os.path.join(here, "album.json")
     if not os.path.isfile(album_json_path):
+
+        # Try checking all the managed albums to see if you're in a known path.
+        artists = wilder.get_artists()
+        for artist in artists:
+            album_paths = [a.path for a in artist.discography]
+            for path in album_paths:
+                if path == here:
+                    print("HERE")
+                    exit(1)
+                    break
+
         raise NotInAlbumError()
     return load_json_from_file(album_json_path)
 
 
 class FromAlbumDirectoryCommand(click.Command):
     def invoke(self, ctx):
-        ctx.obj.album_json = _get_album_json()
+        ctx.obj.album_json = _get_album_json(ctx.obj.wilder)
         return super().invoke(ctx)
 
 

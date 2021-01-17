@@ -61,3 +61,7 @@ def get_file_dir(file=None):
 def load_json_from_file(file_path):
     with wopen(file_path) as json_file:
         return json.load(json_file)
+
+
+def file_exists_with_data(file_path):
+    return os.path.isfile(file_path) and os.path.getsize(file_path)

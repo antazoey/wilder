@@ -4,7 +4,7 @@ import os
 from wilder.lib.constants import Constants
 from wilder.lib.resources import get_artwork_path
 from wilder.lib.resources import get_default_album_json
-from wilder.lib.util.sh import copy_files_to_dir
+from wilder.lib.util.sh import copy_files_to_dir, file_exists_with_data
 from wilder.lib.util.sh import create_dir_if_not_exists
 from wilder.lib.util.sh import load_json_from_file
 from wilder.lib.util.sh import wopen
@@ -24,9 +24,8 @@ def get_album_dir_json(album_path, album_name):
     if not os.path.exists(album_path):
         init_dir(album_path, album_name)
     album_data_file_path = get_album_dir_json_path(album_path)
-    if not os.path.isfile(album_data_file_path) or not os.path.getsize(
-        album_data_file_path
-    ):
+
+    if not file_exists_with_data(album_data_file_path):
         _init_album_json(album_path, album_name)
 
     return load_json_from_file(album_data_file_path)
