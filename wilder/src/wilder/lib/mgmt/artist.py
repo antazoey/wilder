@@ -14,7 +14,7 @@ class Artist:
         self.also_known_as = also_known_as or []
 
     @classmethod
-    def from_path_json(cls, artist_json):
+    def from_json(cls, artist_json):
         name = artist_json.get(Constants.NAME)
         bio = artist_json.get(Constants.BIO)
         also_known_as = artist_json.get(Constants.ALSO_KNOWN_AS)
@@ -35,9 +35,7 @@ class Artist:
     def start_new_album(
         self, path_location, name=None, description=None, album_type=None, status=None
     ):
-        for alb in self.discography:
-            if alb.name == name:
-                raise AlbumAlreadyExistsError(alb.name)
+        self._assert_album_not_exists(name)
         path_location = expand_path(path_location)
         path_location = os.path.join(path_location, name)
         name = name or self._get_default_album_name()
@@ -50,6 +48,11 @@ class Artist:
         )
         album.init_dir()
         self.discography.append(album)
+
+    def _assert_album_not_exists(self, name):
+        for alb in self.discography:
+            if alb.name == name:
+                raise AlbumAlreadyExistsError(alb.name)
 
     def delete_album(self, album):
         albums = []
@@ -70,6 +73,9 @@ class Artist:
     def rename(self, new_name, forget_old_name=False):
         old_name = self.name
         self.name = new_name
+        self._try_append_aka(forget_old_name, old_name)
+
+    def _try_append_aka(self, forget_old_name, old_name):
         if not forget_old_name and old_name not in self.also_known_as:
             self.also_known_as.append(old_name)
 

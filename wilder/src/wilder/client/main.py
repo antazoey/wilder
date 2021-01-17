@@ -53,12 +53,12 @@ class WildClient(BaseWildApi):
         """Get all artists."""
         url = _as_artist_url(Constants.LIST)
         _json = self._get(url).get(Constants.ARTISTS)
-        return [Artist.from_path_json(a_json) for a_json in _json]
+        return [Artist.from_json(a_json) for a_json in _json]
 
     def get_artist(self, name=None):
         """Get an artist."""
         _json = self._get(Constants.ARTIST, params={"artist": name})
-        return Artist.from_path_json(_json)
+        return Artist.from_json(_json)
 
     def focus_on_artist(self, artist_name):
         """Change the focus artist."""

@@ -13,80 +13,57 @@ from wilder.lib.util.sh import wopen
 
 
 class Album:
-    tracks = []
-    releases = []
-
     def __init__(
         self,
         path,
-        name=None,
+        name,
+        artist=None,
         description=None,
         album_type=None,
         status=None,
-        artist=None,
+        tracks=None,
+        releases=None,
     ):
         self.path = path
         self.name = name
+        self.artist = artist
         self.description = description
         self.album_type = album_type
         self.status = status
-        self.artist = artist
+        self.tracks = tracks
+        self.releases = releases
 
     def init_dir(self):
-        create_dir_if_not_exists(self.path)
-        self._init_artwork()
-        self._init_album_json()
-
-    def _init_artwork(self):
-        create_dir_if_not_exists(self.path)
-        artwork_path = get_artwork_path()
-        copy_files_to_dir(artwork_path, self.path)
-
-    def _init_album_json(self):
-        create_dir_if_not_exists(self.path)
-        _json = get_default_album_json()
-        _json[Constants.NAME] = self.name
-        album_json_path = self._get_dir_json_path()
-        json_text = json.dumps(_json, indent=2)
-        with wopen(album_json_path, "w") as album_json_file:
-            album_json_file.write(json_text)
+        _init_dir(self.path, self.name)
 
     @classmethod
     def from_json(cls, artist_name, album_json):
+        """Create the Artist object from data from .wilder/mgmt.json."""
         path = album_json.get(Constants.PATH)
-        album = cls(path)
-        album.artist = artist_name
-        album.name = album_json.get(Constants.NAME)
-        album._set_from_dir_json(artist_name)
+        name = album_json.get(Constants.NAME)
+        album_dir_json = _get_album_dir_json(path, name)
+        description = album_dir_json.get(Constants.DESCRIPTION)
+        album_type = album_dir_json.get(Constants.ALBUM_TYPE)
+        status = album_dir_json.get(Constants.STATUS)
+        tracks = album_dir_json.get(Constants.TRACKS) or []
+        tracks = _parse_tracks(artist_name, name, tracks)
+        releases = album_dir_json.get(Constants.RELEASES)
+        releases = _parse_releases(artist_name, name, releases)
+        album = cls(
+            path,
+            name,
+            artist=artist_name,
+            description=description,
+            album_type=album_type,
+            status=status,
+            tracks=tracks,
+            releases=releases,
+        )
         album.save_album_metadata()
         return album
 
-    def _set_from_dir_json(self, artist_name):
-        # Requires self.name to already be set.
-        album_dir_json = self._get_dir_json()
-        self.description = album_dir_json.get(Constants.DESCRIPTION)
-        self.artwork = album_dir_json.get(Constants.ARTWORK)
-        self.album_type = album_dir_json.get(Constants.ALBUM_TYPE)
-        self.status = album_dir_json.get(Constants.STATUS)
-        tracks = album_dir_json.get(Constants.TRACKS) or []
-        self.tracks = _parse_tracks(artist_name, self.name, tracks)
-        releases = album_dir_json.get(Constants.RELEASES)
-        self.releases = _parse_releases(artist_name, self.name, releases)
-
     def _get_dir_json_path(self):
-        return os.path.join(self.path, "album.json")
-
-    def _get_dir_json(self):
-        if not os.path.exists(self.path):
-            self.init_dir()
-        album_data_file_path = self._get_dir_json_path()
-        if not os.path.isfile(album_data_file_path) or not os.path.getsize(
-            album_data_file_path
-        ):
-            self.init_dir()
-
-        with wopen(album_data_file_path) as local_json_file:
-            return json.load(local_json_file)
+        return _get_album_dir_json_path(self.path)
 
     def to_full_json(self):
         return {
@@ -94,7 +71,6 @@ class Album:
             Constants.NAME: self.name,
             Constants.PATH: self.path,
             Constants.DESCRIPTION: self.description,
-            Constants.ARTWORK: self.artwork,
             Constants.ALBUM_TYPE: self.album_type,
             Constants.STATUS: self.status,
             Constants.TRACKS: [t.to_json() for t in self.tracks],
@@ -138,3 +114,42 @@ def _parse_releases(artist_name, album_name, releases_json):
         Release.from_json(artist_name, album_name, release_json)
         for release_json in releases_json
     ]
+
+
+def _get_album_dir_json_path(album_path):
+    return os.path.join(album_path, "album.json")
+
+
+def _get_album_dir_json(album_path, album_name):
+    if not os.path.exists(album_path):
+        _init_dir(album_path, album_name)
+    album_data_file_path = _get_album_dir_json_path(album_path)
+    if not os.path.isfile(album_data_file_path) or not os.path.getsize(
+        album_data_file_path
+    ):
+        _init_album_json(album_path, album_name)
+
+    with wopen(album_data_file_path) as local_json_file:
+        return json.load(local_json_file)
+
+
+def _init_dir(album_path, album_name):
+    create_dir_if_not_exists(album_path)
+    _init_artwork(album_path)
+    _init_album_json(album_path, album_name)
+
+
+def _init_artwork(album_path):
+    create_dir_if_not_exists(album_path)
+    artwork_path = get_artwork_path()
+    copy_files_to_dir(artwork_path, album_path)
+
+
+def _init_album_json(album_path, album_name):
+    create_dir_if_not_exists(album_path)
+    _json = get_default_album_json()
+    _json[Constants.NAME] = album_name
+    album_json_path = _get_album_dir_json_path(album_path)
+    json_text = json.dumps(_json, indent=2)
+    with wopen(album_json_path, "w") as album_json_file:
+        album_json_file.write(json_text)

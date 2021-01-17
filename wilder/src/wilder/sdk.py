@@ -216,9 +216,15 @@ class Wilder(BaseWildApi):
         collaborators=None,
     ):
         """Add a track to an album."""
-        album = self.get_album(album_name, artist_name=artist_name)
+        artist = self.get_artist(artist_name)
+        album = self.get_album(album_name, artist_name=artist.name)
         track = Track(
-            track_name, track_num, description=description, collaborators=collaborators
+            track_name,
+            track_num,
+            artist.name,
+            album.name,
+            description=description,
+            collaborators=collaborators,
         )
         album.add_track(track)
         self._save()
@@ -233,7 +239,8 @@ class Wilder(BaseWildApi):
     def get_tracks(self, album_name, artist_name=None):
         """Get all the tracks on an album."""
         artist = self.get_artist(artist_name)
-        return artist.discography
+        album = self.get_album(album_name, artist.name)
+        return album.tracks
 
     def play_track(self, album_name, track_name, artist_name=None):
         """Play a track from an album."""
@@ -255,7 +262,7 @@ class Wilder(BaseWildApi):
 
 def _parse_artists(mgmt_json):
     artist_paths = mgmt_json.get(Constants.ARTISTS) or []
-    return [Artist.from_path_json(a) for a in artist_paths]
+    return [Artist.from_json(a) for a in artist_paths]
 
 
 def get_wilder_sdk():

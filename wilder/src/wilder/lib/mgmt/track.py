@@ -29,7 +29,7 @@ class Track:
 
     def to_json(self):
         return {
-            Constants.ARTIST: self.artist.name,
+            Constants.ARTIST: self.artist,
             Constants.NAME: self.name,
             Constants.DESCRIPTION: self.description,
             Constants.TRACK_NUMBER: self.track_number,
