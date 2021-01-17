@@ -1,7 +1,7 @@
 import click
-from wilder.errors import ArtistNotFoundError
-from wilder.errors import NoArtistsFoundError
 from wilder.cli.output_formats import OutputFormatter
+from wilder.lib.errors import ArtistNotFoundError
+from wilder.lib.errors import NoArtistsFoundError
 
 
 def echo_formatted_list(_format, _list, header=None):

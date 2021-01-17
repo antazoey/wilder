@@ -4,8 +4,8 @@ import os
 from wilder.lib.constants import Constants
 from wilder.lib.mgmt.release import Release
 from wilder.lib.mgmt.track import Track
-from wilder.lib.util.resources import get_album_json_path as get_default_album_json_path
-from wilder.lib.util.resources import get_artwork_path
+from wilder.lib.resources import get_album_json_path as get_default_album_json_path
+from wilder.lib.resources import get_artwork_path
 from wilder.lib.util.sh import copy_files_to_dir
 from wilder.lib.util.sh import create_dir_if_not_exists
 from wilder.lib.util.sh import remove_file_if_exists
@@ -44,7 +44,7 @@ class Album:
 
     def _init_album_json(self):
         create_dir_if_not_exists(self.path)
-        album_json_path = self.get_dir_json_path()
+        album_json_path = self._get_dir_json_path()
         default_json_path = get_default_album_json_path()
         with wopen(default_json_path) as default_album_json_file:
             album_json = json.load(default_album_json_file)
@@ -65,29 +65,23 @@ class Album:
 
     def _set_from_dir_json(self, artist_name):
         # Requires self.name to already be set.
-        album_dir_json = self.get_dir_json()
+        album_dir_json = self._get_dir_json()
         self.description = album_dir_json.get(Constants.DESCRIPTION)
         self.artwork = album_dir_json.get(Constants.ARTWORK)
         self.album_type = album_dir_json.get(Constants.ALBUM_TYPE)
         self.status = album_dir_json.get(Constants.STATUS)
         tracks = album_dir_json.get(Constants.TRACKS) or []
-        self.tracks = self.parse_tracks(artist_name, self.name, tracks)
+        self.tracks = _parse_tracks(artist_name, self.name, tracks)
         releases = album_dir_json.get(Constants.RELEASES)
-        self.releases = self.parse_releases(artist_name, self.name, releases)
+        self.releases = _parse_releases(artist_name, self.name, releases)
 
-    def get_default_album_json(self):
-        album_path = get_default_album_json_path()
-        with wopen(album_path) as album_file:
-            return json.load(album_file)
-        return {}
-
-    def get_dir_json_path(self):
+    def _get_dir_json_path(self):
         return os.path.join(self.path, "album.json")
 
-    def get_dir_json(self):
+    def _get_dir_json(self):
         if not os.path.exists(self.path):
             self.init_dir()
-        album_data_file_path = self.get_dir_json_path()
+        album_data_file_path = self._get_dir_json_path()
         if not os.path.isfile(album_data_file_path):
             self.init_dir()
 
@@ -111,20 +105,11 @@ class Album:
         return {Constants.ARTIST: self.artist, Constants.PATH: self.path}
 
     def save_album_metadata(self):
-        album_path = get_album_json_path()
+        album_path = self._get_dir_json_path()
         remove_file_if_exists(album_path)
         album_json = self.to_full_json()
         with wopen(album_path, "w") as album_file:
             album_file.write(album_json)
-
-    def parse_tracks(self, artist_name, album_name, tracks_json):
-        return [Track.from_path_json(artist_name, album_name, t) for t in tracks_json]
-
-    def parse_releases(self, artist_name, album_name, releases_json):
-        return [
-            Release.from_path_json(artist_name, album_name, release_json)
-            for release_json in releases_json
-        ]
 
     def get_track(self, name):
         for track in self.tracks:
@@ -132,7 +117,24 @@ class Album:
                 return track
 
 
-def get_track_path(album, track_name):
+def _get_track_path(album, track_name):
     track_path = f"{album.path}/{track_name}"
     create_dir_if_not_exists(track_path)
     return track_path
+
+
+def _parse_tracks(artist_name, album_name, tracks_json):
+    return [Track.from_json(artist_name, album_name, t) for t in tracks_json]
+
+
+def _parse_releases(artist_name, album_name, releases_json):
+    return [
+        Release.from_json(artist_name, album_name, release_json)
+        for release_json in releases_json
+    ]
+
+
+def _get_default_album_json():
+    album_path = get_default_album_json_path()
+    with wopen(album_path) as album_file:
+        return json.load(album_file) or {}

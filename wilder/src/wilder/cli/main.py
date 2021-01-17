@@ -5,10 +5,9 @@ import sys
 import click
 from wilder.cli.argv import wild_options
 from wilder.cli.clickext.groups import ExceptionHandlingGroup
-from wilder.cli.cmds import album
-from wilder.cli.cmds import artist
-from wilder.cli.cmds import config
-from wilder.cli.cmds import play
+from wilder.cli.cmds.album import album
+from wilder.cli.cmds.artist import artist
+from wilder.cli.cmds.config import config
 from wilder.cli.cmds.dev import dev
 from wilder.cli.logger import get_cli_error_log_path
 
@@ -70,7 +69,6 @@ def logs(last_n_lines):
         return []
 
 
-cli.add_command(play)
 cli.add_command(album)
 cli.add_command(artist)
 cli.add_command(config)

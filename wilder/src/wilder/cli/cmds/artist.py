@@ -1,6 +1,4 @@
 import click
-from wilder.constants import Constants
-from wilder.util import noop
 from wilder.cli.argv import alias_arg
 from wilder.cli.argv import artist_name_arg
 from wilder.cli.argv import artist_option
@@ -12,6 +10,8 @@ from wilder.cli.cmds.util import echo_formatted_list
 from wilder.cli.output_formats import OutputFormat
 from wilder.cli.util import abridge
 from wilder.cli.util import convert_to_table_none_if_needed
+from wilder.lib.constants import Constants
+from wilder.lib.util import noop
 
 
 @click.group()

@@ -1,13 +1,13 @@
 from wilder.client.connection import create_connection
 from wilder.client.errors import OperationNotPermittedError
 from wilder.client.errors import WildBadRequestError
-from wilder.sdk import BaseWildApi
 from wilder.lib.constants import Constants
 from wilder.lib.errors import ArtistAlreadySignedError
 from wilder.lib.errors import ArtistNotSignedError
 from wilder.lib.mgmt.album import Album
 from wilder.lib.mgmt.artist import Artist
 from wilder.lib.util.sh import expand_path
+from wilder.sdk import BaseWildApi
 
 
 def create_client(config):

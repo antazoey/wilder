@@ -2,12 +2,12 @@ import logging
 import traceback
 from threading import Lock
 
-from wilder.lib.util.logging import add_handler_to_logger
-from wilder.lib.util.logging import create_error_file_handler
-from wilder.lib.util.logging import create_formatter_for_error_file
-from wilder.lib.util.logging import get_error_log_path
-from wilder.lib.util.logging import logger_has_handlers
 from wilder.cli.util import get_user_project_path
+from wilder.lib.logging import add_handler_to_logger
+from wilder.lib.logging import create_error_file_handler
+from wilder.lib.logging import create_formatter_for_error_file
+from wilder.lib.logging import get_error_log_path
+from wilder.lib.logging import logger_has_handlers
 
 # prevent loggers from printing stacks to stderr if a pipe is broken
 logging.raiseExceptions = False

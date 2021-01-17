@@ -3,14 +3,14 @@ import re
 from collections import OrderedDict
 
 import click
-from wilder.errors import AlbumAlreadyExistsError
-from wilder.errors import AlbumNotFoundError
-from wilder.errors import ArtistAlreadySignedError
-from wilder.errors import ArtistNotFoundError
-from wilder.errors import ArtistNotSignedError
 from wilder.cli.errors import LoggedCLIError
 from wilder.cli.errors import WilderCLIError
 from wilder.cli.logger import get_main_cli_logger
+from wilder.lib.errors import AlbumAlreadyExistsError
+from wilder.lib.errors import AlbumNotFoundError
+from wilder.lib.errors import ArtistAlreadySignedError
+from wilder.lib.errors import ArtistNotFoundError
+from wilder.lib.errors import ArtistNotSignedError
 
 _DIFFLIB_CUT_OFF = 0.6
 

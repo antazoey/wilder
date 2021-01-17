@@ -1,10 +1,10 @@
 import click
-from wilder.config import delete_config_if_exists
-from wilder.config import set_client_settings
-from wilder.constants import Constants
 from wilder.cli.argv import wild_options
 from wilder.cli.argv import yes_option
 from wilder.cli.util import does_user_agree
+from wilder.lib.config import delete_config_if_exists
+from wilder.lib.config import set_client_settings
+from wilder.lib.constants import Constants
 
 
 class ConfigRequiredCommand(click.Command):

@@ -2,8 +2,8 @@ import logging
 import os
 from logging.handlers import RotatingFileHandler
 
-from wilder.constants import Constants
-from wilder.util.user import get_project_path
+from wilder.lib.constants import Constants
+from wilder.lib.user import get_project_path
 
 
 def create_error_file_handler(log_path=None):

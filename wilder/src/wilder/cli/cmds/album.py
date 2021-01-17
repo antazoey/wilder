@@ -1,6 +1,5 @@
 import click
 from PyInquirer import prompt
-from wilder.constants import Constants
 from wilder.cli.argv import album_name_arg
 from wilder.cli.argv import album_option
 from wilder.cli.argv import artist_option
@@ -13,6 +12,7 @@ from wilder.cli.cmds.util import echo_formatted_list
 from wilder.cli.output_formats import OutputFormat
 from wilder.cli.util import abridge
 from wilder.cli.util import does_user_agree
+from wilder.lib.constants import Constants
 
 
 @click.group()

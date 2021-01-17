@@ -2,16 +2,16 @@ import json
 import shutil
 from datetime import datetime
 
-import wilder.lib.util.user as user
+import wilder.lib.user as user
 from wilder.lib.constants import Constants as Constants
-from wilder.lib.errors import AlbumAlreadyExistsError, TrackNotFoundError
 from wilder.lib.errors import AlbumNotFoundError
 from wilder.lib.errors import ArtistAlreadySignedError
 from wilder.lib.errors import ArtistNotSignedError
 from wilder.lib.errors import NoArtistsFoundError
-from wilder.lib.mgmt.track import Track
+from wilder.lib.errors import TrackNotFoundError
 from wilder.lib.mgmt.artist import Artist
-from wilder.lib.util.sh import expand_path, save_as
+from wilder.lib.mgmt.track import Track
+from wilder.lib.util.sh import save_as
 
 
 class BaseWildApi:
@@ -35,7 +35,7 @@ class Wilder(BaseWildApi):
         self._artists = artists
         self._last_updated = last_updated
         self._focus_artist = focus_artist
-    
+
     """Class"""
 
     @classmethod
@@ -136,10 +136,7 @@ class Wilder(BaseWildApi):
             raise ValueError("Must provide a new name when renaming an artist.")
         artist = self.get_artist(name=artist_name)
         old_name = artist.name
-        artist.name = new_name
-        if not forget_old_name and old_name not in artist.also_known_as:
-            artist.also_known_as.append(old_name)
-
+        artist.rename(new_name, forget_old_name=forget_old_name)
         if old_name == self._focus_artist:
             self._focus_artist = new_name
         self._save()
@@ -147,13 +144,13 @@ class Wilder(BaseWildApi):
     def add_alias(self, alias, artist_name=None):
         """Add an additional artist name, such as a "formerly known as"."""
         artist = self.get_artist(name=artist_name)
-        artist.also_known_as.append(alias)
+        artist.add_alias(alias)
         self._save()
 
     def remove_alias(self, alias, artist_name=None):
         """Remove one of the additional artist names."""
         artist = self.get_artist(name=artist_name)
-        artist.also_known_as = filter(lambda x: x != alias, artist.also_known_as)
+        artist.remove_alias(alias)
         self._save()
 
     """Albums"""
@@ -182,11 +179,6 @@ class Wilder(BaseWildApi):
     ):
         """Start a new album."""
         artist = self.get_artist(name=artist_name)
-        for alb in artist.discography:
-            if alb.name == album_name:
-                raise AlbumAlreadyExistsError(alb.name)
-        album_path = expand_path(album_path)
-        album_path = f"{album_path}/{album_name}"
         artist.start_new_album(
             album_path,
             name=album_name,
@@ -232,11 +224,7 @@ class Wilder(BaseWildApi):
         """Delete an album."""
         artist = self.get_artist(artist_name)
         album = self.get_album(album_name, artist_name=artist_name)
-        albums = []
-        for alb in artist.discography:
-            if alb.name != album.name:
-                albums.append(album)
-        artist.discography = albums
+        artist.delete_album(album)
         self._save()
 
     def get_tracks(self, album_name, artist_name=None):

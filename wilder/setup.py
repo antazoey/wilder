@@ -33,8 +33,8 @@ setup(
         "click>=7.1.2",
         "Flask==1.1.2",
         "PyInquirer>=1.0.3",
-        "python-vlc>=3.0.11115", 
-        "requests>=2.25.1"
+        "python-vlc>=3.0.11115",
+        "requests>=2.25.1",
     ],
     extras_require={
         "dev": [
