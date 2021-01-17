@@ -18,9 +18,10 @@ def expand_path(path):
 
 
 def copy_files_to_dir(source_files, dest_path):
-    if dest_path:
-        for file in source_files:
-            copy_file_to_dir(file, dest_path)
+    if not isinstance(source_files, (list, tuple)):
+        source_files = [source_files]
+    for file in source_files:
+        copy_file_to_dir(file, dest_path)
 
 
 def copy_file_to_dir(source_file, dest_path):

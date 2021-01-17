@@ -116,7 +116,7 @@ class WildClient(BaseWildApi):
         albums = self._get(url, params=_as_artist_dict(artist_name)).get(
             Constants.ALBUMS
         )
-        return [Album.from_path_json(artist_name, a_json) for a_json in albums]
+        return [Album.from_json(artist_name, a_json) for a_json in albums]
 
     def get_album(self, name, artist_name=None):
         """Get an album by its title."""
@@ -125,7 +125,7 @@ class WildClient(BaseWildApi):
         params[Constants.ALBUM] = name
         response = self._get(url, params=params)
         artist_name = response[Constants.ARTIST]
-        return Album.from_path_json(artist_name, response)
+        return Album.from_json(artist_name, response)
 
     def start_new_album(
         self,

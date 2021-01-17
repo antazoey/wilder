@@ -45,8 +45,8 @@ def cli(state):
 @wild_options()
 def mgmt(state):
     """Show the full MGMT JSON blob."""
-    _mgmt = state.wilder.get_mgmt()
-    _json = json.dumps(_mgmt.to_json(), indent=2)
+    _json = state.wilder.get_mgmt()
+    _json = json.dumps(_json, indent=2)
     click.echo(_json)
 
 

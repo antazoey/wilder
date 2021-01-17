@@ -36,6 +36,9 @@ class Wilder(BaseWildApi):
         self._last_updated = last_updated
         self._focus_artist = focus_artist
 
+    def __repr__(self):
+        return f"Wilder-{self._focus_artist}"
+
     """Class"""
 
     @classmethod
@@ -47,6 +50,7 @@ class Wilder(BaseWildApi):
         sdk._artists = artists
         sdk.last_updated = last_updated
         sdk.focus_artist = focus_artist
+        return sdk
 
     def get_mgmt(self):
         """Get the full MGMT JSON blob."""
