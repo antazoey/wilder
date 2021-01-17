@@ -1,13 +1,13 @@
 import json
 import os
 
-from wilder.lib.util.sh import get_current_dir
+from wilder.lib.util.sh import get_file_dir
 
 # This module is for accessing default Wilder resources for creating albums.
 
 
 def get_resources_path():
-    here = get_current_dir(__file__)
+    here = get_file_dir(__file__)
     return os.path.join(here, "resources")
 
 

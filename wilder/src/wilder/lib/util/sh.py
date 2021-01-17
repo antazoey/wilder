@@ -1,4 +1,5 @@
 import os
+import json
 import shutil
 from pathlib import Path
 
@@ -53,5 +54,11 @@ def save_as(to, file_text):
         file_to_save.write(file_text)
 
 
-def get_current_dir(file=None):
+def get_file_dir(file=None):
     return os.path.dirname(os.path.abspath(file or __file__))
+
+
+def load_json_from_file(file_path):
+    with wopen(file_path) as json_file:
+        return json.load(json_file)
+

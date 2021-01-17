@@ -2,11 +2,9 @@ import os
 
 import click
 from PyInquirer import prompt
-from wilder.cli.argv import album_option
 from wilder.cli.argv import wild_options
 from wilder.lib.constants import Constants
-from wilder.lib.errors import NotInAlbumError
-from wilder.lib.util.sh import get_current_dir
+from wilder.lib.util.sh import load_json_from_file
 
 
 @click.group()
@@ -15,8 +13,8 @@ def track():
     pass
 
 
-def _check_for_album_json():
-    here = get_current_dir(__file__)
+def _get_album_json():
+    here = os.getcwd()
     album_json_path = os.path.join(here, "album.json")
     if not os.path.isfile(album_json_path):
         click.echo(
@@ -25,11 +23,12 @@ def _check_for_album_json():
             "to change to the desired album directory.",
             err=True,
         )
+    return load_json_from_file(album_json_path)
 
 
 class FromAlbumDirectoryCommand(click.Command):
     def invoke(self, ctx):
-        _check_for_album_json()
+        ctx.obj.album_json = _get_album_json()
         return super().invoke(ctx)
 
 
@@ -37,14 +36,16 @@ class FromAlbumDirectoryCommand(click.Command):
 @wild_options()
 def _list(state):
     """List the tracks on an album."""
-    # _artist = state.wilder.get_artist(artist)
-    # _album = state.wilder.get_album(album_name, artist_name=artist)
-    # if _album.tracks:
-    #     click.echo(f"'{album_name}' by {_artist.name}: \n")
-    #     for track in _album.tracks:
-    #         click.echo(f"{track.track_number}. {track.name}")
-    # else:
-    #     click.echo(f"No tracks yet on album '{_album.name}'.")
+    artist_name = state.album_json.get(Constants.ARTIST)
+    album_name = state.album_json.get(Constants.NAME)
+    _album = state.wilder.get_album(album_name)
+
+    if _album.tracks:
+        click.echo(f"'{album_name}' by {artist_name}: \n")
+        for tr in _album.tracks:
+            click.echo(f"{tr.track_number}. {tr.name}")
+    else:
+        click.echo(f"No tracks yet on album '{_album.name}'.")
 
 
 # @click.command(cls=ArtistArgRequiredIfGivenCommand)
