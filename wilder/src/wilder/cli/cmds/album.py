@@ -132,8 +132,8 @@ def list_tracks(state, artist, album_name):
     _artist = state.wilder.get_artist(artist)
     _album = state.wilder.get_album(album_name, artist_name=artist)
     if _album.tracks:
+        click.echo(f"'{album_name}' by {_artist.name}: \n")
         for track in _album.tracks:
-            click.echo(f"'{album_name}' by {_artist.name}: \n")
             click.echo(f"{track.track_number}. {track.name}")
     else:
         click.echo(f"No tracks yet on album '{_album.name}'.")

@@ -1,17 +1,17 @@
 from flask import Flask
 from flask import jsonify
 from flask import request
-from wilder import get_wilder_sdk
-from wilder.constants import Constants as Consts
-from wilder.errors import WildError
-from wilder.errors import WildNotFoundError as WildCoreNotFoundError
+from wilder.sdk import get_wilder_sdk
+from wilder.lib.constants import Constants as Consts
+from wilder.lib.errors import WildError
+from wilder.lib.errors import WildNotFoundError as WildCoreNotFoundError
 from wilder.server._helper import error_response
 from wilder.server._helper import HttpMethod
 from wilder.server._helper import successful_response
 from wilder.server.error import get_response_error_data
 from wilder.server.error import ShortErrorMessages
 from wilder.server.error import WildServerError
-from wilder.util.user import get_mgmt_json
+from wilder.lib.user import get_mgmt_json
 
 
 app = Flask(__name__)
@@ -235,7 +235,7 @@ def album_create_track():
     description = _get_request_data_param(Consts.DESCRIPTION)
     collaborators = _get_request_data_param(Consts.COLLABORATORS)
     wilder.start_new_track(
-        album_name,
+        _album,
         track,
         track_num,
         artist_name=artist_name,
@@ -259,7 +259,8 @@ def album_list_tracks():
     """List the tracks on an album"""
     wilder = get_wilder_sdk()
     artist_name = _get_request_data_param(Consts.ARTIST)
-    _album = _get_request_data_param(Consts.ALBUM)
+    album_name = _get_request_data_param(Consts.ALBUM)
+    _album = wilder.get_album(album_name, artist_name)
     return {Consts.ALBUMS: [t.to_json() for t in _album.tracks]}
 
 
