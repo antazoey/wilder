@@ -129,10 +129,12 @@ def delete(state, artist, album_name):
 @album_name_arg
 def list_tracks(state, artist, album_name):
     """List the tracks on an album."""
+    _artist = state.wilder.get_artist(artist)
     _album = state.wilder.get_album(album_name, artist_name=artist)
     if _album.tracks:
         for track in _album.tracks:
-            click.echo(f"({track.track_number}.) {track.name}")
+            click.echo(f"'{album_name}' by {_artist.name}: \n")
+            click.echo(f"{track.track_number}. {track.name}")
     else:
         click.echo(f"No tracks yet on album '{_album.name}'.")
 

@@ -15,7 +15,7 @@ class Track:
     @classmethod
     def from_json(cls, artist_name, album_name, track_json):
         name = track_json.get(Constants.NAME)
-        track_number = track_json.get(Constants.TRACK_NUMBER)
+        track_number = track_json.get(Constants.TRACK_NUMBER) or 1
         description = track_json.get(Constants.DESCRIPTION)
         collaborators = track_json.get(Constants.COLLABORATORS)
         return cls(

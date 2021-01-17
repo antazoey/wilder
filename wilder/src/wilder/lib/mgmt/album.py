@@ -78,7 +78,7 @@ class Album:
         }
 
     def to_json_for_mgmt(self):
-        # Figure out name if path is set
+        # Figure out name if path is set but name for some reason isn't
         if not self.name and self.path:
             self.name = os.path.basename(os.path.normpath(self.path))
             self.save_album_metadata()
