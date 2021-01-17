@@ -4,8 +4,8 @@ import os
 from wilder.lib.constants import Constants
 from wilder.lib.mgmt.release import Release
 from wilder.lib.mgmt.track import Track
-from wilder.lib.resources import get_default_album_json
 from wilder.lib.resources import get_artwork_path
+from wilder.lib.resources import get_default_album_json
 from wilder.lib.util.sh import copy_files_to_dir
 from wilder.lib.util.sh import create_dir_if_not_exists
 from wilder.lib.util.sh import remove_file_if_exists
@@ -58,6 +58,7 @@ class Album:
         album.artist = artist_name
         album.name = album_json.get(Constants.NAME)
         album._set_from_dir_json(artist_name)
+        album.save_album_metadata()
         return album
 
     def _set_from_dir_json(self, artist_name):
@@ -79,7 +80,10 @@ class Album:
         if not os.path.exists(self.path):
             self.init_dir()
         album_data_file_path = self._get_dir_json_path()
-        if not os.path.isfile(album_data_file_path):
+        if (
+            not os.path.isfile(album_data_file_path)
+            or not os.path.getsize(album_data_file_path)
+        ):
             self.init_dir()
 
         with wopen(album_data_file_path) as local_json_file:
@@ -102,15 +106,17 @@ class Album:
         # Figure out name if path is set
         if not self.name and self.path:
             self.name = os.path.basename(os.path.normpath(self.path))
+            self.save_album_metadata()
 
         return {Constants.ALBUM: self.name, Constants.PATH: self.path}
 
     def save_album_metadata(self):
         album_path = self._get_dir_json_path()
         remove_file_if_exists(album_path)
-        album_json = self.to_full_json()
+        full_json = self.to_full_json()
+        album_text = json.dumps(full_json, indent=2)
         with wopen(album_path, "w") as album_file:
-            album_file.write(album_json)
+            album_file.write(album_text)
 
     def get_track(self, name):
         for track in self.tracks:

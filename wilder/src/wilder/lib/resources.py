@@ -22,5 +22,6 @@ def get_album_json_path():
 def get_default_album_json():
     album_path = get_album_json_path()
     from wilder.lib.util.sh import wopen
+
     with wopen(album_path) as album_file:
         return json.load(album_file) or {}
