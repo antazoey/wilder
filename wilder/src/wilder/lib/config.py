@@ -5,6 +5,7 @@ from wilder.lib.constants import Constants
 from wilder.lib.user import get_config_path
 from wilder.lib.util.conversion import to_bool
 from wilder.lib.util.conversion import to_int
+from wilder.lib.util.sh import wopen
 
 
 def set_client_settings(client_config_json):
@@ -33,13 +34,13 @@ def set_client_settings(client_config_json):
 def _save_config_change(config_path, config_json):
     if os.path.exists(config_path):
         os.remove(config_path)
-    with open(config_path, "w") as config_file:
+    with wopen(config_path, "w") as config_file:
         config_file.write(json.dumps(config_json, indent=2))
 
 
 def get_config_json():
     config_path = get_config_path(True)
-    with open(config_path) as config_file:
+    with wopen(config_path) as config_file:
         return json.load(config_file)
 
 

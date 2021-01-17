@@ -11,6 +11,8 @@ from wilder.client.errors import WildClientError
 from wilder.client.errors import WildNotFoundError
 from wilder.client.errors import WildUnknownServerError
 from wilder.lib.errors import ArtistNotFoundError
+from wilder.lib.config import get_config_json
+from wilder.lib.constants import Constants
 
 
 SESSION_ADAPTER = HTTPAdapter(pool_connections=200, pool_maxsize=4, pool_block=True)
@@ -25,8 +27,11 @@ ROOT_SESSION.headers = {
 }
 
 
-def create_connection(host_address="127.0.0.1", port=443):
-    return Connection(f"{host_address}:{port}")
+def create_connection():
+    _config = get_config_json()
+    host = _config.get(Constants.HOST, Constants.DEFAULT_HOST)
+    port = _config.get(Constants.PORT, Constants.DEFAULT_PORT)
+    return Connection(f"{host}:{port}")
 
 
 class Connection:

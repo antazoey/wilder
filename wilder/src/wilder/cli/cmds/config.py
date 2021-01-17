@@ -25,8 +25,8 @@ def config():
 @click.command("set")
 def _set():
     """Create a config file to re-use your Wilder connection parameters."""
-    host = "http://127.0.0.1"
-    port = 6660
+    host = Constants.DEFAULT_HOST
+    port = Constants.DEFAULT_PORT
     _json = {Constants.HOST: host, Constants.PORT: port}
     set_client_settings(_json)
 

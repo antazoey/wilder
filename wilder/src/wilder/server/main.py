@@ -270,3 +270,7 @@ def _get_request_query_param(key):
 
 def _get_request_data_param(key):
     return request.json.get(key)
+
+
+def run(host, port):
+    app.run(host=host, port=port)

@@ -1,3 +1,4 @@
+
 class Constants:
     ALIAS = "alias"
     ALBUM = "album"
@@ -12,6 +13,8 @@ class Constants:
     CREATE_ALBUM = "create-album"
     CREATE_TRACK = "create-track"
     COLLABORATORS = "collaborators"
+    DEFAULT_HOST = "127.0.0.1"
+    DEFAULT_PORT = 6660
     DELETE = "delete"
     DESCRIPTION = "description"
     DISCOGRAPHY = "discography"
