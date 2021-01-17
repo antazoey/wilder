@@ -52,20 +52,24 @@ ALBUM_HEADER = {
 @format_option
 def _list(state, artist, format):
     """List an artist's discography."""
-    artist_obj = state.get_artist(artist)
+    artist_obj = state.wilder.get_artist(artist)
     albums_json_list = [a.to_full_json() for a in artist_obj.discography]
     if not albums_json_list:
         _handle_no_albums_found(artist_obj.name)
         return
 
     if format == OutputFormat.TABLE:
-        for alb in albums_json_list:
-            full_desc = alb.get(Constants.DESCRIPTION)
-            if full_desc:
-                alb[Constants.DESCRIPTION] = abridge(full_desc)
+        _abridge_discography_data(albums_json_list)
 
     click.echo(f"Albums by '{artist_obj.name}':\n")
     echo_formatted_list(format, albums_json_list, header=ALBUM_HEADER)
+
+
+def _abridge_discography_data(albums_json_list):
+    for alb in albums_json_list:
+        full_desc = alb.get(Constants.DESCRIPTION)
+        if full_desc:
+            alb[Constants.DESCRIPTION] = abridge(full_desc)
 
 
 @click.command(cls=ArtistArgRequiredIfGivenCommand)

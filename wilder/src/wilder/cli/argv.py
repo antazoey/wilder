@@ -48,13 +48,6 @@ class CLIState:
             self._config = create_config_object()
         return self._config
 
-    def get_artist(self, artist_arg=None):
-        try:
-            return self.wilder.get_artist(name=artist_arg)
-        except NoArtistsFoundError:
-            click.echo("No artists found.")
-            exit(1)
-
     def set_assume_yes(self, param):
         self.assume_yes = param
 

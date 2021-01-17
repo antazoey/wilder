@@ -47,7 +47,7 @@ def create_dir_if_not_exists(path):
 
 
 def save_as(to, file_text):
-    """Overwrites or creates the file at the path with the given text.."""
+    """Overwrites or creates the file at the path with the given text."""
     remove_file_if_exists(to)
     with wopen(to, "w") as file_to_save:
         file_to_save.write(file_text)

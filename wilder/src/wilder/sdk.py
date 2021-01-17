@@ -46,11 +46,9 @@ class Wilder(BaseWildApi):
         last_updated = mgmt_json.get(Constants.LAST_UPDATED)
         focus_artist = mgmt_json.get(Constants.FOCUS_ARTIST)
         artists = _parse_artists(mgmt_json)
-        sdk = cls()
-        sdk._artists = artists
-        sdk.last_updated = last_updated
-        sdk.focus_artist = focus_artist
-        return sdk
+        return cls(
+            artists=artists, last_updated=last_updated, focus_artist=focus_artist
+        )
 
     def get_mgmt(self):
         """Get the full MGMT JSON blob."""
@@ -87,8 +85,9 @@ class Wilder(BaseWildApi):
         return self._set_first_artist_as_focus_artist()
 
     def _set_first_artist_as_focus_artist(self):
-        first_artist = self._artists[0].name
-        self.focus_on_artist(first_artist)
+        first_artist = self._artists[0]
+        self._focus_artist = first_artist.name
+        self._save()
         return first_artist
 
     def focus_on_artist(self, artist_name):
