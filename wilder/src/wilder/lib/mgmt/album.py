@@ -4,7 +4,7 @@ import os
 from wilder.lib.constants import Constants
 from wilder.lib.mgmt.release import Release
 from wilder.lib.mgmt.track import Track
-from wilder.lib.resources import get_album_json_path as get_default_album_json_path
+from wilder.lib.resources import get_default_album_json
 from wilder.lib.resources import get_artwork_path
 from wilder.lib.util.sh import copy_files_to_dir
 from wilder.lib.util.sh import create_dir_if_not_exists
@@ -44,15 +44,12 @@ class Album:
 
     def _init_album_json(self):
         create_dir_if_not_exists(self.path)
+        _json = get_default_album_json()
+        _json[Constants.NAME] = self.name
         album_json_path = self._get_dir_json_path()
-        default_json_path = get_default_album_json_path()
-        with wopen(default_json_path) as default_album_json_file:
-            album_json = json.load(default_album_json_file)
-            album_json[Constants.NAME] = self.name
-            with wopen(album_json_path, "w") as real_album_json_file:
-                real_album_json_file.write(json.dumps(album_json, indent=2))
-
-        copy_files_to_dir(album_json_path, self.path)
+        json_text = json.dumps(_json, indent=2)
+        with wopen(album_json_path, "w") as album_json_file:
+            album_json_file.write(json_text)
 
     @classmethod
     def from_json(cls, artist_name, album_json):
@@ -102,7 +99,11 @@ class Album:
         }
 
     def to_json_for_mgmt(self):
-        return {Constants.ARTIST: self.artist, Constants.PATH: self.path}
+        # Figure out name if path is set
+        if not self.name and self.path:
+            self.name = os.path.basename(os.path.normpath(self.path))
+
+        return {Constants.ALBUM: self.name, Constants.PATH: self.path}
 
     def save_album_metadata(self):
         album_path = self._get_dir_json_path()
@@ -132,9 +133,3 @@ def _parse_releases(artist_name, album_name, releases_json):
         Release.from_json(artist_name, album_name, release_json)
         for release_json in releases_json
     ]
-
-
-def _get_default_album_json():
-    album_path = get_default_album_json_path()
-    with wopen(album_path) as album_file:
-        return json.load(album_file) or {}
