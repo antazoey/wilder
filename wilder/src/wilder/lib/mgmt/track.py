@@ -2,30 +2,13 @@ from wilder.lib.constants import Constants
 
 
 class Track:
-    # The name of the track.
-    name = None
-
-    # The description of the track.
-    description = None
-
-    # The track number on the album it appears on.
-    track_number = None
-
-    # The .flp file.
-    proj_file = None
-
-    # Relational
-    album = None
-
-    # The artist of the track.
-    artist = None
-
-    # Additional collaborators on the track.
-    collaborators = []
-
-    def __init__(self, name, track_num, description=None, collaborators=None):
+    def __init__(
+        self, name, track_num, artist, album, description=None, collaborators=None
+    ):
         self.name = name
         self.track_number = track_num
+        self.artist = artist
+        self.album = album
         self.description = description
         self.collaborators = collaborators
 
@@ -35,12 +18,14 @@ class Track:
         track_number = track_json.get(Constants.TRACK_NUMBER)
         description = track_json.get(Constants.DESCRIPTION)
         collaborators = track_json.get(Constants.COLLABORATORS)
-        track = cls(name, track_number)
-        track.artist = artist_name
-        track.album = album_name
-        track.description = description
-        track.collaborators = collaborators
-        return track
+        return cls(
+            name,
+            track_number,
+            artist_name,
+            album_name,
+            description=description,
+            collaborators=collaborators,
+        )
 
     def to_json(self):
         return {

@@ -80,9 +80,8 @@ class Album:
         if not os.path.exists(self.path):
             self.init_dir()
         album_data_file_path = self._get_dir_json_path()
-        if (
-            not os.path.isfile(album_data_file_path)
-            or not os.path.getsize(album_data_file_path)
+        if not os.path.isfile(album_data_file_path) or not os.path.getsize(
+            album_data_file_path
         ):
             self.init_dir()
 
