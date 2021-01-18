@@ -20,8 +20,12 @@ def track():
 
 @click.command(Constants.LIST, cls=AlbumDirCommand)
 @wild_options()
-def _list(state):
+@artist_option
+@album_option()
+def _list(state, artist, album):
     """List the tracks on an album."""
+    _ = artist
+    _ = album
     artist_name = state.album_json.get(Constants.ARTIST)
     album_name = state.album_json.get(Constants.NAME)
     _album = state.wilder.get_album(album_name)
@@ -41,8 +45,12 @@ def _list(state):
 @track_num_option
 @description_option("The description of the track.")
 @collaborator_option
-def new(state, artist, track_name, track_num):
+@artist_option
+@album_option()
+def new(state, track_name, track_num, artist, album):
     """Add a track to an album."""
+    _ = artist
+    _ = album
     album = state.album_json.get(Constants.NAME)
     state.wilder.start_new_track(
         album, track_name, artist_name=artist, track_num=track_num
@@ -50,8 +58,13 @@ def new(state, artist, track_name, track_num):
 
 
 @click.command()
-def reorder():
+@wild_options()
+@artist_option
+@album_option()
+def reorder(state, artist, album):
     """Reorder the tracks on an album."""
+    _ = artist
+    _ = album
     questions = [
         {
             "type": "list",
