@@ -24,10 +24,7 @@ def track():
 @album_option()
 def _list(state, artist, album):
     """List the tracks on an album."""
-    _ = artist
-    _ = album
-    artist_name = state.album_json.get(Constants.ARTIST)
-    album_name = state.album_json.get(Constants.NAME)
+    artist_name, album_name = _get_artist_and_album(state, artist, album)
     _album = state.wilder.get_album(album_name)
 
     if _album.tracks:
@@ -49,9 +46,7 @@ def _list(state, artist, album):
 @album_option()
 def new(state, track_name, track_num, artist, album):
     """Add a track to an album."""
-    _ = artist
-    _ = album
-    album = state.album_json.get(Constants.NAME)
+    _, album = _get_artist_and_album(state, artist, album)
     state.wilder.start_new_track(
         album, track_name, artist_name=artist, track_num=track_num
     )
@@ -63,8 +58,7 @@ def new(state, track_name, track_num, artist, album):
 @album_option()
 def reorder(state, artist, album):
     """Reorder the tracks on an album."""
-    _ = artist
-    _ = album
+    _, _ = _get_artist_and_album(state, artist, album)
     questions = [
         {
             "type": "list",
@@ -77,6 +71,15 @@ def reorder(state, artist, album):
     answers = prompt(questions)
 
 
+def _get_artist_and_album(state, artist_arg, album_arg):
+    # Artist/album args get set to album_json if provided
+    _ = artist_arg
+    _ = album_arg
+    artist = state.album_json.get(Constants.ARTIST)
+    album = state.album_json.get(Constants.NAME)
+    return artist, album
+
+
 track.add_command(_list)
-# track.add_command(add)
+track.add_command(new)
 track.add_command(reorder)
