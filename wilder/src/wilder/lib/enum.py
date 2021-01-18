@@ -1,7 +1,7 @@
 from wilder.lib.util import get_attribute_keys_from_class
 
 
-class AlbumState:
+class AlbumStatus:
     IN_PROGRESS = "IN_PROGRESS"
     DEMO = "DEMO"
     PRE_RELEASE = "PRE_RELEASED"
@@ -9,7 +9,7 @@ class AlbumState:
 
     @staticmethod
     def choices():
-        return get_attribute_keys_from_class(AlbumState)
+        return get_attribute_keys_from_class(AlbumStatus)
 
 
 class AlbumType:

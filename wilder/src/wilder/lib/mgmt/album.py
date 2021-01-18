@@ -2,6 +2,7 @@ import json
 import os
 
 from wilder.lib.constants import Constants
+from wilder.lib.enum import AlbumStatus
 from wilder.lib.mgmt.album_dir import get_album_dir_json
 from wilder.lib.mgmt.album_dir import get_album_dir_json_path
 from wilder.lib.mgmt.album_dir import init_dir
@@ -41,10 +42,10 @@ class Album:
         path = album_json.get(Constants.PATH)
         name = album_json.get(Constants.NAME)
         album_dir_json = get_album_dir_json(path, name)
-        description = album_dir_json.get(Constants.DESCRIPTION)
+        description = album_dir_json.get(Constants.DESCRIPTION, "")
         album_type = album_dir_json.get(Constants.ALBUM_TYPE)
-        status = album_dir_json.get(Constants.STATUS)
-        tracks = album_dir_json.get(Constants.TRACKS) or []
+        status = album_dir_json.get(Constants.STATUS, AlbumStatus.IN_PROGRESS)
+        tracks = album_dir_json.get(Constants.TRACKS, [])
         tracks = _parse_tracks(artist_name, name, tracks)
         releases = album_dir_json.get(Constants.RELEASES)
         releases = _parse_releases(artist_name, name, releases)

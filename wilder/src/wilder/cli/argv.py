@@ -3,7 +3,7 @@ from wilder.cli.clickext.types import FileOrString
 from wilder.cli.output_formats import OutputFormat
 from wilder.cli.wild_factory import get_wilder
 from wilder.lib.config import create_config_object
-from wilder.lib.enum import AlbumState
+from wilder.lib.enum import AlbumStatus
 from wilder.lib.enum import AlbumType
 from wilder.lib.errors import NoArtistsFoundError
 
@@ -86,7 +86,7 @@ def update_album_options():
         f = click.option(
             "--status",
             help="The current status of the album.",
-            type=click.Choice(AlbumState.choices()),
+            type=click.Choice(AlbumStatus.choices()),
         )(f)
         f = wild_options()(f)
         f = artist_option(f)

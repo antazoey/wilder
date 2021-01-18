@@ -74,7 +74,5 @@ class NotInAlbumError(WildError):
 
     def __init__(self):
         super().__init__(
-            "Error: all 'track' commands require being an album directory. "
-            "Do:\n\n\tcd $(wild album path <album-name>)\n\n"
-            "to change to the desired album directory."
+            "Error: this command required album specification or to be in an album directory."
         )

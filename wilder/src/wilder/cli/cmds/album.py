@@ -1,16 +1,19 @@
 import click
 from wilder.cli.argv import album_name_arg
+from wilder.cli.argv import album_option
 from wilder.cli.argv import artist_option
 from wilder.cli.argv import format_option
 from wilder.cli.argv import update_album_options
 from wilder.cli.argv import wild_options
 from wilder.cli.argv import yes_option
+from wilder.cli.cmds.util import AlbumDirCommand
 from wilder.cli.cmds.util import ArtistArgRequiredIfGivenCommand
 from wilder.cli.cmds.util import echo_formatted_list
 from wilder.cli.output_formats import OutputFormat
 from wilder.cli.util import abridge
 from wilder.cli.util import does_user_agree
 from wilder.lib.constants import Constants
+from wilder.lib.mgmt.album_dir import echo_tracks
 
 
 @click.group()
@@ -80,11 +83,12 @@ def _abridge_discography_data(albums_json_list):
             alb[Constants.DESCRIPTION] = abridge(full_desc)
 
 
-@click.command(cls=ArtistArgRequiredIfGivenCommand)
+@click.command(cls=AlbumDirCommand)
 @update_album_options()
-@album_name_arg
-def update(state, artist, album_name, description, album_type, status):
+@album_option()
+def update(state, artist, album, description, album_type, status):
     """Update an album."""
+    album_name = album or state.album_json.get(Constants.NAME)
     state.wilder.update_album(
         album_name,
         artist_name=artist,
@@ -101,9 +105,32 @@ def update(state, artist, album_name, description, album_type, status):
 @yes_option
 def delete(state, artist, album_name):
     """Delete an album."""
-    album = state.wilder.get_album(album_name, artist_name=artist)
-    if does_user_agree(f"Are you sure you wish to delete the album '{album.name}'? "):
-        state.wilder.delete_album(album.name, artist_name=artist)
+    _album = state.wilder.get_album(album_name, artist_name=artist)
+    if does_user_agree(f"Are you sure you wish to delete the album '{_album.name}'? "):
+        state.wilder.delete_album(_album.name, artist_name=artist)
+
+
+@click.command(cls=AlbumDirCommand)
+@wild_options()
+@artist_option
+@album_option()
+def show(state, artist, album):
+    """Show information about an album."""
+    _ = artist
+    _ = album
+    data = state.album_json
+    click.echo(f"{data.get(Constants.NAME)} by  {data.get(Constants.ARTIST)}:\n\t")
+    _echo_kv(Constants.DESCRIPTION, data)
+    _echo_kv(Constants.ALBUM_TYPE, data)
+    _echo_kv(Constants.STATUS, data)
+    tracks = data.get(Constants.TRACKS)
+    if tracks:
+        click.echo("\nTracks:\n")
+        echo_tracks(tracks)
+
+
+def _echo_kv(key, data):
+    click.echo(f"{key}: {data.get(key)}")
 
 
 def _handle_no_albums_found(name):
@@ -116,3 +143,4 @@ album.add_command(_list)
 album.add_command(path)
 album.add_command(update)
 album.add_command(delete)
+album.add_command(show)

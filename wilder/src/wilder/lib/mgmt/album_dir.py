@@ -1,11 +1,13 @@
 import json
 import os
+import click
 
 from wilder.lib.constants import Constants
 from wilder.lib.resources import get_artwork_path
 from wilder.lib.resources import get_default_album_json
-from wilder.lib.util.sh import copy_files_to_dir, file_exists_with_data
+from wilder.lib.util.sh import copy_files_to_dir
 from wilder.lib.util.sh import create_dir_if_not_exists
+from wilder.lib.util.sh import file_exists_with_data
 from wilder.lib.util.sh import load_json_from_file
 from wilder.lib.util.sh import wopen
 
@@ -51,3 +53,8 @@ def _init_album_json(album_path, album_name):
     json_text = json.dumps(_json, indent=2)
     with wopen(album_json_path, "w") as album_json_file:
         album_json_file.write(json_text)
+
+
+def echo_tracks(tracks):
+    for track in tracks:
+        click.echo(f"{track.track_number}. {track.name}")

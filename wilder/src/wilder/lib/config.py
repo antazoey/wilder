@@ -5,7 +5,8 @@ from wilder.lib.constants import Constants
 from wilder.lib.user import get_config_path
 from wilder.lib.util.conversion import to_bool
 from wilder.lib.util.conversion import to_int
-from wilder.lib.util.sh import wopen, load_json_from_file
+from wilder.lib.util.sh import load_json_from_file
+from wilder.lib.util.sh import wopen
 
 
 def set_client_settings(client_config_json):

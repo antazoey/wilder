@@ -1,11 +1,9 @@
-import os
-
 import click
 from PyInquirer import prompt
 from wilder.cli.argv import wild_options
+from wilder.cli.cmds.util import AlbumDirCommand
 from wilder.lib.constants import Constants
-from wilder.lib.errors import NotInAlbumError
-from wilder.lib.util.sh import load_json_from_file
+from wilder.lib.mgmt.album_dir import echo_tracks
 
 
 @click.group()
@@ -14,32 +12,7 @@ def track():
     pass
 
 
-def _get_album_json(wilder):
-    here = os.getcwd()
-    album_json_path = os.path.join(here, "album.json")
-    if not os.path.isfile(album_json_path):
-
-        # Try checking all the managed albums to see if you're in a known path.
-        artists = wilder.get_artists()
-        for artist in artists:
-            album_paths = [a.path for a in artist.discography]
-            for path in album_paths:
-                if path == here:
-                    print("HERE")
-                    exit(1)
-                    break
-
-        raise NotInAlbumError()
-    return load_json_from_file(album_json_path)
-
-
-class FromAlbumDirectoryCommand(click.Command):
-    def invoke(self, ctx):
-        ctx.obj.album_json = _get_album_json(ctx.obj.wilder)
-        return super().invoke(ctx)
-
-
-@click.command(Constants.LIST, cls=FromAlbumDirectoryCommand)
+@click.command(Constants.LIST, cls=AlbumDirCommand)
 @wild_options()
 def _list(state):
     """List the tracks on an album."""
@@ -49,8 +22,7 @@ def _list(state):
 
     if _album.tracks:
         click.echo(f"'{album_name}' by {artist_name}: \n")
-        for tr in _album.tracks:
-            click.echo(f"{tr.track_number}. {tr.name}")
+        echo_tracks(_album.tracks)
     else:
         click.echo(f"No tracks yet on album '{_album.name}'.")
 
