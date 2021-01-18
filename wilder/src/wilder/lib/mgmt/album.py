@@ -62,7 +62,8 @@ class Album:
         album.save_album_metadata()
         return album
 
-    def _get_dir_json_path(self):
+    @property
+    def dir_json_path(self):
         return get_album_dir_json_path(self.path)
 
     def to_full_json(self):
@@ -86,11 +87,10 @@ class Album:
         return {Constants.ALBUM: self.name, Constants.PATH: self.path}
 
     def save_album_metadata(self):
-        album_path = self._get_dir_json_path()
-        remove_file_if_exists(album_path)
+        remove_file_if_exists(self.dir_json_path)
         full_json = self.to_full_json()
         album_text = json.dumps(full_json, indent=2)
-        with wopen(album_path, "w") as album_file:
+        with wopen(self.dir_json_path, "w") as album_file:
             album_file.write(album_text)
 
     def get_track(self, name):

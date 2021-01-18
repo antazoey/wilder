@@ -41,4 +41,4 @@ def get_album_json(wilder, artist_arg, album_arg):
         return load_json_from_file(album_json_path)
     else:
         album = wilder.get_album(album_arg, artist_name=artist_arg)
-        return load_json_from_file(album.path)
+        return load_json_from_file(album.dir_json_path)
