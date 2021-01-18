@@ -13,7 +13,7 @@ from wilder.lib.util.sh import wopen
 
 
 def get_track_path(album, track_name):
-    track_path = f"{album.path}/{track_name}"
+    track_path = os.path.join(album.path, track_name)
     create_dir_if_not_exists(track_path)
     return track_path
 

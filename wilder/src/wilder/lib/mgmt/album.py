@@ -86,6 +86,12 @@ class Album:
 
         return {Constants.ALBUM: self.name, Constants.PATH: self.path}
 
+    def update(self, description=None, album_type=None, status=None):
+        self.description = description or self.description
+        self.album_type = album_type or self.album_type
+        self.status = status or self.status
+        self.save_album_metadata()
+
     def save_album_metadata(self):
         remove_file_if_exists(self.dir_json_path)
         full_json = self.to_full_json()

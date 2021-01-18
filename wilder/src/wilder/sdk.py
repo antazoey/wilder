@@ -201,9 +201,7 @@ class Wilder(BaseWildApi):
     ):
         """Update an existing album."""
         album = self.get_album(album_name, artist_name=artist_name)
-        album.description = description or album.description
-        album.album_type = album_type or album.album_type
-        album.status = status or album.status
+        album.update(description=description, album_type=album_type, status=status)
         self._save()
 
     def start_new_track(
