@@ -18,6 +18,11 @@ def get_track_path(album, track_name):
     return track_path
 
 
+def get_track_json_path(album, track_name):
+    track_path = get_track_path(album, track_name)
+    return os.path.join(track_path, "track.json")
+
+
 def get_album_dir_json_path(album_path):
     return os.path.join(album_path, "album.json")
 

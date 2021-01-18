@@ -49,7 +49,7 @@ class Album:
             description=album_json.get(Consts.DESCRIPTION, ""),
             album_type=album_json.get(Consts.ALBUM_TYPE),
             status=album_json.get(Consts.STATUS, AlbumStatus.IN_PROGRESS),
-            tracks=_parse_tracks(artist_name, name, album_json),
+            tracks=_parse_tracks(path, artist_name, name, album_json),
             releases=_parse_releases(artist_name, name, album_json),
         )
         return album.save_album_metadata()
@@ -58,7 +58,8 @@ class Album:
     def dir_json_path(self):
         return get_album_dir_json_path(self.path)
 
-    def to_full_json(self):
+    def to_json_for_album_dir(self):
+        """The JSON blob representing the artifact in the album's directory."""
         return {
             Consts.ARTIST: self.artist,
             Consts.NAME: self.name,
@@ -66,7 +67,7 @@ class Album:
             Consts.DESCRIPTION: self.description,
             Consts.ALBUM_TYPE: self.album_type,
             Consts.STATUS: self.status,
-            Consts.TRACKS: [t.to_json() for t in self.tracks],
+            Consts.TRACKS: [t.name for t in self.tracks],
             Consts.RELEASES: [r.to_json() for r in self.releases],
         }
 
@@ -90,7 +91,7 @@ class Album:
 
     def save_album_metadata(self):
         remove_file_if_exists(self.dir_json_path)
-        full_json = self.to_full_json()
+        full_json = self.to_json_for_album_dir()
         album_text = json.dumps(full_json, indent=2)
         with wopen(self.dir_json_path, "w") as album_file:
             album_file.write(album_text)
@@ -102,9 +103,9 @@ class Album:
                 return track
 
 
-def _parse_tracks(artist_name, album_name, album_dir_json):
+def _parse_tracks(album_path, artist_name, album_name, album_dir_json):
     tracks = album_dir_json.get(Consts.TRACKS, [])
-    return [Track.from_json(artist_name, album_name, t) for t in tracks]
+    return [Track.from_json(album_path, artist_name, album_name, t) for t in tracks]
 
 
 def _parse_releases(artist_name, album_name, album_dir_json):

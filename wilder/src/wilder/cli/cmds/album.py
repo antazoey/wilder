@@ -66,7 +66,7 @@ def path(state, album_name, artist):
 def _list(state, artist, format):
     """List an artist's discography."""
     artist_obj = state.wilder.get_artist(artist)
-    albums_json_list = [a.to_full_json() for a in artist_obj.discography]
+    albums_json_list = [a.to_json_for_album_dir() for a in artist_obj.discography]
     if not albums_json_list:
         _handle_no_albums_found(artist_obj.name)
         return
