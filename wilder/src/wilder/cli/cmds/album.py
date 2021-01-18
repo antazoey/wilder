@@ -15,6 +15,7 @@ from wilder.cli.util import abridge
 from wilder.cli.util import does_user_agree
 from wilder.lib.constants import Constants
 from wilder.lib.mgmt.album_dir import echo_tracks
+from wilder.lib.mgmt.track import Track
 
 
 @click.group()
@@ -124,6 +125,7 @@ def show(state, artist, album):
     _echo_kv(Constants.ALBUM_TYPE, data)
     _echo_kv(Constants.STATUS, data)
     tracks = data.get(Constants.TRACKS)
+    tracks = [Track.from_json(artist_name, album_name, track) for track in tracks]
     if tracks:
         click.echo("\nTracks:\n")
         echo_tracks(tracks)

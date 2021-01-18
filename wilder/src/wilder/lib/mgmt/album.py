@@ -92,6 +92,10 @@ class Album:
         self.status = status or self.status
         self.save_album_metadata()
 
+    def add_track(self, track):
+        self.tracks.append(track)
+        self.save_album_metadata()
+
     def save_album_metadata(self):
         remove_file_if_exists(self.dir_json_path)
         full_json = self.to_full_json()
