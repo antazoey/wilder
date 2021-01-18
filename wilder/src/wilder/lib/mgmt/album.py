@@ -1,7 +1,7 @@
 import json
 import os
 
-from wilder.lib.constants import Constants
+from wilder.lib.constants import Constants as Consts
 from wilder.lib.enum import AlbumStatus
 from wilder.lib.mgmt.album_dir import get_album_dir_json
 from wilder.lib.mgmt.album_dir import get_album_dir_json_path
@@ -39,28 +39,20 @@ class Album:
     @classmethod
     def from_json(cls, artist_name, album_json):
         """Create the Artist object from data from .wilder/mgmt.json."""
-        path = album_json.get(Constants.PATH)
-        name = album_json.get(Constants.NAME)
-        album_dir_json = get_album_dir_json(path, name)
-        description = album_dir_json.get(Constants.DESCRIPTION, "")
-        album_type = album_dir_json.get(Constants.ALBUM_TYPE)
-        status = album_dir_json.get(Constants.STATUS, AlbumStatus.IN_PROGRESS)
-        tracks = album_dir_json.get(Constants.TRACKS, [])
-        tracks = _parse_tracks(artist_name, name, tracks)
-        releases = album_dir_json.get(Constants.RELEASES)
-        releases = _parse_releases(artist_name, name, releases)
+        path = album_json.get(Consts.PATH)
+        name = album_json.get(Consts.NAME)
+        album_json = get_album_dir_json(path, name)
         album = cls(
             path,
             name,
             artist=artist_name,
-            description=description,
-            album_type=album_type,
-            status=status,
-            tracks=tracks,
-            releases=releases,
+            description=album_json.get(Consts.DESCRIPTION, ""),
+            album_type=album_json.get(Consts.ALBUM_TYPE),
+            status=album_json.get(Consts.STATUS, AlbumStatus.IN_PROGRESS),
+            tracks=_parse_tracks(artist_name, name, album_json),
+            releases=_parse_releases(artist_name, name, album_json),
         )
-        album.save_album_metadata()
-        return album
+        return album.save_album_metadata()
 
     @property
     def dir_json_path(self):
@@ -68,14 +60,14 @@ class Album:
 
     def to_full_json(self):
         return {
-            Constants.ARTIST: self.artist,
-            Constants.NAME: self.name,
-            Constants.PATH: self.path,
-            Constants.DESCRIPTION: self.description,
-            Constants.ALBUM_TYPE: self.album_type,
-            Constants.STATUS: self.status,
-            Constants.TRACKS: [t.to_json() for t in self.tracks],
-            Constants.RELEASES: [r.to_json() for r in self.releases],
+            Consts.ARTIST: self.artist,
+            Consts.NAME: self.name,
+            Consts.PATH: self.path,
+            Consts.DESCRIPTION: self.description,
+            Consts.ALBUM_TYPE: self.album_type,
+            Consts.STATUS: self.status,
+            Consts.TRACKS: [t.to_json() for t in self.tracks],
+            Consts.RELEASES: [r.to_json() for r in self.releases],
         }
 
     def to_json_for_mgmt(self):
@@ -84,7 +76,7 @@ class Album:
             self.name = os.path.basename(os.path.normpath(self.path))
             self.save_album_metadata()
 
-        return {Constants.ALBUM: self.name, Constants.PATH: self.path}
+        return {Consts.ALBUM: self.name, Consts.PATH: self.path}
 
     def update(self, description=None, album_type=None, status=None):
         self.description = description or self.description
@@ -102,6 +94,7 @@ class Album:
         album_text = json.dumps(full_json, indent=2)
         with wopen(self.dir_json_path, "w") as album_file:
             album_file.write(album_text)
+        return self
 
     def get_track(self, name):
         for track in self.tracks:
@@ -109,12 +102,14 @@ class Album:
                 return track
 
 
-def _parse_tracks(artist_name, album_name, tracks_json):
-    return [Track.from_json(artist_name, album_name, t) for t in tracks_json]
+def _parse_tracks(artist_name, album_name, album_dir_json):
+    tracks = album_dir_json.get(Consts.TRACKS, [])
+    return [Track.from_json(artist_name, album_name, t) for t in tracks]
 
 
-def _parse_releases(artist_name, album_name, releases_json):
+def _parse_releases(artist_name, album_name, album_dir_json):
+    releases = album_dir_json.get(Consts.RELEASES)
     return [
         Release.from_json(artist_name, album_name, release_json)
-        for release_json in releases_json
+        for release_json in releases
     ]
