@@ -119,7 +119,7 @@ def show(state, artist, album):
     _ = artist
     _ = album
     data = state.album_json
-    click.echo(f"{data.get(Constants.NAME)} by  {data.get(Constants.ARTIST)}:\n\t")
+    click.echo(f"{data.get(Constants.NAME)} by {data.get(Constants.ARTIST)}:\n\t")
     _echo_kv(Constants.DESCRIPTION, data)
     _echo_kv(Constants.ALBUM_TYPE, data)
     _echo_kv(Constants.STATUS, data)

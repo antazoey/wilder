@@ -1,5 +1,11 @@
 import click
 from PyInquirer import prompt
+from wilder.cli.argv import album_option
+from wilder.cli.argv import artist_option
+from wilder.cli.argv import collaborator_option
+from wilder.cli.argv import description_option
+from wilder.cli.argv import track_name_arg
+from wilder.cli.argv import track_num_option
 from wilder.cli.argv import wild_options
 from wilder.cli.cmds.util import AlbumDirCommand
 from wilder.lib.constants import Constants
@@ -27,14 +33,20 @@ def _list(state):
         click.echo(f"No tracks yet on album '{_album.name}'.")
 
 
-# @click.command(cls=ArtistArgRequiredIfGivenCommand)
-# @wild_options()
-# @artist_option
-# @album_option(required=True)
-# @click.option("--track-num", help="The track number.", required=True)
-# def add(state, artist, path, album, track):
-#     """Add a track to an album."""
-#     pass
+@click.command(cls=AlbumDirCommand)
+@wild_options()
+@artist_option
+@album_option()
+@track_name_arg
+@track_num_option
+@description_option("The description of the track.")
+@collaborator_option
+def new(state, artist, track_name, track_num):
+    """Add a track to an album."""
+    album = state.album_json.get(Constants.NAME)
+    state.wilder.start_new_track(
+        album, track_name, artist_name=artist, track_num=track_num
+    )
 
 
 @click.command()

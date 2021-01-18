@@ -1,7 +1,7 @@
 import json
 import os
-import click
 
+import click
 from wilder.lib.constants import Constants
 from wilder.lib.resources import get_artwork_path
 from wilder.lib.resources import get_default_album_json

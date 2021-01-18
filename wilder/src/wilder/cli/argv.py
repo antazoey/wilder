@@ -5,7 +5,6 @@ from wilder.cli.wild_factory import get_wilder
 from wilder.lib.config import create_config_object
 from wilder.lib.enum import AlbumStatus
 from wilder.lib.enum import AlbumType
-from wilder.lib.errors import NoArtistsFoundError
 
 
 yes_option = click.option(
@@ -28,6 +27,12 @@ format_option = click.option(
 )
 bio_option = click.option("--bio", "--biography", help="The artist biography.")
 artist_option = click.option("--artist", help="The name of an artist.")
+track_num_option = click.option(
+    "--track-num", help="The number the track is on the album.", default=1
+)
+collaborator_option = click.option(
+    "--collaborator", help="Additional artists on the track", multiple=True
+)
 
 
 class CLIState:
@@ -97,4 +102,5 @@ def update_album_options():
 
 artist_name_arg = click.argument("artist-name")
 album_name_arg = click.argument("album-name")
+track_name_arg = click.argument("track-name")
 alias_arg = click.argument("alias")

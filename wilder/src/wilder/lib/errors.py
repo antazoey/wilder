@@ -74,5 +74,5 @@ class NotInAlbumError(WildError):
 
     def __init__(self):
         super().__init__(
-            "Error: this command required album specification or to be in an album directory."
+            "Error: album not found. Try executing the command from an album directory or specifying the album option"
         )

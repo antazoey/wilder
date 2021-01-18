@@ -210,8 +210,8 @@ class Wilder(BaseWildApi):
         self,
         album_name,
         track_name,
-        track_num,
         artist_name=None,
+        track_num=None,
         description=None,
         collaborators=None,
     ):
