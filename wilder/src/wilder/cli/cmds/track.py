@@ -8,6 +8,7 @@ from wilder.cli.argv import track_name_arg
 from wilder.cli.argv import track_num_option
 from wilder.cli.argv import wild_options
 from wilder.cli.cmds.util import AlbumDirCommand
+from wilder.cli.cmds.util import get_artist_and_album
 from wilder.lib.constants import Constants
 from wilder.lib.mgmt.album_dir import echo_tracks
 
@@ -24,7 +25,7 @@ def track():
 @album_option()
 def _list(state, artist, album):
     """List the tracks on an album."""
-    artist_name, album_name = _get_artist_and_album(state, artist, album)
+    artist_name, album_name = get_artist_and_album(state, artist, album)
     _album = state.wilder.get_album(album_name)
 
     if _album.tracks:
@@ -42,11 +43,9 @@ def _list(state, artist, album):
 @track_num_option
 @description_option("The description of the track.")
 @collaborator_option
-@artist_option
-@album_option()
-def new(state, track_name, track_num, artist, album):
+def new(state, track_name, artist, album, track_num, description, collaborator):
     """Add a track to an album."""
-    _, album = _get_artist_and_album(state, artist, album)
+    _, album = get_artist_and_album(state, artist, album)
     state.wilder.start_new_track(
         album, track_name, artist_name=artist, track_num=track_num
     )
@@ -58,7 +57,7 @@ def new(state, track_name, track_num, artist, album):
 @album_option()
 def reorder(state, artist, album):
     """Reorder the tracks on an album."""
-    _, _ = _get_artist_and_album(state, artist, album)
+    _, _ = get_artist_and_album(state, artist, album)
     questions = [
         {
             "type": "list",
@@ -69,15 +68,6 @@ def reorder(state, artist, album):
         {"type": "input", "name": "task_name", "message": "Task description"},
     ]
     answers = prompt(questions)
-
-
-def _get_artist_and_album(state, artist_arg, album_arg):
-    # Artist/album args get set to album_json if provided
-    _ = artist_arg
-    _ = album_arg
-    artist = state.album_json.get(Constants.ARTIST)
-    album = state.album_json.get(Constants.NAME)
-    return artist, album
 
 
 track.add_command(_list)

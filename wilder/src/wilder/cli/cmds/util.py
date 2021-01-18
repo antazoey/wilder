@@ -43,3 +43,12 @@ def get_album_json(wilder, artist_arg, album_arg):
     else:
         album = wilder.get_album(album_arg, artist_name=artist_arg)
         return load_json_from_file(album.dir_json_path)
+
+
+def get_artist_and_album(state, artist_arg, album_arg):
+    # Artist/album args get set to album_json if provided
+    _ = artist_arg
+    _ = album_arg
+    artist = state.album_json.get(Constants.ARTIST)
+    album = state.album_json.get(Constants.NAME)
+    return artist, album

@@ -9,6 +9,7 @@ from wilder.cli.argv import yes_option
 from wilder.cli.cmds.util import AlbumDirCommand
 from wilder.cli.cmds.util import ArtistArgRequiredIfGivenCommand
 from wilder.cli.cmds.util import echo_formatted_list
+from wilder.cli.cmds.util import get_artist_and_album
 from wilder.cli.output_formats import OutputFormat
 from wilder.cli.util import abridge
 from wilder.cli.util import does_user_agree
@@ -116,10 +117,9 @@ def delete(state, artist, album_name):
 @album_option()
 def show(state, artist, album):
     """Show information about an album."""
-    _ = artist
-    _ = album
+    artist_name, album_name = get_artist_and_album(state, artist, album)
     data = state.album_json
-    click.echo(f"{data.get(Constants.NAME)} by {data.get(Constants.ARTIST)}:\n\t")
+    click.echo(f"{album_name} by {artist_name}:\n\t")
     _echo_kv(Constants.DESCRIPTION, data)
     _echo_kv(Constants.ALBUM_TYPE, data)
     _echo_kv(Constants.STATUS, data)
