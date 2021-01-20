@@ -1,13 +1,9 @@
-import os
-
 import click
 from wilder.cli.output_formats import OutputFormatter
 from wilder.lib.constants import Constants
 from wilder.lib.errors import ArtistNotFoundError
 from wilder.lib.errors import NoArtistsFoundError
-from wilder.lib.errors import NotInAlbumError
-from wilder.lib.mgmt.album_dir import get_album_dir_json_path
-from wilder.lib.util.sh import load_json_from_file
+from wilder.lib.mgmt.album_dir import get_album_json
 
 
 def echo_formatted_list(_format, _list, header=None):
@@ -31,18 +27,6 @@ class AlbumDirCommand(ArtistArgRequiredIfGivenCommand):
         artist_arg = ctx.params.get(Constants.ARTIST)
         ctx.obj.album_json = get_album_json(wilder, artist_arg, album_arg)
         return super().invoke(ctx)
-
-
-def get_album_json(wilder, artist_arg, album_arg):
-    if not album_arg:
-        here = os.getcwd()
-        album_json_path = get_album_dir_json_path(here)
-        if not os.path.isfile(album_json_path):
-            raise NotInAlbumError()
-        return load_json_from_file(album_json_path)
-    else:
-        album = wilder.get_album(album_arg, artist_name=artist_arg)
-        return load_json_from_file(album.dir_json_path)
 
 
 def get_artist_and_album(state, artist_arg, album_arg):

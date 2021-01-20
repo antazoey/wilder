@@ -19,7 +19,7 @@ class Artist:
         bio = artist_json.get(Constants.BIO)
         also_known_as = artist_json.get(Constants.ALSO_KNOWN_AS)
         discography_json = artist_json.get(Constants.DISCOGRAPHY) or []
-        discography = cls._parse_discography(name, discography_json)
+        discography = cls._parse_discography(discography_json, name)
         return cls(
             discography=discography, name=name, bio=bio, also_known_as=also_known_as
         )
@@ -41,7 +41,8 @@ class Artist:
         name = name or self._get_default_album_name()
         album = Album(
             path_location,
-            name=name,
+            name,
+            self.name,
             description=description,
             album_type=album_type,
             status=status,
@@ -87,5 +88,5 @@ class Artist:
         self.also_known_as = filter(lambda x: x != alias, self.also_known_as)
 
     @classmethod
-    def _parse_discography(cls, artist_name, disco_json):
-        return [Album.from_json(artist_name, album_json) for album_json in disco_json]
+    def _parse_discography(cls, disco_json, artist_name):
+        return [Album.from_json(album_json, artist_name) for album_json in disco_json]

@@ -25,7 +25,7 @@ def artist():
 @artist_option
 def show(state, artist):
     """The artist information."""
-    _artist = state.get_artist(artist)
+    _artist = state.wilder.get_artist(artist)
     _bio = convert_to_table_none_if_needed(_artist.bio)
     also_known_as = _artist.also_known_as
     click.echo(f"{Constants.NAME}: {_artist.name}")

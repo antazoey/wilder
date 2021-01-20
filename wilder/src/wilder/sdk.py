@@ -1,4 +1,3 @@
-import json
 import shutil
 from datetime import datetime
 
@@ -11,7 +10,7 @@ from wilder.lib.errors import NoArtistsFoundError
 from wilder.lib.errors import TrackNotFoundError
 from wilder.lib.mgmt.artist import Artist
 from wilder.lib.mgmt.track import Track
-from wilder.lib.util.sh import save_as
+from wilder.lib.util.sh import save_json_as
 
 
 class BaseWildApi:
@@ -214,17 +213,13 @@ class Wilder(BaseWildApi):
         collaborators=None,
     ):
         """Add a track to an album."""
-        artist = self.get_artist(artist_name)
-        album = self.get_album(album_name, artist_name=artist.name)
-        track = Track(
+        album = self.get_album(album_name, artist_name=artist_name)
+        album.start_new_track(
             track_name,
-            track_num,
-            artist.name,
-            album.name,
+            track_num=track_num,
             description=description,
             collaborators=collaborators,
         )
-        album.add_track(track)
         self._save()
 
     def delete_album(self, album_name, artist_name=None):
@@ -272,6 +267,5 @@ def get_wilder_sdk():
 def save(mgmt_json_dict):
     """Save a MGMT dictionary to the .wilder/mgmt.json file."""
     mgmt_json_dict[Constants.LAST_UPDATED] = datetime.utcnow().timestamp()
-    mgmt_json = json.dumps(mgmt_json_dict, indent=2)
     mgmt_path = user.get_mgmt_json_path()
-    save_as(mgmt_path, mgmt_json)
+    save_json_as(mgmt_path, mgmt_json_dict)
