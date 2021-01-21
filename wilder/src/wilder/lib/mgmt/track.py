@@ -50,7 +50,7 @@ class Track:
         )
 
     def init_dir(self):
-        init_track_dir(self.path, self.name, self.album, self.artist)
+        init_track_dir(self.path, self.name, self.artist, self.album)
 
     def to_json_for_track_dir(self):
         return {
