@@ -4,8 +4,9 @@ import os
 from wilder.lib.constants import Constants as Consts
 from wilder.lib.enum import AlbumStatus
 from wilder.lib.errors import TrackAlreadyExistError
-from wilder.lib.mgmt.album_dir import get_album_dir_json, get_track_path
+from wilder.lib.mgmt.album_dir import get_album_dir_json
 from wilder.lib.mgmt.album_dir import get_album_json_path
+from wilder.lib.mgmt.album_dir import get_track_path
 from wilder.lib.mgmt.album_dir import init_album_dir
 from wilder.lib.mgmt.release import Release
 from wilder.lib.mgmt.track import Track
@@ -90,6 +91,9 @@ class Album:
         self, track_name, track_num=None, description=None, collaborators=None
     ):
         """Add a track to an album."""
+        current_tracks = [t.name for t in self.tracks]
+        if track_name in current_tracks:
+            raise TrackAlreadyExistError(track_name, self.name)
         track_path = get_track_path(self.path, track_name)
         track = Track(
             track_path,
@@ -105,11 +109,8 @@ class Album:
         self.save_album_metadata()
 
     def _add_track(self, track):
-        if track in self.tracks:
-            raise TrackAlreadyExistError(track, self.name)
         self.tracks.append(track)
         self.save_album_metadata()
-
 
     def save_album_metadata(self):
         remove_file_if_exists(self.dir_json_path)
