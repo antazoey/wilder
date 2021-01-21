@@ -61,6 +61,14 @@ class TrackNotFoundError(WildNotFoundError):
         )
 
 
+class TrackAlreadyExistError(WildError):
+    """An error raised when trying to start a new track with the same name as another track on its album."""
+
+    def __init__(self, track_name, album_name):
+        msg = f"There is already a track named '{track_name}' on album '{album_name}'."
+        super().__init__(msg)
+
+
 class AlbumAlreadyExistsError(WildError):
     """An error raised when trying to create an album that already exists."""
 

@@ -33,7 +33,7 @@ class Track:
     def from_json(cls, album_json, track_name):
         album_path = album_json.get(Constants.PATH)
         album_name = album_json.get(Constants.NAME)
-        artist_name = album_name.get(Constants.ARTIST)
+        artist_name = album_json.get(Constants.ARTIST)
         track_path = get_track_path(album_path, track_name)
         track_json = get_track_dir_json(track_path, track_name, artist_name, album_name)
         track_number = track_json.get(Constants.TRACK_NUMBER) or 1
