@@ -1,38 +1,6 @@
-import click
 from wilder.cli.output_formats import OutputFormatter
-from wilder.lib.constants import Constants
-from wilder.lib.errors import ArtistNotFoundError
-from wilder.lib.errors import NoArtistsFoundError
-from wilder.lib.mgmt.album_dir import get_album_json
 
 
 def echo_formatted_list(_format, _list, header=None):
     formatter = OutputFormatter(_format, header=header)
     formatter.echo_formatted_list(_list)
-
-
-class ArtistArgRequiredIfGivenCommand(click.Command):
-    def invoke(self, ctx):
-        try:
-            return super().invoke(ctx)
-        except (ArtistNotFoundError, NoArtistsFoundError) as err:
-            click.echo(str(err))
-
-
-class AlbumDirCommand(ArtistArgRequiredIfGivenCommand):
-    def invoke(self, ctx):
-        # Load the MGMT data to auto-correct prior to context verification.
-        wilder = ctx.obj.wilder
-        album_arg = ctx.params.get(Constants.ALBUM)
-        artist_arg = ctx.params.get(Constants.ARTIST)
-        ctx.obj.album_json = get_album_json(wilder, artist_arg, album_arg)
-        return super().invoke(ctx)
-
-
-def get_artist_and_album(state, artist_arg, album_arg):
-    # Artist/album args get set to album_json if provided
-    _ = artist_arg
-    _ = album_arg
-    artist = state.album_json.get(Constants.ARTIST)
-    album = state.album_json.get(Constants.NAME)
-    return artist, album

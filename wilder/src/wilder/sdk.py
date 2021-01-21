@@ -68,9 +68,12 @@ class Wilder(BaseWildApi):
         return self._get_artist_by_name(name) or self._get_focus_artist()
 
     def _get_artist_by_name(self, name):
+        if not name:
+            return None
         for artist in self._artists:
             if artist.name == name:
                 return artist
+        raise ArtistNotSignedError(name)
 
     def _get_focus_artist(self):
         """Get the Wilder focus artist."""
@@ -234,6 +237,15 @@ class Wilder(BaseWildApi):
         artist = self.get_artist(artist_name)
         album = self.get_album(album_name, artist.name)
         return album.tracks
+
+    def get_track(self, track_name, album_name, artist_name=None):
+        """Get a single track from an album."""
+        artist = self.get_artist(artist_name)
+        album = self.get_album(album_name, artist.name)
+        track = album.get_track(track_name)
+        if not track:
+            raise TrackNotFoundError(album.name, track_name)
+        return track
 
     def play_track(self, album_name, track_name, artist_name=None):
         """Play a track from an album."""

@@ -5,7 +5,7 @@ from wilder.cli.argv import artist_option
 from wilder.cli.argv import bio_option
 from wilder.cli.argv import format_option
 from wilder.cli.argv import wild_options
-from wilder.cli.cmds.util import ArtistArgRequiredIfGivenCommand
+from wilder.cli.cmds import ArtistArgRequiredIfGivenCommand
 from wilder.cli.cmds.util import echo_formatted_list
 from wilder.cli.output_formats import OutputFormat
 from wilder.cli.util import abridge

@@ -7,9 +7,9 @@ from wilder.cli.argv import description_option
 from wilder.cli.argv import track_name_arg
 from wilder.cli.argv import track_num_option
 from wilder.cli.argv import wild_options
-from wilder.cli.cmds.util import AlbumDirCommand
-from wilder.cli.cmds.util import get_artist_and_album
-from wilder.lib.constants import Constants
+from wilder.cli.argv import yes_option
+from wilder.cli.cmds import AlbumDirCommand
+from wilder.cli.util import does_user_agree
 from wilder.lib.mgmt.album_dir import echo_tracks
 
 
@@ -19,45 +19,78 @@ def track():
     pass
 
 
-@click.command(Constants.LIST, cls=AlbumDirCommand)
-@wild_options()
-@artist_option
-@album_option()
+def track_options():
+    def decorator(f):
+        f = wild_options()(f)
+        f = artist_option(f)
+        f = album_option()(f)
+        return f
+
+    return decorator
+
+
+def single_track_options():
+    def decorator(f):
+        f = track_options()(f)
+        f = track_name_arg(f)
+        return f
+
+    return decorator
+
+
+@click.command("list", cls=AlbumDirCommand)
+@track_options()
 def _list(state, artist, album):
     """List the tracks on an album."""
-    artist_name, album_name = get_artist_and_album(state, artist, album)
-    _album = state.wilder.get_album(album_name)
-
+    _album = state.wilder.get_album(album, artist_name=artist)
     if _album.tracks:
-        click.echo(f"'{album_name}' by {artist_name}: \n")
+        click.echo(f"'{_album.name}' by {_album.artist}: \n")
         echo_tracks(_album.tracks)
     else:
         click.echo(f"No tracks yet on album '{_album.name}'.")
 
 
 @click.command(cls=AlbumDirCommand)
-@wild_options()
-@artist_option
-@album_option()
-@track_name_arg
+@single_track_options()
 @track_num_option
 @description_option("The description of the track.")
 @collaborator_option
 def new(state, track_name, artist, album, track_num, description, collaborator):
     """Add a track to an album."""
-    _, album = get_artist_and_album(state, artist, album)
     state.wilder.start_new_track(
-        album, track_name, artist_name=artist, track_num=track_num
+        album,
+        track_name,
+        artist_name=artist,
+        track_num=track_num,
+        description=description,
+        collaborators=collaborator,
     )
 
 
-@click.command()
-@wild_options()
-@artist_option
-@album_option()
+@click.command(cls=AlbumDirCommand)
+@single_track_options()
+def show(state, track_name, artist, album):
+    """Show information about a track."""
+    _track = state.wilder.get_track(track_name, album, artist_name=artist)
+    click.echo(_track.artist)
+    click.echo(f'"{_track.name}"')
+    click.echo(_track.album)
+
+
+@click.command(cls=AlbumDirCommand)
+@single_track_options()
+@yes_option
+def delete(state, track_name, artist, album):
+    """Delete a track from an album."""
+    _track = state.wilder.get_track(track_name, album, artist_name=artist)
+    if does_user_agree(f"Are you sure you wish to delete '{track_name}'?"):
+        state.wilder.delete_track(track_name, album, artist_name=artist)
+
+
+@click.command(cls=AlbumDirCommand)
+@track_options()
 def reorder(state, artist, album):
     """Reorder the tracks on an album."""
-    _, _ = get_artist_and_album(state, artist, album)
     questions = [
         {
             "type": "list",
@@ -72,4 +105,6 @@ def reorder(state, artist, album):
 
 track.add_command(_list)
 track.add_command(new)
+track.add_command(show)
+track.add_command(delete)
 track.add_command(reorder)

@@ -13,6 +13,7 @@ from wilder.lib.errors import ArtistNotFoundError
 from wilder.lib.errors import ArtistNotSignedError
 from wilder.lib.errors import NotInAlbumError
 from wilder.lib.errors import TrackAlreadyExistError
+from wilder.lib.errors import TrackNotFoundError
 
 _DIFFLIB_CUT_OFF = 0.6
 
@@ -48,6 +49,7 @@ class ExceptionHandlingGroup(click.Group):
             AlbumAlreadyExistsError,
             NotInAlbumError,
             TrackAlreadyExistError,
+            TrackNotFoundError,
         ) as err:
             raise WilderCLIError(str(err))
 
