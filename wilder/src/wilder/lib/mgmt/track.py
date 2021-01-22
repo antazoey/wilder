@@ -12,7 +12,7 @@ class Track:
         self,
         path,
         name,
-        track_num,
+        track_number,
         artist,
         album,
         description=None,
@@ -20,7 +20,7 @@ class Track:
     ):
         self.path = path
         self.name = name
-        self.track_number = track_num
+        self.track_number = track_number
         self.artist = artist
         self.album = album
         self.description = description
@@ -65,6 +65,10 @@ class Track:
             Constants.TRACK_NUMBER: self.track_number,
             Constants.COLLABORATORS: self.collaborators,
         }
+
+    def update(self, track_number=None):
+        self.track_number = track_number or track_number
+        self.save_track_metadata()
 
     def save_track_metadata(self):
         """Save this instance's data to the file in the track directory."""

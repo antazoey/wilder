@@ -28,7 +28,10 @@ format_option = click.option(
 bio_option = click.option("--bio", "--biography", help="The artist biography.")
 artist_option = click.option("--artist", help="The name of an artist.")
 track_num_option = click.option(
-    "--track-num", help="The number the track is on the album.", default=1
+    "--track-number",
+    "--track-num",
+    help="The number the track is on the album.",
+    default=1,
 )
 collaborator_option = click.option(
     "--collaborator", help="Additional artists on the track", multiple=True

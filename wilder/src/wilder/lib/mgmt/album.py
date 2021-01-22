@@ -31,7 +31,7 @@ class Album:
         self.description = description
         self.album_type = album_type
         self.status = status
-        self.tracks = tracks
+        self._tracks = tracks
         self.releases = releases
 
     def init_dir(self):
@@ -57,6 +57,10 @@ class Album:
         return album.save_album_metadata()
 
     @property
+    def tracks(self):
+        return sorted(self._tracks, key=lambda t: t.track_number)
+
+    @property
     def dir_json_path(self):
         """The path to the album directory."""
         return get_album_json_path(self.path)
@@ -70,7 +74,7 @@ class Album:
             Consts.DESCRIPTION: self.description,
             Consts.ALBUM_TYPE: self.album_type,
             Consts.STATUS: self.status,
-            Consts.TRACKS: [t.name for t in self.tracks],
+            Consts.TRACKS: [t.name for t in self._tracks],
             Consts.RELEASES: [r.to_json() for r in self.releases],
         }
 
@@ -91,17 +95,17 @@ class Album:
         self.save_album_metadata()
 
     def start_new_track(
-        self, track_name, track_num=None, description=None, collaborators=None
+        self, track_name, track_number=None, description=None, collaborators=None
     ):
         """Add a track to an album."""
-        current_tracks = [t.name for t in self.tracks]
+        current_tracks = [t.name for t in self._tracks]
         if track_name in current_tracks:
             raise TrackAlreadyExistError(track_name, self.name)
         track_path = get_track_path(self.path, track_name)
         track = Track(
             track_path,
             track_name,
-            track_num,
+            track_number,
             self.artist,
             self.name,
             description=description,
@@ -112,7 +116,7 @@ class Album:
         self.save_album_metadata()
 
     def _add_track(self, track):
-        self.tracks.append(track)
+        self._tracks.append(track)
         self.save_album_metadata()
 
     def save_album_metadata(self):
@@ -124,19 +128,27 @@ class Album:
 
     def get_track(self, name):
         """Get a track on the album by name."""
-        for track in self.tracks:
+        for track in self._tracks:
             if track.name == name:
                 return track
 
     def update_track(
-        self, track_name, track_num=None, description=None, collaborators=None
+        self, track_name, track_number=None, description=None, collaborators=None
     ):
         """Update track metadata on the album. `None` does not overwrite."""
         track = self.get_track(track_name)
-        track.track_number = track_num or track.track_number
-        track.description = description or track.description
-        track.collaborators = collaborators or track.collaborators
-        track.save_track_metadata()
+        track.update(
+            track_number=track_number,
+            description=description,
+            collaborators=collaborators,
+        )
+        self.save_album_metadata()
+
+    def bulk_set_track_numbers(self, track_numbers):
+        track_numbers = track_numbers or []
+        end_index = min(len(track_numbers), len(self._tracks))
+        for i in range(0, end_index):
+            self._tracks[i].update(track_number=track_numbers[i])
         self.save_album_metadata()
 
 

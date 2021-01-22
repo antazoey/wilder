@@ -170,7 +170,7 @@ class WildClient(BaseWildApi):
         track_name,
         album_name,
         artist_name=None,
-        track_num=None,
+        track_number=None,
         description=None,
         collaborators=None,
     ):
@@ -179,7 +179,7 @@ class WildClient(BaseWildApi):
         _json = {
             Constants.ALBUM: album_name,
             Constants.TRACK: track_name,
-            Constants.TRACK_NUMBER: track_num,
+            Constants.TRACK_NUMBER: track_number,
             Constants.ARTIST: artist_name,
             Constants.DESCRIPTION: description,
             Constants.COLLABORATORS: collaborators,

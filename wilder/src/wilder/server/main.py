@@ -231,13 +231,13 @@ def album_create_track():
     artist_name = _get_request_data_param(Consts.ARTIST)
     _album = _get_request_data_param(Consts.ALBUM)
     track = _get_request_data_param(Consts.TRACK)
-    track_num = _get_request_data_param(Consts.TRACK_NUMBER)
+    track_number = _get_request_data_param(Consts.TRACK_NUMBER)
     description = _get_request_data_param(Consts.DESCRIPTION)
     collaborators = _get_request_data_param(Consts.COLLABORATORS)
     wilder.start_new_track(
         _album,
         track,
-        track_num,
+        track_number,
         artist_name=artist_name,
         description=description,
         collaborators=collaborators,

@@ -63,13 +63,13 @@ def _list(state, artist, album):
 
 @click.command(cls=AlbumDirCommand)
 @metadata_options()
-def new(state, track_name, artist, album, track_num, description, collaborator):
+def new(state, track_name, artist, album, track_number, description, collaborator):
     """Add a track to an album."""
     state.wilder.start_new_track(
         track_name,
         album,
         artist_name=artist,
-        track_num=track_num,
+        track_number=track_number,
         description=description,
         collaborators=collaborator,
     )
@@ -89,13 +89,13 @@ def show(state, track_name, artist, album):
 
 @click.command(cls=AlbumDirCommand)
 @metadata_options()
-def update(state, track_name, artist, album, track_num, description, collaborator):
+def update(state, track_name, artist, album, track_number, description, collaborator):
     """Update track metadata."""
     state.wilder.update_track(
         track_name,
         album,
         artist_name=artist,
-        track_num=track_num,
+        track_number=track_number,
         description=description,
         collaborators=collaborator,
     )
@@ -115,16 +115,32 @@ def delete(state, track_name, artist, album):
 @track_options()
 def reorder(state, artist, album):
     """Reorder the tracks on an album."""
-    questions = [
-        {
+
+    def get_track_num_choices(track_name_gen, _range, answer_list=None):
+        if not _range:
+            return answer_list
+
+        answer_list = answer_list or []
+        track_name = track_name_gen()
+        question = {
             "type": "list",
-            "name": "list_name",
-            "message": "Add task to which list?",
-            "choices": ["test", "foo"],
-        },
-        {"type": "input", "name": "task_name", "message": "Task description"},
-    ]
-    answers = prompt(questions)
+            "name": "choice",
+            "message": f"What do you want the track number for {track_name} to be?",
+            "choices": _range,
+        }
+        ans = prompt(question)["choice"]
+        answer_list.append(ans)
+        new_range = tuple(filter(lambda i: i != ans, _range))
+        return get_track_num_choices(track_name_gen, new_range, answer_list)
+
+    def gen_track_name():
+        for t in tracks:
+            yield t.name
+
+    tracks = state.wilder.get_tracks(album, artist_name=artist)
+    track_num_range = tuple(str(i) for i in range(1, len(tracks) + 1))
+    answers = get_track_num_choices(gen_track_name, track_num_range)
+    state.wilder.bulk_set_track_numbers(answers, album, artist_name=artist)
 
 
 track.add_command(_list)
