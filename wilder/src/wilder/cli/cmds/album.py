@@ -14,7 +14,6 @@ from wilder.cli.util import abridge
 from wilder.cli.util import does_user_agree
 from wilder.lib.constants import Constants
 from wilder.lib.mgmt.album_dir import echo_tracks
-from wilder.lib.mgmt.track import Track
 
 
 @click.group()
@@ -117,20 +116,15 @@ def delete(state, artist, album_name):
 @album_option()
 def show(state, artist, album):
     """Show information about an album."""
-    data = state.album_json
-    click.echo(f"{album} by {artist}:\n\t")
-    _echo_kv(Constants.DESCRIPTION, data)
-    _echo_kv(Constants.ALBUM_TYPE, data)
-    _echo_kv(Constants.STATUS, data)
-    tracks = data.get(Constants.TRACKS)
-    tracks = [Track.from_json(state.album_json, track) for track in tracks]
+    _album = state.wilder.get_album(album, artist_name=artist)
+    click.echo(f"{_album.name} by {_album.artist}:\n\t")
+    click.echo(f"{Constants.DESCRIPTION}: {_album.description}")
+    click.echo(f"{Constants.ALBUM_TYPE}: {_album.album_type}")
+    click.echo(f"{Constants.STATUS}: {_album.status}")
+    tracks = _album.tracks
     if tracks:
         click.echo("\nTracks:\n")
         echo_tracks(tracks)
-
-
-def _echo_kv(key, data):
-    click.echo(f"{key}: {data.get(key)}")
 
 
 def _handle_no_albums_found(name):
