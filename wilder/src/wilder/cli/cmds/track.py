@@ -38,6 +38,17 @@ def single_track_options():
     return decorator
 
 
+def metadata_options():
+    def decorator(f):
+        f = single_track_options()(f)
+        f = track_num_option(f)
+        f = description_option("The description of the track.")(f)
+        f = collaborator_option(f)
+        return f
+
+    return decorator
+
+
 @click.command("list", cls=AlbumDirCommand)
 @track_options()
 def _list(state, artist, album):
@@ -51,15 +62,12 @@ def _list(state, artist, album):
 
 
 @click.command(cls=AlbumDirCommand)
-@single_track_options()
-@track_num_option
-@description_option("The description of the track.")
-@collaborator_option
+@metadata_options()
 def new(state, track_name, artist, album, track_num, description, collaborator):
     """Add a track to an album."""
     state.wilder.start_new_track(
-        album,
         track_name,
+        album,
         artist_name=artist,
         track_num=track_num,
         description=description,
@@ -75,6 +83,22 @@ def show(state, track_name, artist, album):
     click.echo(_track.artist)
     click.echo(f'"{_track.name}"')
     click.echo(_track.album)
+    if _track.description:
+        click.echo(f'\n"{_track.description}"')
+
+
+@click.command(cls=AlbumDirCommand)
+@metadata_options()
+def update(state, track_name, artist, album, track_num, description, collaborator):
+    """Update track metadata."""
+    state.wilder.update_track(
+        track_name,
+        album,
+        artist_name=artist,
+        track_num=track_num,
+        description=description,
+        collaborators=collaborator,
+    )
 
 
 @click.command(cls=AlbumDirCommand)
@@ -106,5 +130,6 @@ def reorder(state, artist, album):
 track.add_command(_list)
 track.add_command(new)
 track.add_command(show)
+track.add_command(update)
 track.add_command(delete)
 track.add_command(reorder)

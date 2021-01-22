@@ -1,4 +1,3 @@
-import json
 import os
 
 from wilder.lib.constants import Constants as Consts
@@ -11,7 +10,7 @@ from wilder.lib.mgmt.album_dir import init_album_dir
 from wilder.lib.mgmt.release import Release
 from wilder.lib.mgmt.track import Track
 from wilder.lib.util.sh import remove_file_if_exists
-from wilder.lib.util.sh import wopen
+from wilder.lib.util.sh import save_json_as
 
 
 class Album:
@@ -36,6 +35,7 @@ class Album:
         self.releases = releases
 
     def init_dir(self):
+        """Create the album directory with default files."""
         init_album_dir(self.path, self.name)
 
     @classmethod
@@ -58,6 +58,7 @@ class Album:
 
     @property
     def dir_json_path(self):
+        """The path to the album directory."""
         return get_album_json_path(self.path)
 
     def to_json_for_album_dir(self):
@@ -74,6 +75,7 @@ class Album:
         }
 
     def to_json_for_mgmt(self):
+        """Convert this object to JSON for storing in the user's MGMT JSON."""
         # Figure out name if path is set but name for some reason isn't
         if not self.name and self.path:
             self.name = os.path.basename(os.path.normpath(self.path))
@@ -82,6 +84,7 @@ class Album:
         return {Consts.NAME: self.name, Consts.PATH: self.path}
 
     def update(self, description=None, album_type=None, status=None):
+        """Update an album."""
         self.description = description or self.description
         self.album_type = album_type or self.album_type
         self.status = status or self.status
@@ -113,17 +116,28 @@ class Album:
         self.save_album_metadata()
 
     def save_album_metadata(self):
+        """Save the current album context to the album's JSON file."""
         remove_file_if_exists(self.dir_json_path)
         full_json = self.to_json_for_album_dir()
-        album_text = json.dumps(full_json, indent=2)
-        with wopen(self.dir_json_path, "w") as album_file:
-            album_file.write(album_text)
+        save_json_as(self.dir_json_path, full_json)
         return self
 
     def get_track(self, name):
+        """Get a track on the album by name."""
         for track in self.tracks:
             if track.name == name:
                 return track
+
+    def update_track(
+        self, track_name, track_num=None, description=None, collaborators=None
+    ):
+        """Update track metadata on the album. `None` does not overwrite."""
+        track = self.get_track(track_name)
+        track.track_number = track_num or track.track_number
+        track.description = description or track.description
+        track.collaborators = collaborators or track.collaborators
+        track.save_track_metadata()
+        self.save_album_metadata()
 
 
 def _parse_tracks(album_dir_json):

@@ -167,10 +167,10 @@ class WildClient(BaseWildApi):
 
     def start_new_track(
         self,
-        album_name,
         track_name,
-        track_num,
+        album_name,
         artist_name=None,
+        track_num=None,
         description=None,
         collaborators=None,
     ):

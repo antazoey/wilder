@@ -208,8 +208,8 @@ class Wilder(BaseWildApi):
 
     def start_new_track(
         self,
-        album_name,
         track_name,
+        album_name,
         artist_name=None,
         track_num=None,
         description=None,
@@ -224,6 +224,24 @@ class Wilder(BaseWildApi):
             collaborators=collaborators,
         )
         self._save()
+
+    def update_track(
+        self,
+        track_name,
+        album_name,
+        artist_name=None,
+        track_num=None,
+        description=None,
+        collaborators=None,
+    ):
+        """Update track metadata."""
+        album = self.get_album(album_name, artist_name=artist_name)
+        album.update_track(
+            track_name,
+            track_num=track_num,
+            description=description,
+            collaborators=collaborators,
+        )
 
     def delete_album(self, album_name, artist_name=None):
         """Delete an album."""
