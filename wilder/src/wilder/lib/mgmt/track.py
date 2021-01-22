@@ -3,6 +3,7 @@ from wilder.lib.mgmt.album_dir import get_track_dir_json
 from wilder.lib.mgmt.album_dir import get_track_json_path
 from wilder.lib.mgmt.album_dir import get_track_path
 from wilder.lib.mgmt.album_dir import init_track_dir
+from wilder.lib.util.conversion import to_int
 from wilder.lib.util.sh import remove_file_if_exists
 from wilder.lib.util.sh import save_json_as
 
@@ -20,11 +21,19 @@ class Track:
     ):
         self.path = path
         self.name = name
-        self.track_number = track_number
+        self._track_number = track_number
         self.artist = artist
         self.album = album
         self.description = description
         self.collaborators = collaborators
+
+    @property
+    def track_number(self):
+        return to_int(self._track_number)
+
+    @track_number.setter
+    def track_number(self, track_number):
+        self._track_number = to_int(track_number)
 
     @property
     def dir_json_path(self):
@@ -66,8 +75,10 @@ class Track:
             Constants.COLLABORATORS: self.collaborators,
         }
 
-    def update(self, track_number=None):
-        self.track_number = track_number or track_number
+    def update(self, track_number=None, description=None, collaborators=None):
+        self.track_number = track_number or self.track_number
+        self.description = description or self.description
+        self.collaborators = collaborators or self.collaborators
         self.save_track_metadata()
 
     def save_track_metadata(self):
