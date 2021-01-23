@@ -95,15 +95,17 @@ def echo_tracks(tracks):
 
 
 def get_album_json(wilder, artist_arg, album_arg):
-    """If given an album, it will use Wilder to retrieve the album directory JSON blob.
-    Otherwise, it tries to intelligently figure out the artist/album combo based on
-    the currently working directory.
+    """Get the album directory JSON blob. If given an album name, it uses the Wilder SDK.
+    Otherwise, it attempts to figure out the artist/album combo based on the currently working
+    directory.
 
-    For example, if you are inside the album directory, it will use the album.json directly.
-    If you are in an album directory but you deleted the album.json, it will recreate the default
-     album JSON and return the expected album/artist combo.
-    If you are inside a track directory, it will use the album.json from the parent directory, or it will
-     create the default JSON in the parent directory and use the expected album/artist combo.
+    Cases:
+        * You provide the album arg: It uses the Wilder SDK to find the path to the album to get the rest of the data.
+        * You are in the album directory: It uses the local album.json file.
+        * You are in the album directory and the album.json does not exist: It recreates the default JSON and uses that.
+        * You are in a track directory of an album. It uses the parent album.json file if it exists.
+        * You are in a track directory of an album and the album.json does not exist in the parent directorY: It will
+            create the default album JSON in the parent directory and use that.
     """
 
     if not album_arg:
