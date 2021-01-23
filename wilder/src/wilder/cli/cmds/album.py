@@ -3,6 +3,7 @@ from wilder.cli.argv import album_name_arg
 from wilder.cli.argv import album_option
 from wilder.cli.argv import artist_option
 from wilder.cli.argv import format_option
+from wilder.cli.argv import hard_option
 from wilder.cli.argv import update_album_options
 from wilder.cli.argv import wild_options
 from wilder.cli.argv import yes_option
@@ -14,6 +15,7 @@ from wilder.cli.util import abridge
 from wilder.cli.util import does_user_agree
 from wilder.lib.constants import Constants
 from wilder.lib.mgmt.album_dir import echo_tracks
+from wilder.lib.util.sh import remove_directory
 
 
 @click.group()
@@ -86,11 +88,10 @@ def _abridge_discography_data(albums_json_list):
 @click.command(cls=AlbumDirCommand)
 @update_album_options()
 @album_option()
-def update(state, artist, album, description, album_type, status):
+def update(state, artist, description, album_type, status):
     """Update an album."""
-    album_name = album or state.album_json.get(Constants.NAME)
     state.wilder.update_album(
-        album_name,
+        album,
         artist_name=artist,
         description=description,
         album_type=album_type,
@@ -103,11 +104,14 @@ def update(state, artist, album, description, album_type, status):
 @artist_option
 @album_name_arg
 @yes_option
-def delete(state, artist, album_name):
+@hard_option
+def delete(state, artist, album_name, hard):
     """Delete an album."""
     _album = state.wilder.get_album(album_name, artist_name=artist)
     if does_user_agree(f"Are you sure you wish to delete the album '{_album.name}'? "):
         state.wilder.delete_album(_album.name, artist_name=artist)
+        if hard:
+            remove_directory(_album.path)
 
 
 @click.command(cls=AlbumDirCommand)

@@ -15,11 +15,10 @@ class ArtistArgRequiredIfGivenCommand(click.Command):
 
 class AlbumDirCommand(ArtistArgRequiredIfGivenCommand):
     def invoke(self, ctx):
-        # Load the MGMT data to auto-correct prior to context verification.
-        wilder = ctx.obj.wilder
+        wilder = ctx.obj.wilder  # This line must stay to load context
         album_arg = ctx.params.get(Constants.ALBUM)
         artist_arg = ctx.params.get(Constants.ARTIST)
-        ctx.obj.album_json = get_album_json(wilder, artist_arg, album_arg)
-        ctx.params[Constants.ALBUM] = ctx.obj.album_json[Constants.NAME]
-        ctx.params[Constants.ARTIST] = ctx.obj.album_json[Constants.ARTIST]
+        album_json = get_album_json(wilder, artist_arg, album_arg)
+        ctx.params[Constants.ALBUM] = album_json[Constants.NAME]
+        ctx.params[Constants.ARTIST] = album_json[Constants.ARTIST]
         return super().invoke(ctx)

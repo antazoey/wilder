@@ -1,7 +1,6 @@
 import time
 
 import vlc
-
 from wilder.lib.errors import WildVLCPlayerLaunchError
 
 
