@@ -1,3 +1,5 @@
+import os
+
 from wilder.lib.constants import Constants
 from wilder.lib.mgmt.album_dir import get_track_dir_json
 from wilder.lib.mgmt.album_dir import get_track_json_path
@@ -39,6 +41,19 @@ class Track:
     def dir_json_path(self):
         """The path to the track JSON file."""
         return get_track_json_path(self.path)
+
+    @property
+    def mp3_path(self):
+        """The path to the mp3 file for track, if it exists."""
+        return self._get_file("mp3")
+
+    @property
+    def wav_path(self):
+        """The path to the mp3 file for track, if it exists."""
+        return self._get_file("wav")
+
+    def _get_file(self, ext):
+        return os.path.join(self.path, f"{self.name}.{ext}")
 
     @classmethod
     def from_json(cls, album_json, track_name):

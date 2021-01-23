@@ -9,7 +9,7 @@ from wilder.lib.mgmt.album_dir import get_track_path
 from wilder.lib.mgmt.album_dir import init_album_dir
 from wilder.lib.mgmt.release import Release
 from wilder.lib.mgmt.track import Track
-from wilder.lib.util.sh import remove_file_if_exists
+from wilder.lib.util.sh import remove_file_if_exists, remove_directory
 from wilder.lib.util.sh import save_json_as
 
 
@@ -102,6 +102,7 @@ class Album:
         if track_name in current_tracks:
             raise TrackAlreadyExistError(track_name, self.name)
         track_path = get_track_path(self.path, track_name)
+        track_number = track_number or len(current_tracks)
         track = Track(
             track_path,
             track_name,
@@ -144,12 +145,30 @@ class Album:
         )
         self.save_album_metadata()
 
-    def bulk_set_track_numbers(self, track_numbers):
-        track_numbers = track_numbers or []
-        end_index = min(len(track_numbers), len(self._tracks))
-        for i in range(0, end_index):
-            self._tracks[i].update(track_number=track_numbers[i])
+    def delete_track(self, track_name, hard=False):
+        """Delete a track. Set hard to True to delete the directory."""
+        for i in range(0, len(self._tracks)):
+            if self._tracks[i].name != track_name:
+                continue
+            elif hard:
+                remove_directory(self._tracks[i].path)
+            del self._tracks[i]
+            self.auto_set_track_numbers()
+            self.save_album_metadata()
+            break
+
+    def bulk_set_track_numbers(self, track_number_dict):
+        for name, num in track_number_dict.items():
+            track = self.get_track(name)
+            track.track_number = num
+            track.save_track_metadata()
         self.save_album_metadata()
+
+    def auto_set_track_numbers(self):
+        for i in range(0, len(self._tracks)):
+            track = self._tracks[i]
+            track.track_number = i + 1
+            track.save_track_metadata()
 
 
 def _parse_tracks(album_dir_json):

@@ -47,6 +47,10 @@ def remove_file_if_exists(file_path):
         os.remove(file_path)
 
 
+def remove_directory(dir_path):
+    shutil.rmtree(dir_path)
+
+
 def create_dir_if_not_exists(path):
     """Build a directory tree."""
     if path and not os.path.exists(path):

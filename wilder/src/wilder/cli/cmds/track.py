@@ -1,6 +1,6 @@
 import click
 from PyInquirer import prompt
-from wilder.cli.argv import album_option
+from wilder.cli.argv import album_option, hard_option
 from wilder.cli.argv import artist_option
 from wilder.cli.argv import collaborator_option
 from wilder.cli.argv import description_option
@@ -104,43 +104,53 @@ def update(state, track_name, artist, album, track_number, description, collabor
 @click.command(cls=AlbumDirCommand)
 @single_track_options()
 @yes_option
-def delete(state, track_name, artist, album):
+@hard_option
+def delete(state, track_name, artist, album, hard):
     """Delete a track from an album."""
     _track = state.wilder.get_track(track_name, album, artist_name=artist)
-    if does_user_agree(f"Are you sure you wish to delete '{track_name}'?"):
-        state.wilder.delete_track(track_name, album, artist_name=artist)
+    if does_user_agree(f"Are you sure you wish to delete '{track_name}'? "):
+        state.wilder.delete_track(track_name, album, artist_name=artist, hard=hard)
 
 
 @click.command(cls=AlbumDirCommand)
 @track_options()
-def reorder(state, artist, album):
+@click.option("--auto", help="Set to skip interactive mode and set track numbers as a sequence.")
+def reorder(state, artist, album, auto):
     """Reorder the tracks on an album."""
-
-    def get_track_num_choices(track_name_gen, _range, answer_list=None):
-        if not _range:
-            return answer_list
-
-        answer_list = answer_list or []
-        track_name = track_name_gen()
-        question = {
-            "type": "list",
-            "name": "choice",
-            "message": f"What do you want the track number for {track_name} to be?",
-            "choices": _range,
-        }
-        ans = prompt(question)["choice"]
-        answer_list.append(ans)
-        new_range = tuple(filter(lambda i: i != ans, _range))
-        return get_track_num_choices(track_name_gen, new_range, answer_list)
-
-    def gen_track_name():
-        for t in tracks:
-            yield t.name
-
     tracks = state.wilder.get_tracks(album, artist_name=artist)
     track_num_range = tuple(str(i) for i in range(1, len(tracks) + 1))
-    answers = get_track_num_choices(gen_track_name, track_num_range)
-    state.wilder.bulk_set_track_numbers(answers, album, artist_name=artist)
+    track_names = [t.name for t in tracks]
+    if not auto:
+        answers = _get_track_num_choices(track_names, track_num_range)
+        state.wilder.bulk_set_track_numbers(answers, album, artist_name=artist)
+    else:
+        state.wilder.auto_set_track_numbers()
+
+
+def _get_track_num_choices(track_names, choices, answer_dict=None):
+    if not track_names or not choices:
+        return answer_dict
+
+    answer_dict = answer_dict or {}
+    track_name = track_names.pop()
+    question = {
+        "type": "list",
+        "name": "choice",
+        "message": f"What do you want the track number for '{track_name}' to be?",
+        "choices": choices,
+    }
+    ans = prompt(question)["choice"]
+    answer_dict[track_name] = ans
+    remaining_choices = tuple(filter(lambda i: i != ans, choices))
+    return _get_track_num_choices(track_names, remaining_choices, answer_dict)
+
+
+@click.command(cls=AlbumDirCommand)
+@single_track_options()
+def play(state, track_name, artist, album):
+    """Play a track."""
+    _track = state.wilder.get_track(track_name, album, artist_name=artist)
+    play_track()
 
 
 track.add_command(_list)

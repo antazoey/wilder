@@ -265,11 +265,24 @@ class Wilder(BaseWildApi):
             raise TrackNotFoundError(album.name, track_name)
         return track
 
+    def delete_track(self, track_name, album_name, artist_name=None, hard=None):
+        """Delete a track from an album."""
+        artist = self.get_artist(artist_name)
+        album = self.get_album(album_name, artist.name)
+        album.delete_track(track_name, hard=hard)
+        self._save()
+
     def bulk_set_track_numbers(self, track_numbers, album_name, artist_name=None):
         """Bulk set all of the track numbers on an album."""
         artist = self.get_artist(artist_name)
         album = self.get_album(album_name, artist.name)
         album.bulk_set_track_numbers(track_numbers)
+
+    def auto_set_track_numbers(self, album_name, artist_name=None):
+        """Automatically adjust the track numbers on an album."""
+        artist = self.get_artist(artist_name)
+        album = self.get_album(album_name, artist.name)
+        album.auto_set_track_numbers()
 
     def play_track(self, album_name, track_name, artist_name=None):
         """Play a track from an album."""

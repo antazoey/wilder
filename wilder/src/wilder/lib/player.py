@@ -7,7 +7,7 @@ def play_album(album):
 
 
 def play_track(track):
-    player = _create_player(track)
+    return _create_player(track)
 
 
 def _create_player(song_path):

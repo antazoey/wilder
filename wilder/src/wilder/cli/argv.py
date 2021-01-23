@@ -31,11 +31,11 @@ track_num_option = click.option(
     "--track-number",
     "--track-num",
     help="The number the track is on the album.",
-    default=1,
 )
 collaborator_option = click.option(
     "--collaborator", help="Additional artists on the track", multiple=True
 )
+hard_option = click.option("--hard", help="To permanently delete associated files.")
 
 
 class CLIState:
