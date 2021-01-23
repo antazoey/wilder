@@ -33,12 +33,18 @@ def copy_file_to_dir(source_file, dest_path):
     if not source_file or not os.path.isfile(source_file):
         raise WildNotFoundError(f"File not found: {source_file}.")
 
-    path = Path(dest_path)
-    if not os.path.exists(path.parent):
-        os.makedirs(path.parent)
+    parent = get_parent(dest_path)
+    if parent and not os.path.exists(parent):
+        os.makedirs(parent)
 
     remove_file_if_exists(dest_path)
     shutil.copy(source_file, dest_path)
+
+
+def get_parent(path):
+    path = Path(path)
+    if os.path.exists(path.parent) and path.parent.name != path.name:
+        return path.parent
 
 
 def remove_file_if_exists(file_path):

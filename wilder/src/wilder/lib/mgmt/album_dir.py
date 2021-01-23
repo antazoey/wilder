@@ -10,11 +10,14 @@ from wilder.lib.user import get_mgmt_json
 from wilder.lib.util.sh import copy_files_to_dir
 from wilder.lib.util.sh import create_dir_if_not_exists
 from wilder.lib.util.sh import file_exists_with_data
+from wilder.lib.util.sh import get_parent
 from wilder.lib.util.sh import load_json_from_file
 from wilder.lib.util.sh import save_json_as
 
 
 def get_album_json_path(album_path):
+    if not album_path:
+        return None
     return os.path.join(album_path, "album.json")
 
 
@@ -92,27 +95,68 @@ def echo_tracks(tracks):
 
 
 def get_album_json(wilder, artist_arg, album_arg):
+    """If given an album, it will use Wilder to retrieve the album directory JSON blob.
+    Otherwise, it tries to intelligently figure out the artist/album combo based on
+    the currently working directory.
+
+    For example, if you are inside the album directory, it will use the album.json directly.
+    If you are in an album directory but you deleted the album.json, it will recreate the default
+     album JSON and return the expected album/artist combo.
+    If you are inside a track directory, it will use the album.json from the parent directory, or it will
+     create the default JSON in the parent directory and use the expected album/artist combo.
+    """
+
     if not album_arg:
         try:
-            here = os.getcwd()
-            album_json_path = get_album_json_path(here)
-            if not os.path.isfile(album_json_path):
-                mgmt_json = get_mgmt_json()
-                artists = mgmt_json.get(Constants.ARTISTS)
-                for artist in artists:
-                    albums = artist.get(Constants.DISCOGRAPHY)
-                    for album in albums:
-                        path = album.get(Constants.PATH)
-                        name = album.get(Constants.NAME)
-                        if path == here:
-                            # Turns out, we are actually in an album dir but someone deleted the JSON
-                            init_album_dir(here, name)
-                            return load_json_from_file(album_json_path)
+            album_json = _try_get_local_json()
+            if not album_json:
                 raise NotInAlbumError()
-            return load_json_from_file(album_json_path)
+            return album_json
         except OSError:
             # Handles case when in a strange directory
             raise NotInAlbumError()
     else:
         album = wilder.get_album(album_arg, artist_name=artist_arg)
         return load_json_from_file(album.dir_json_path)
+
+
+def _try_get_local_json():
+    here = os.getcwd()
+    album_json_path = get_album_json_path(here)
+    if os.path.isfile(album_json_path):
+        return load_json_from_file(album_json_path)
+
+    local_json = _create_album_if_should_exist(here, album_json_path)
+    if local_json:
+        return local_json
+
+    return _try_get_local_json_from_parent_dir(here)
+
+
+def _create_album_if_should_exist(here, album_json_path):
+    should_exist, name, here = _album_is_supposed_to_exist(here)
+    if should_exist and name:
+        init_album_dir(here, name)
+        return load_json_from_file(album_json_path)
+
+
+def _try_get_local_json_from_parent_dir(here):
+    here = get_parent(here)
+    album_json_path = get_album_json_path(here)
+    if os.path.isfile(album_json_path):
+        return load_json_from_file(album_json_path)
+    else:
+        return _create_album_if_should_exist(here, album_json_path)
+
+
+def _album_is_supposed_to_exist(here):
+    mgmt_json = get_mgmt_json()
+    artists = mgmt_json.get(Constants.ARTISTS)
+    for artist in artists:
+        albums = artist.get(Constants.DISCOGRAPHY)
+        for album in albums:
+            path = album.get(Constants.PATH)
+            name = album.get(Constants.NAME)
+            if path == here:
+                return True, name, here
+    return False, None, here
