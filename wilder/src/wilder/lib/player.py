@@ -1,14 +1,12 @@
 import vlc
 
 
-def play_album(album):
+def play_album(album, audio_type):
     for track in album.tracks:
-        play_track(track)
+        path = track.get_file(audio_type)
+        play_track(path)
 
 
-def play_track(track):
-    return _create_player(track)
-
-
-def _create_player(song_path):
-    return vlc.MediaPlayer(song_path)
+def play_track(track_path):
+    player = vlc.MediaPlayer(track_path)
+    player.play()

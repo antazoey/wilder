@@ -34,7 +34,9 @@ track_num_option = click.option(
 collaborator_option = click.option(
     "--collaborator", help="Additional artists on the track", multiple=True
 )
-hard_option = click.option("--hard", help="To permanently delete associated files.", is_flag=True)
+hard_option = click.option(
+    "--hard", help="To permanently delete associated files.", is_flag=True
+)
 audio_type_option = click.option(
     "--audio-type",
     help="The audio file extension of the track to play.",

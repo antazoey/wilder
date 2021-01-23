@@ -114,6 +114,7 @@ class Album:
             collaborators=collaborators or [],
         )
         track.init_dir()
+        track.save_track_metadata()
         self._add_track(track)
         self.save_album_metadata()
 

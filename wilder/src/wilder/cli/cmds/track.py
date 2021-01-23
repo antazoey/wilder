@@ -117,7 +117,9 @@ def delete(state, track_name, artist, album, hard):
 @click.command(cls=AlbumDirCommand)
 @track_options()
 @click.option(
-    "--auto", help="Set to skip interactive mode and set track numbers as a sequence."
+    "--auto",
+    help="Set to skip interactive mode and set track numbers as a sequence.",
+    is_flag=True,
 )
 def reorder(state, artist, album, auto):
     """Reorder the tracks on an album."""
@@ -128,7 +130,7 @@ def reorder(state, artist, album, auto):
         answers = _get_track_num_choices(track_names, track_num_range)
         state.wilder.bulk_set_track_numbers(answers, album, artist_name=artist)
     else:
-        state.wilder.auto_set_track_numbers()
+        state.wilder.auto_set_track_numbers(album)
 
 
 def _get_track_num_choices(track_names, choices, answer_dict=None):
@@ -154,9 +156,7 @@ def _get_track_num_choices(track_names, choices, answer_dict=None):
 @audio_type_option
 def play(state, track_name, artist, album, audio_type):
     """Play a track."""
-    state.wilder.play_track(
-        track_name, album, artist_name=artist, audio_type=audio_type
-    )
+    state.wilder.play_track(track_name, album, audio_type, artist_name=artist)
 
 
 track.add_command(_list)
