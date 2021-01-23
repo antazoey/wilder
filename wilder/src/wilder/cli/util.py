@@ -187,7 +187,7 @@ class warn_interrupt:
         return inner
 
 
-def abridge(val, up_to=12):
+def abridge(val, up_to=28):
     if not val:
         return None
     if len(val) > up_to:

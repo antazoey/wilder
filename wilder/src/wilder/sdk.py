@@ -31,7 +31,9 @@ class BaseWildApi:
 
 
 class Wilder(BaseWildApi):
-    def __init__(self, artists=None, last_updated=None, focus_artist=None):
+    def __init__(
+        self, artists=None, last_updated=None, focus_artist=None,
+    ):
         self._artists = artists
         self._last_updated = last_updated
         self._focus_artist = focus_artist
@@ -47,7 +49,7 @@ class Wilder(BaseWildApi):
         focus_artist = mgmt_json.get(Constants.FOCUS_ARTIST)
         artists = _parse_artists(mgmt_json)
         return cls(
-            artists=artists, last_updated=last_updated, focus_artist=focus_artist
+            artists=artists, last_updated=last_updated, focus_artist=focus_artist,
         )
 
     def get_mgmt(self):
@@ -66,7 +68,10 @@ class Wilder(BaseWildApi):
 
     def get_artist(self, name=None):
         """Get an artist."""
-        return self._get_artist_by_name(name) or self._get_focus_artist()
+        artist = self._get_artist_by_name(name) or self._get_focus_artist()
+        if not artist:
+            raise NoArtistsFoundError()
+        return artist
 
     def _get_artist_by_name(self, name):
         if not name:
@@ -79,7 +84,7 @@ class Wilder(BaseWildApi):
     def _get_focus_artist(self):
         """Get the Wilder focus artist."""
         if not self._artists:
-            raise NoArtistsFoundError()
+            return None
         for artist in self._artists:
             if artist.name == self._focus_artist:
                 return artist
@@ -99,7 +104,7 @@ class Wilder(BaseWildApi):
         self._focus_artist = artist.name
         self._save()
 
-    def sign_new_artist(self, name, bio=None):
+    def create_artist(self, name, bio=None):
         """Create a new artist."""
         if self.is_represented(name):
             raise ArtistAlreadySignedError(name)
@@ -111,7 +116,7 @@ class Wilder(BaseWildApi):
             self._focus_artist = artist.name
         self._save()
 
-    def unsign_artist(self, name):
+    def delete_artist(self, name):
         """Remove an artist."""
         if not self.is_represented(name):
             raise ArtistNotSignedError(name)
@@ -174,7 +179,7 @@ class Wilder(BaseWildApi):
             raise AlbumNotFoundError(name)
         return album
 
-    def start_new_album(
+    def create_album(
         self,
         album_path,
         album_name=None,
@@ -207,7 +212,7 @@ class Wilder(BaseWildApi):
         album.update(description=description, album_type=album_type, status=status)
         self._save()
 
-    def start_new_track(
+    def create_track(
         self,
         track_name,
         album_name,
@@ -218,7 +223,7 @@ class Wilder(BaseWildApi):
     ):
         """Add a track to an album."""
         album = self.get_album(album_name, artist_name=artist_name)
-        album.start_new_track(
+        album.create_track(
             track_name,
             track_number=track_number,
             description=description,

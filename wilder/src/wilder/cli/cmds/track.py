@@ -67,7 +67,7 @@ def _list(state, artist, album):
 @metadata_options()
 def new(state, track_name, artist, album, track_number, description, collaborator):
     """Add a track to an album."""
-    state.wilder.start_new_track(
+    state.wilder.create_track(
         track_name,
         album,
         artist_name=artist,

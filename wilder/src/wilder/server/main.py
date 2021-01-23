@@ -106,7 +106,7 @@ def artist_sign():
     wilder = get_wilder_sdk()
     artist_name = _get_request_data_param(Consts.ARTIST)
     bio = _get_request_data_param(Consts.BIO)
-    wilder.sign_new_artist(artist_name, bio=bio)
+    wilder.create_artist(artist_name, bio=bio)
     return successful_response()
 
 
@@ -115,7 +115,7 @@ def artist_unsign():
     """Remove a managed artist."""
     wilder = get_wilder_sdk()
     artist_name = _get_request_data_param(Consts.ARTIST)
-    wilder.unsign_artist(artist_name)
+    wilder.delete_artist(artist_name)
     return successful_response()
 
 
@@ -195,7 +195,7 @@ def album_create():
     description = _get_request_data_param(Consts.DESCRIPTION)
     album_type = _get_request_data_param(Consts.ALBUM_TYPE)
     status = _get_request_data_param(Consts.STATUS)
-    wilder.start_new_album(
+    wilder.create_album(
         path,
         name=_album,
         artist_name=artist_name,
@@ -234,7 +234,7 @@ def album_create_track():
     track_number = _get_request_data_param(Consts.TRACK_NUMBER)
     description = _get_request_data_param(Consts.DESCRIPTION)
     collaborators = _get_request_data_param(Consts.COLLABORATORS)
-    wilder.start_new_track(
+    wilder.create_track(
         _album,
         track,
         track_number,

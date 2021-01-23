@@ -59,17 +59,17 @@ def _list(state, format):
 @wild_options()
 @artist_name_arg
 @bio_option
-def sign(state, artist_name, bio):
+def new(state, artist_name, bio):
     """Manage a new artist."""
-    state.wilder.sign_new_artist(artist_name, bio=bio)
+    state.wilder.create_artist(artist_name, bio=bio)
 
 
 @click.command()
 @wild_options()
 @artist_name_arg
-def unsign(state, artist_name):
+def remove(state, artist_name):
     """Stop managing an artist."""
-    state.wilder.unsign_artist(artist_name)
+    state.wilder.delete_artist(artist_name)
 
 
 @click.command(cls=ArtistArgRequiredIfGivenCommand)
@@ -125,8 +125,8 @@ def rename(state, new_name, artist, forget_old_name):
 
 
 artist.add_command(_list)
-artist.add_command(sign)
-artist.add_command(unsign)
+artist.add_command(new)
+artist.add_command(remove)
 artist.add_command(focus)
 artist.add_command(update)
 artist.add_command(show)

@@ -28,9 +28,9 @@ def album():
 @update_album_options()
 @click.option("--path", "-p", help=f"The path where to start an album.", required=True)
 @click.option("--name", "-n", help="The name to give the album.", required=True)
-def init(state, artist, path, name, description, album_type, status):
+def new(state, artist, path, name, description, album_type, status):
     """Start a new album at the given path."""
-    state.wilder.start_new_album(
+    state.wilder.create_album(
         path,
         album_name=name,
         artist_name=artist,
@@ -136,7 +136,7 @@ def _handle_no_albums_found(name):
     click.echo(msg)
 
 
-album.add_command(init)
+album.add_command(new)
 album.add_command(_list)
 album.add_command(path)
 album.add_command(update)
