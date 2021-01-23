@@ -5,6 +5,7 @@ from wilder.cli.wild_factory import get_wilder
 from wilder.lib.config import create_config_object
 from wilder.lib.enum import AlbumStatus
 from wilder.lib.enum import AlbumType
+from wilder.lib.enum import AudioType
 
 
 yes_option = click.option(
@@ -28,14 +29,18 @@ format_option = click.option(
 bio_option = click.option("--bio", "--biography", help="The artist biography.")
 artist_option = click.option("--artist", help="The name of an artist.")
 track_num_option = click.option(
-    "--track-number",
-    "--track-num",
-    help="The number the track is on the album.",
+    "--track-number", "--track-num", help="The number the track is on the album.",
 )
 collaborator_option = click.option(
     "--collaborator", help="Additional artists on the track", multiple=True
 )
 hard_option = click.option("--hard", help="To permanently delete associated files.")
+audio_type_option = click.option(
+    "--audio-type",
+    help="The audio file extension of the track to play.",
+    type=click.Choice(AudioType.choices()),
+    default=AudioType.MP3,
+)
 
 
 class CLIState:

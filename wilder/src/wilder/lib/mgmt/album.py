@@ -9,7 +9,8 @@ from wilder.lib.mgmt.album_dir import get_track_path
 from wilder.lib.mgmt.album_dir import init_album_dir
 from wilder.lib.mgmt.release import Release
 from wilder.lib.mgmt.track import Track
-from wilder.lib.util.sh import remove_file_if_exists, remove_directory
+from wilder.lib.util.sh import remove_directory
+from wilder.lib.util.sh import remove_file_if_exists
 from wilder.lib.util.sh import save_json_as
 
 

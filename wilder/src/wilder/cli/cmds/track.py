@@ -1,9 +1,11 @@
 import click
 from PyInquirer import prompt
-from wilder.cli.argv import album_option, hard_option
+from wilder.cli.argv import album_option
 from wilder.cli.argv import artist_option
+from wilder.cli.argv import audio_type_option
 from wilder.cli.argv import collaborator_option
 from wilder.cli.argv import description_option
+from wilder.cli.argv import hard_option
 from wilder.cli.argv import track_name_arg
 from wilder.cli.argv import track_num_option
 from wilder.cli.argv import wild_options
@@ -114,7 +116,9 @@ def delete(state, track_name, artist, album, hard):
 
 @click.command(cls=AlbumDirCommand)
 @track_options()
-@click.option("--auto", help="Set to skip interactive mode and set track numbers as a sequence.")
+@click.option(
+    "--auto", help="Set to skip interactive mode and set track numbers as a sequence."
+)
 def reorder(state, artist, album, auto):
     """Reorder the tracks on an album."""
     tracks = state.wilder.get_tracks(album, artist_name=artist)
@@ -147,10 +151,12 @@ def _get_track_num_choices(track_names, choices, answer_dict=None):
 
 @click.command(cls=AlbumDirCommand)
 @single_track_options()
-def play(state, track_name, artist, album):
+@audio_type_option
+def play(state, track_name, artist, album, audio_type):
     """Play a track."""
-    _track = state.wilder.get_track(track_name, album, artist_name=artist)
-    play_track()
+    state.wilder.play_track(
+        track_name, album, artist_name=artist, audio_type=audio_type
+    )
 
 
 track.add_command(_list)
@@ -159,3 +165,4 @@ track.add_command(show)
 track.add_command(update)
 track.add_command(delete)
 track.add_command(reorder)
+track.add_command(play)

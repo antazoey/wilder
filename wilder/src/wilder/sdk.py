@@ -9,7 +9,8 @@ from wilder.lib.errors import ArtistNotSignedError
 from wilder.lib.errors import NoArtistsFoundError
 from wilder.lib.errors import TrackNotFoundError
 from wilder.lib.mgmt.artist import Artist
-from wilder.lib.mgmt.track import Track
+from wilder.lib.player import play_album
+from wilder.lib.player import play_track
 from wilder.lib.util.sh import save_json_as
 
 
@@ -284,12 +285,16 @@ class Wilder(BaseWildApi):
         album = self.get_album(album_name, artist.name)
         album.auto_set_track_numbers()
 
-    def play_track(self, album_name, track_name, artist_name=None):
+    def play_track(self, track_name, album_name, artist_name=None, audio_type=None):
         """Play a track from an album."""
+        track = self.get_track(track_name, album_name, artist_name=artist_name)
+        path = track.get_file(audio_type)
+        play_track(path)
+
+    def play_album(self, album_name, artist_name=None):
+        """Play a whole album."""
         album = self.get_album(album_name, artist_name=artist_name)
-        track = album.get_track(track_name)
-        if not track:
-            raise TrackNotFoundError(album_name, track_name)
+        play_album(album)
 
     """Other"""
 

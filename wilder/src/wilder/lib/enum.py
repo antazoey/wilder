@@ -32,3 +32,13 @@ class ReleaseType:
     @staticmethod
     def choices():
         return get_attribute_keys_from_class(ReleaseType)
+
+
+class AudioType:
+    MP3 = "mp3"
+    WAV = "wav"
+    FLAC = "flac"
+
+    @staticmethod
+    def choices():
+        return get_attribute_keys_from_class(AudioType)
