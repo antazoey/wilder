@@ -1,7 +1,8 @@
 import time
 
 import vlc
-from wilder.lib.errors import WildError
+
+from wilder.lib.errors import WildVLCPlayerLaunchError
 
 
 def play_album(album, audio_type):
@@ -17,7 +18,7 @@ def play_track(track_path):
 
     cmd_res = player.play()
     if cmd_res == -1:
-        raise WildError("Player failed to launch.")
+        raise WildVLCPlayerLaunchError()
 
     start = 1
     time.sleep(start)
@@ -26,8 +27,6 @@ def play_track(track_path):
     remaining = track_length - start
     while remaining > 0:
         wait_time = 0.1
-        print(f"\r{round(remaining)}           \r", end="\r")
+        yield wait_time
         time.sleep(wait_time)
         remaining -= wait_time
-
-    print()

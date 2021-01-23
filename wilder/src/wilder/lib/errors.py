@@ -86,3 +86,17 @@ class NotInAlbumError(WildError):
             "Try executing the command from an album directory or specifying the album option."
         )
         super().__init__(msg)
+
+
+class WildVLCPlayerLaunchError(WildError):
+    """An error raised when trying to use VLC media player."""
+
+    def __init__(self):
+        super().__init__("VLC Media Player failed to launch.")
+
+
+class UnsupportedAudioTypeError(WildError):
+    """An error raised when receiving an unknown audio type."""
+
+    def __init__(self, audio_type):
+        super().__init__(f"Received unsupported audio-type '{audio_type}'.")

@@ -9,6 +9,7 @@ from wilder.lib.mgmt.album_dir import init_track_dir
 from wilder.lib.util.conversion import to_int
 from wilder.lib.util.sh import remove_file_if_exists
 from wilder.lib.util.sh import save_json_as
+from wilder.lib.errors import UnsupportedAudioTypeError
 
 
 class Track:
@@ -45,20 +46,28 @@ class Track:
 
     @property
     def mp3_path(self):
-        """The path to the mp3 file for track, if it exists."""
+        """The path to the mp3 file for this track, if it exists."""
         return self._get_file("mp3")
 
     @property
     def wav_path(self):
-        """The path to the mp3 file for track, if it exists."""
+        """The path to the mp3 file for this track, if it exists."""
         return self._get_file("wav")
+
+    @property
+    def flac_path(self):
+        """The path to the FLAC file for this track, if it exists."""
+        return self._get_file("flac")
 
     def get_file(self, audio_type):
         audio_type = audio_type.lower()
         if audio_type == AudioType.MP3:
-            return self.mp3_path
+            return _get_path_if_exists(self.mp3_path)
         elif audio_type == AudioType.WAV:
-            return self.wav_path
+            return _get_path_if_exists(self.wav_path)
+        elif audio_type == AudioType.FLAC:
+            return _get_path_if_exists(self.flac_path)
+        raise UnsupportedAudioTypeError(audio_type)
 
     def _get_file(self, ext):
         return os.path.join(self.path, f"{self.name}.{ext}")
@@ -110,3 +119,9 @@ class Track:
         full_json = self.to_json_for_track_dir()
         save_json_as(self.dir_json_path, full_json)
         return self
+
+
+def _get_path_if_exists(path):
+    if os.path.isfile(path):
+        return path
+    raise FileNotFoundError(path)
