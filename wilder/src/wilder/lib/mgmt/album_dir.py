@@ -124,9 +124,9 @@ def get_album_json(wilder, artist_arg, album_arg):
 
 def _try_get_local_json():
     here = os.getcwd()
-    album_json_path = get_album_json_path(here)
-    if os.path.isfile(album_json_path):
-        return load_json_from_file(album_json_path)
+    album_json_path, album_json = _get_album_json_from_here(here)
+    if album_json:
+        return album_json
 
     local_json = _create_album_if_should_exist(here, album_json_path)
     if local_json:
@@ -135,20 +135,22 @@ def _try_get_local_json():
     return _try_get_local_json_from_parent_dir(here)
 
 
+def _get_album_json_from_here(here):
+    album_json_path = get_album_json_path(here)
+    album_json = _get_album_json_from_path(album_json_path)
+    return album_json_path, album_json
+
+
+def _get_album_json_from_path(path):
+    if os.path.isfile(path):
+        return load_json_from_file(path)
+
+
 def _create_album_if_should_exist(here, album_json_path):
-    should_exist, name, here = _album_is_supposed_to_exist(here)
+    should_exist, name = _album_is_supposed_to_exist(here)
     if should_exist and name:
         init_album_dir(here, name)
         return load_json_from_file(album_json_path)
-
-
-def _try_get_local_json_from_parent_dir(here):
-    here = get_parent(here)
-    album_json_path = get_album_json_path(here)
-    if os.path.isfile(album_json_path):
-        return load_json_from_file(album_json_path)
-    else:
-        return _create_album_if_should_exist(here, album_json_path)
 
 
 def _album_is_supposed_to_exist(here):
@@ -160,5 +162,14 @@ def _album_is_supposed_to_exist(here):
             path = album.get(Constants.PATH)
             name = album.get(Constants.NAME)
             if path == here:
-                return True, name, here
-    return False, None, here
+                return True, name
+    return False, None
+
+
+def _try_get_local_json_from_parent_dir(here):
+    here = get_parent(here)
+    album_json_path, album_json = _get_album_json_from_here(here)
+    if album_json:
+        return album_json
+    else:
+        return _create_album_if_should_exist(here, album_json_path)
