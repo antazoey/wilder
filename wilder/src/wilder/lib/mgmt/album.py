@@ -103,7 +103,7 @@ class Album:
         if track_name in current_tracks:
             raise TrackAlreadyExistError(track_name, self.name)
         track_path = get_track_path(self.path, track_name)
-        track_number = track_number or len(current_tracks)
+        track_number = track_number or len(current_tracks) + 1
         track = Track(
             track_path,
             track_name,
