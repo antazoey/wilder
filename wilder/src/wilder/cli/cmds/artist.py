@@ -1,9 +1,10 @@
 import click
-from wilder.cli.argv import alias_arg, new_name_arg
+from wilder.cli.argv import alias_arg
 from wilder.cli.argv import artist_name_arg
 from wilder.cli.argv import artist_option
 from wilder.cli.argv import bio_option
 from wilder.cli.argv import format_option
+from wilder.cli.argv import new_name_arg
 from wilder.cli.argv import wild_options
 from wilder.cli.cmds.util import echo_formatted_list
 from wilder.cli.output_formats import OutputFormat

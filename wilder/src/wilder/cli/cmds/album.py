@@ -1,9 +1,10 @@
 import click
-from wilder.cli.argv import album_name_arg, new_name_arg
+from wilder.cli.argv import album_name_arg
 from wilder.cli.argv import album_option
 from wilder.cli.argv import artist_option
 from wilder.cli.argv import format_option
 from wilder.cli.argv import hard_option
+from wilder.cli.argv import new_name_arg
 from wilder.cli.argv import update_album_options
 from wilder.cli.argv import wild_options
 from wilder.cli.argv import yes_option

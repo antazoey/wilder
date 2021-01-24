@@ -11,8 +11,9 @@ from wilder.lib.mgmt.album_dir import get_track_path
 from wilder.lib.mgmt.album_dir import init_album_dir
 from wilder.lib.mgmt.release import Release
 from wilder.lib.mgmt.track import Track
-from wilder.lib.util.sh import remove_directory, rename_directory
+from wilder.lib.util.sh import remove_directory
 from wilder.lib.util.sh import remove_file_if_exists
+from wilder.lib.util.sh import rename_directory
 from wilder.lib.util.sh import save_json_as
 
 
@@ -99,11 +100,7 @@ class Album:
 
     def rename(self, new_name):
         self.name = new_name
-        path = Path(self.path)
-        parent = path.parent
-        new_path = str(parent.joinpath(new_name))
-        rename_directory(self.path, new_path)
-        self.path = new_path
+        self.path = rename_directory(self.path, new_name)
         self.save_album_metadata()
 
     def create_track(

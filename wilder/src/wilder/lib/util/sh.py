@@ -57,8 +57,14 @@ def remove_directory(dir_path):
     shutil.rmtree(dir_path)
 
 
-def rename_directory(original_path, new_path):
+def rename_directory(original_path, new_name):
+    """Takes a full path and a new name (of the last dir in the path) and creates the new directory.
+    Returns the new path."""
+    path = Path(original_path)
+    parent = path.parent
+    new_path = str(parent.joinpath(new_name))
     shutil.move(original_path, new_path)
+    return new_path
 
 
 def create_dir_if_not_exists(path):

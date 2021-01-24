@@ -219,6 +219,20 @@ class Wilder(BaseWildApi):
         album.rename(new_name)
         self._save()
 
+    def delete_album(self, album_name, artist_name=None):
+        """Delete an album."""
+        artist = self.get_artist(artist_name)
+        album = self.get_album(album_name, artist_name=artist_name)
+        artist.delete_album(album)
+        self._save()
+
+    def play_album(self, album_name, audio_type, artist_name=None):
+        """Play a whole album."""
+        album = self.get_album(album_name, artist_name=artist_name)
+        play_album(album, audio_type)
+
+    """Tracks"""
+
     def create_track(
         self,
         track_name,
@@ -256,43 +270,34 @@ class Wilder(BaseWildApi):
             collaborators=collaborators,
         )
 
-    def delete_album(self, album_name, artist_name=None):
-        """Delete an album."""
-        artist = self.get_artist(artist_name)
-        album = self.get_album(album_name, artist_name=artist_name)
-        artist.delete_album(album)
-        self._save()
-
     def get_tracks(self, album_name, artist_name=None):
         """Get all the tracks on an album."""
-        artist = self.get_artist(artist_name)
-        album = self.get_album(album_name, artist.name)
+        album = self.get_album(album_name, artist_name=artist_name)
         return album.tracks
 
     def get_track(self, track_name, album_name, artist_name=None):
         """Get a single track from an album."""
-        artist = self.get_artist(artist_name)
-        album = self.get_album(album_name, artist.name)
-        track = album.get_track(track_name)
-        return track
+        album = self.get_album(album_name, artist_name=artist_name)
+        return album.get_track(track_name)
 
     def delete_track(self, track_name, album_name, artist_name=None, hard=None):
         """Delete a track from an album."""
-        artist = self.get_artist(artist_name)
-        album = self.get_album(album_name, artist.name)
+        album = self.get_album(album_name, artist_name=artist_name)
         album.delete_track(track_name, hard=hard)
-        self._save()
+
+    def rename_track(self, new_name, track_name, album_name, artist_name=None):
+        """Change the name of a track."""
+        track = self.get_track(track_name, album_name, artist_name=artist_name)
+        track.rename(new_name)
 
     def bulk_set_track_numbers(self, track_numbers, album_name, artist_name=None):
         """Bulk set all of the track numbers on an album."""
-        artist = self.get_artist(artist_name)
-        album = self.get_album(album_name, artist.name)
+        album = self.get_album(album_name, artist_name=artist_name)
         album.bulk_set_track_numbers(track_numbers)
 
     def auto_set_track_numbers(self, album_name, artist_name=None):
         """Automatically adjust the track numbers on an album."""
-        artist = self.get_artist(artist_name)
-        album = self.get_album(album_name, artist.name)
+        album = self.get_album(album_name, artist_name=artist_name)
         album.auto_set_track_numbers()
 
     def play_track(self, track_name, album_name, audio_type, artist_name=None):
@@ -300,11 +305,6 @@ class Wilder(BaseWildApi):
         track = self.get_track(track_name, album_name, artist_name=artist_name)
         path = track.get_file(audio_type)
         play_track(path)
-
-    def play_album(self, album_name, audio_type, artist_name=None):
-        """Play a whole album."""
-        album = self.get_album(album_name, artist_name=artist_name)
-        play_album(album, audio_type)
 
     """Other"""
 
