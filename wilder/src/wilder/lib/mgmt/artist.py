@@ -42,7 +42,7 @@ class Artist:
             Constants.ALSO_KNOWN_AS: self.also_known_as,
         }
 
-    def start_new_album(
+    def create_album(
         self, path_location, name=None, description=None, album_type=None, status=None
     ):
         """Initialize a new album in a given directory."""

@@ -25,7 +25,10 @@ class BaseWildApi:
 
     def is_represented(self, name):
         """Returns True if the artist is represented by Wilder."""
-        return name in self.artist_names
+        try:
+            return name in self.artist_names
+        except ArtistNotFoundError:
+            return False
 
 
 class Wilder(BaseWildApi):
@@ -83,9 +86,8 @@ class Wilder(BaseWildApi):
 
     def _get_focus_artist(self):
         """Get the Wilder focus artist."""
-        if not self._artists:
-            return None
-        for artist in self._artists:
+        artists = self.get_artists()
+        for artist in artists:
             if artist.name == self._focus_artist:
                 return artist
 
