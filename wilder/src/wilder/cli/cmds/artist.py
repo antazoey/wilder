@@ -48,10 +48,7 @@ def _list(state, format):
         }
         for a in _artists
     ]
-    if not artists_list:
-        click.echo("There are no artists currently being managed.")
-    else:
-        echo_formatted_list(format, artists_list)
+    echo_formatted_list(format, artists_list)
 
 
 @artist.command()

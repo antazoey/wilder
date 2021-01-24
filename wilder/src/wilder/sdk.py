@@ -62,19 +62,21 @@ class Wilder(BaseWildApi):
 
     def get_artists(self):
         """Get all artists."""
-        return self._artists
+        artists = self._artists
+        if not artists:
+            raise NoArtistsFoundError()
+        return artists
 
     def get_artist(self, name=None):
         """Get an artist."""
-        artist = self._get_artist_by_name(name) or self._get_focus_artist()
-        if not artist:
-            raise NoArtistsFoundError()
+        artist = (
+            self._get_focus_artist() if not name else self._get_artist_by_name(name)
+        )
         return artist
 
     def _get_artist_by_name(self, name):
-        if not name:
-            return None
-        for artist in self._artists:
+        artists = self.get_artists()
+        for artist in artists:
             if artist.name == name:
                 return artist
         raise ArtistNotFoundError(name)
