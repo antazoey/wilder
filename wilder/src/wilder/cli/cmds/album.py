@@ -1,5 +1,5 @@
 import click
-from wilder.cli.argv import album_name_arg
+from wilder.cli.argv import album_name_arg, new_name_arg
 from wilder.cli.argv import album_option
 from wilder.cli.argv import artist_option
 from wilder.cli.argv import format_option
@@ -75,7 +75,7 @@ def _abridge_discography_data(albums_json_list):
 @album.command(cls=AlbumDirCommand)
 @update_album_options()
 @album_option()
-def update(state, artist, description, album_type, status):
+def update(state, artist, album, description, album_type, status):
     """Update an album."""
     state.wilder.update_album(
         album,
@@ -84,6 +84,16 @@ def update(state, artist, description, album_type, status):
         album_type=album_type,
         status=status,
     )
+
+
+@album.command(cls=AlbumDirCommand)
+@wild_options()
+@new_name_arg
+@artist_option
+@album_option()
+def rename(state, new_name, artist, album):
+    """Rename an album."""
+    state.wilder.rename_album(new_name, album, artist_name=artist)
 
 
 @album.command(cls=click.Command)

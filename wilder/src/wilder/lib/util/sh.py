@@ -57,6 +57,10 @@ def remove_directory(dir_path):
     shutil.rmtree(dir_path)
 
 
+def rename_directory(original_path, new_path):
+    shutil.move(original_path, new_path)
+
+
 def create_dir_if_not_exists(path):
     """Build a directory tree."""
     if path and not os.path.exists(path):

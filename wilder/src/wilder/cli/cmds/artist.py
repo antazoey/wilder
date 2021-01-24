@@ -1,5 +1,5 @@
 import click
-from wilder.cli.argv import alias_arg
+from wilder.cli.argv import alias_arg, new_name_arg
 from wilder.cli.argv import artist_name_arg
 from wilder.cli.argv import artist_option
 from wilder.cli.argv import bio_option
@@ -105,7 +105,7 @@ def remove_alias(state, artist, alias):
 
 @artist.command()
 @wild_options()
-@click.argument("new_name")
+@new_name_arg
 @artist_option
 @click.option(
     "--forget-old-name", help="To not store in 'Also known as'.", default=False,

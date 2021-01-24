@@ -213,6 +213,12 @@ class Wilder(BaseWildApi):
         album.update(description=description, album_type=album_type, status=status)
         self._save()
 
+    def rename_album(self, new_name, album_name, artist_name=None):
+        """Change the name of an album."""
+        album = self.get_album(album_name, artist_name=artist_name)
+        album.rename(new_name)
+        self._save()
+
     def create_track(
         self,
         track_name,
