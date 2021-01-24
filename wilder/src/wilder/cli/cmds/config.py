@@ -22,16 +22,17 @@ def config():
     pass
 
 
-@click.command("set")
-def _set():
+@config.command("set")
+@click.option("--port", "-p", help="The local port to  run the Wild server on.")
+def _set(port):
     """Create a config file to re-use your Wilder connection parameters."""
     host = Constants.DEFAULT_HOST
-    port = Constants.DEFAULT_PORT
+    port = port or Constants.DEFAULT_PORT
     _json = {Constants.HOST: host, Constants.PORT: port}
     set_client_settings(_json)
 
 
-@click.command(cls=ConfigRequiredCommand)
+@config.command(cls=ConfigRequiredCommand)
 @wild_options()
 def show(state):
     """Show the current client config settings."""
@@ -42,7 +43,7 @@ def show(state):
     )
 
 
-@click.command(cls=ConfigRequiredCommand)
+@config.command(cls=ConfigRequiredCommand)
 @wild_options()
 @yes_option
 def reset(state):
@@ -52,13 +53,13 @@ def reset(state):
         delete_config_if_exists()
 
 
-@click.command(cls=ConfigRequiredCommand)
+@config.command(cls=ConfigRequiredCommand)
 def enable():
     """Enable the config."""
     _enable_or_disable(True)
 
 
-@click.command(cls=ConfigRequiredCommand)
+@config.command(cls=ConfigRequiredCommand)
 def disable():
     """Disable the config."""
     _enable_or_disable(False)
@@ -66,10 +67,3 @@ def disable():
 
 def _enable_or_disable(do_enable):
     set_client_settings({Constants.IS_ENABLED: do_enable})
-
-
-config.add_command(_set)
-config.add_command(show)
-config.add_command(reset)
-config.add_command(enable)
-config.add_command(disable)

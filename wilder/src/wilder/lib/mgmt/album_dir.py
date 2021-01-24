@@ -135,7 +135,7 @@ class AlbumDirectory:
     def _handle_could_not_find(self):
         if self._get_default:
             return self._get_default()
-        return self._handle_could_not_find()
+        raise NotInAlbumError()
 
 
 def _get_album_json_from_here(here=None):

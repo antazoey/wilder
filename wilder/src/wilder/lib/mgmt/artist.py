@@ -2,13 +2,15 @@ import os
 
 from wilder.lib.constants import Constants
 from wilder.lib.errors import AlbumAlreadyExistsError
+from wilder.lib.errors import AlbumNotFoundError
+from wilder.lib.errors import ArtistHasNoAlbumsError
 from wilder.lib.mgmt.album import Album
 from wilder.lib.util.sh import expand_path
 
 
 class Artist:
     def __init__(self, discography=None, name=None, bio=None, also_known_as=None):
-        self.discography = discography or []
+        self._discography = discography or []
         self.name = name
         self.bio = bio
         self.also_known_as = also_known_as or []
@@ -25,12 +27,18 @@ class Artist:
             discography=discography, name=name, bio=bio, also_known_as=also_known_as
         )
 
+    def get_discography(self):
+        """Get all the albums of an artist."""
+        if not self._discography:
+            raise ArtistHasNoAlbumsError(self.name)
+        return self._discography
+
     def to_json(self):
         """Convert an Artist to JSON for storing in the MGMT JSON."""
         return {
             Constants.NAME: self.name,
             Constants.BIO: self.bio,
-            Constants.DISCOGRAPHY: [a.to_json_for_mgmt() for a in self.discography],
+            Constants.DISCOGRAPHY: [a.to_json_for_mgmt() for a in self._discography],
             Constants.ALSO_KNOWN_AS: self.also_known_as,
         }
 
@@ -51,29 +59,30 @@ class Artist:
             status=status,
         )
         album.init_dir()
-        self.discography.append(album)
+        self._discography.append(album)
 
     def _assert_album_not_exists(self, name):
-        for alb in self.discography:
+        for alb in self._discography:
             if alb.name == name:
                 raise AlbumAlreadyExistsError(alb.name)
 
     def delete_album(self, album):
         """Remove an album from Wilder. This does not destroy the directory."""
         albums = []
-        for alb in self.discography:
+        for alb in self._discography:
             if alb.name != album.name:
                 albums.append(album)
-        self.discography = albums
+        self._discography = albums
 
     def get_album_by_name(self, name):
         """Return an album by its name."""
-        for alb in self.discography:
+        for alb in self._discography:
             if alb.name == name:
                 return alb
+        raise AlbumNotFoundError(name)
 
     def _get_default_album_name(self):
-        album_number = len(self.discography) + 1
+        album_number = len(self._discography) + 1
         return f"{self.name} {album_number}"
 
     def rename(self, new_name, forget_old_name=False):

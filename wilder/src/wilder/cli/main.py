@@ -1,4 +1,3 @@
-import json
 import signal
 import sys
 
@@ -13,15 +12,15 @@ from wilder.cli.cmds.track import track
 from wilder.cli.logger import get_cli_error_log_path
 from wilder.lib.config import get_config_json
 from wilder.lib.constants import Constants
+from wilder.lib.util.sh import wopen
 from wilder.server.main import run
-
 
 BANNER = """\b
  |#  ^^  |#  ^#  ^#      |#~~~~#   |#~~~~  ^#~~~~~#
  |#  |#  |#  |#  |#      |#    *#  |#      |#    *#
  |#  |#  |#  |#  |#      |#    *#  |#~~~   |#~~~~#
  |#  |#  |#  |#  |#      |#    *#  |#      |#    *#
- |#~~# #~~#  |#  |#~~~~  |#~~~~#   |#~~~~  |#     #~
+ |#_~# #~_#  |#  |#~~__  |#~__~#   |#~~__  |#     #~
 """
 
 
@@ -45,24 +44,15 @@ def cli(state):
     pass
 
 
-@click.command()
-@wild_options()
-def mgmt(state):
-    """Show the full MGMT JSON blob."""
-    _json = state.wilder.get_mgmt()
-    _json = json.dumps(_json, indent=2)
-    click.echo(_json)
-
-
-@click.command()
+@cli.command()
 @click.option(
-    "--last-n-lines", "-l", help="The last number of lines to show.", default=10
+    "--last-n-lines", "-l", help="The last number of lines to show.", default=15
 )
 def logs(last_n_lines):
     """Show the last n lines of the CLI error logs."""
     logs_path = get_cli_error_log_path()
     try:
-        with open(logs_path) as log_file:
+        with wopen(logs_path) as log_file:
             lines = log_file.readlines()
             length = len(lines)
             for line in lines[length - last_n_lines :]:
@@ -73,13 +63,13 @@ def logs(last_n_lines):
         return []
 
 
-@click.command()
+@cli.command()
 def start_server():
     """Start the wilder server."""
-    import os
+    _start_server()
 
-    os.chdir("..")
-    exit(1)
+
+def _start_server():
     _config = get_config_json().get(Constants.CLIENT)
     host = _config.get(Constants.HOST, Constants.DEFAULT_HOST)
     port = _config.get(Constants.PORT, Constants.DEFAULT_PORT)
@@ -90,7 +80,4 @@ cli.add_command(album)
 cli.add_command(artist)
 cli.add_command(track)
 cli.add_command(config)
-cli.add_command(mgmt)
 cli.add_command(dev)
-cli.add_command(logs)
-cli.add_command(start_server)

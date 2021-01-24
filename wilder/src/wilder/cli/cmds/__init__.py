@@ -1,20 +1,10 @@
 import click
 from PyInquirer import prompt
 from wilder.lib.constants import Constants
-from wilder.lib.errors import ArtistNotFoundError
-from wilder.lib.errors import NoArtistsFoundError
 from wilder.lib.mgmt.album_dir import get_album_directory
 
 
-class ArtistArgRequiredIfGivenCommand(click.Command):
-    def invoke(self, ctx):
-        try:
-            return super().invoke(ctx)
-        except (ArtistNotFoundError, NoArtistsFoundError) as err:
-            click.echo(str(err))
-
-
-class AlbumDirCommand(ArtistArgRequiredIfGivenCommand):
+class AlbumDirCommand(click.Command):
     def invoke(self, ctx):
         wilder = ctx.obj.wilder  # This line must stay to load context
         album_arg = ctx.params.get(Constants.ALBUM)
@@ -31,13 +21,11 @@ class AlbumDirCommand(ArtistArgRequiredIfGivenCommand):
 
 def _select_album_from_list(artist):
     # Gets called when not in an album directory
-    albums = artist.discography
-    if not albums:
-        return
-    elif len(albums) == 1:
+    albums = artist.get_discography()  # Errors when no albums
+    if len(albums) == 1:
         album = albums[0]
     else:
-        choices = [a.name for a in artist.discography]
+        choices = [a.name for a in albums]
         album_name = _get_album_from_user_prompt(choices)
         album = artist.get_album_by_name(album_name)
     return album.to_json_for_album_dir()

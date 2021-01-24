@@ -6,28 +6,19 @@ class WildNotFoundError(WildError):
     """A base error for when a resource is not found."""
 
 
-class ArtistAlreadySignedError(WildError):
-    """An error raised when trying to sign an artist that is already signed."""
+class ArtistAlreadyExistsError(WildError):
+    """An error raised when trying to add an artist that is already signed."""
 
     def __init__(self, artist):
         msg = f"{artist} already signed."
         super().__init__(msg)
 
 
-class ArtistNotSignedError(WildError):
-    """An error raised when trying to unsign an artist that is not signed."""
+class ArtistNotFoundError(WildError):
+    """An error raised when an artist does not exist."""
 
     def __init__(self, artist):
-        msg = f"{artist} is not signed."
-        super().__init__(msg)
-
-
-class ArtistNotFoundError(WildNotFoundError):
-    """An error raised when an artist is not found in the local mgmt.json file."""
-
-    def __init__(self, artist=None, msg=None):
-        if artist:
-            msg = f"Artist '{artist}' not found."
+        msg = f"Artist '{artist}' is not registered."
         super().__init__(msg)
 
 
@@ -43,6 +34,32 @@ class AlbumNotFoundError(WildNotFoundError):
 
     def __init__(self, album_name):
         super().__init__(f"Album '{album_name}' was not found.")
+
+
+class ArtistHasNoAlbumsError(WildError):
+    """An error raised when trying to perform an album-specific operation on an artist when the artist has no albums."""
+
+    def __init__(self, artist_name):
+        super().__init__(f"Artist '{artist_name}' does not have any albums.")
+
+
+class AlbumAlreadyExistsError(WildError):
+    """An error raised when trying to create an album that already exists."""
+
+    def __init__(self, album_name):
+        super().__init__(f"Album '{album_name}' already exists.")
+
+
+class NotInAlbumError(WildError):
+    """An error raised when trying to do an operation outside an album directory or there is no album.json when
+    there needs to be."""
+
+    def __init__(self):
+        msg = (
+            "Error: album not found. "
+            "Try executing the command from an album directory or specifying the album option."
+        )
+        super().__init__(msg)
 
 
 class InvalidAudioFileError(WildError):
@@ -66,25 +83,6 @@ class TrackAlreadyExistError(WildError):
 
     def __init__(self, track_name, album_name):
         msg = f"There is already a track named '{track_name}' on album '{album_name}'."
-        super().__init__(msg)
-
-
-class AlbumAlreadyExistsError(WildError):
-    """An error raised when trying to create an album that already exists."""
-
-    def __init__(self, album_name):
-        super().__init__(f"Album '{album_name}' already exists.")
-
-
-class NotInAlbumError(WildError):
-    """An error raised when trying to do an operation outside an album directory or there is no album.json when
-    there needs to be."""
-
-    def __init__(self):
-        msg = (
-            "Error: album not found. "
-            "Try executing the command from an album directory or specifying the album option."
-        )
         super().__init__(msg)
 
 

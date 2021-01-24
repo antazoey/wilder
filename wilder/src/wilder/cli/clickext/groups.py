@@ -8,9 +8,10 @@ from wilder.cli.errors import WilderCLIError
 from wilder.cli.logger import get_main_cli_logger
 from wilder.lib.errors import AlbumAlreadyExistsError
 from wilder.lib.errors import AlbumNotFoundError
-from wilder.lib.errors import ArtistAlreadySignedError
+from wilder.lib.errors import ArtistAlreadyExistsError
+from wilder.lib.errors import ArtistHasNoAlbumsError
 from wilder.lib.errors import ArtistNotFoundError
-from wilder.lib.errors import ArtistNotSignedError
+from wilder.lib.errors import NoArtistsFoundError
 from wilder.lib.errors import NotInAlbumError
 from wilder.lib.errors import TrackAlreadyExistError
 from wilder.lib.errors import TrackNotFoundError
@@ -43,11 +44,13 @@ class ExceptionHandlingGroup(click.Group):
 
         except (
             AlbumNotFoundError,
-            ArtistNotSignedError,
-            ArtistAlreadySignedError,
+            ArtistNotFoundError,
+            ArtistAlreadyExistsError,
             ArtistNotFoundError,
             AlbumAlreadyExistsError,
+            ArtistHasNoAlbumsError,
             NotInAlbumError,
+            NoArtistsFoundError,
             TrackAlreadyExistError,
             TrackNotFoundError,
         ) as err:

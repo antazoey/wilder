@@ -5,7 +5,6 @@ from wilder.cli.argv import artist_option
 from wilder.cli.argv import bio_option
 from wilder.cli.argv import format_option
 from wilder.cli.argv import wild_options
-from wilder.cli.cmds import ArtistArgRequiredIfGivenCommand
 from wilder.cli.cmds.util import echo_formatted_list
 from wilder.cli.output_formats import OutputFormat
 from wilder.cli.util import abridge
@@ -20,7 +19,7 @@ def artist():
     pass
 
 
-@click.command(cls=ArtistArgRequiredIfGivenCommand)
+@artist.command(cls=click.Command)
 @wild_options()
 @artist_option
 def show(state, artist):
@@ -35,7 +34,7 @@ def show(state, artist):
         click.echo(f"Also known as: '{also_known_as}'")
 
 
-@click.command(Constants.LIST)
+@artist.command(Constants.LIST)
 @wild_options()
 @format_option
 def _list(state, format):
@@ -55,7 +54,7 @@ def _list(state, format):
         echo_formatted_list(format, artists_list)
 
 
-@click.command()
+@artist.command()
 @wild_options()
 @artist_name_arg
 @bio_option
@@ -64,7 +63,7 @@ def new(state, artist_name, bio):
     state.wilder.create_artist(artist_name, bio=bio)
 
 
-@click.command()
+@artist.command()
 @wild_options()
 @artist_name_arg
 def remove(state, artist_name):
@@ -72,7 +71,7 @@ def remove(state, artist_name):
     state.wilder.delete_artist(artist_name)
 
 
-@click.command(cls=ArtistArgRequiredIfGivenCommand)
+@artist.command(cls=click.Command)
 @wild_options()
 @artist_option
 @bio_option
@@ -84,7 +83,7 @@ def update(state, artist, bio):
     state.wilder.update_artist(artist, bio)
 
 
-@click.command(cls=ArtistArgRequiredIfGivenCommand)
+@artist.command(cls=click.Command)
 @wild_options()
 @artist_name_arg
 def focus(state, artist_name):
@@ -92,7 +91,7 @@ def focus(state, artist_name):
     state.wilder.focus_on_artist(artist_name)
 
 
-@click.command(cls=ArtistArgRequiredIfGivenCommand)
+@artist.command(cls=click.Command)
 @wild_options()
 @artist_option
 @alias_arg
@@ -101,7 +100,7 @@ def add_alias(state, artist, alias):
     state.wilder.add_alias(alias, artist_name=artist)
 
 
-@click.command(cls=ArtistArgRequiredIfGivenCommand)
+@artist.command(cls=click.Command)
 @wild_options()
 @artist_option
 @alias_arg
@@ -110,7 +109,7 @@ def remove_alias(state, artist, alias):
     state.wilder.remove_alias(alias, artist_name=artist)
 
 
-@click.command()
+@artist.command()
 @wild_options()
 @click.argument("new_name")
 @artist_option
@@ -122,14 +121,3 @@ def rename(state, new_name, artist, forget_old_name):
     state.wilder.rename_artist(
         new_name, artist_name=artist, forget_old_name=forget_old_name
     )
-
-
-artist.add_command(_list)
-artist.add_command(new)
-artist.add_command(remove)
-artist.add_command(focus)
-artist.add_command(update)
-artist.add_command(show)
-artist.add_command(rename)
-artist.add_command(add_alias)
-artist.add_command(remove_alias)

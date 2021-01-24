@@ -3,6 +3,7 @@ import os
 from wilder.lib.constants import Constants as Consts
 from wilder.lib.enum import AlbumStatus
 from wilder.lib.errors import TrackAlreadyExistError
+from wilder.lib.errors import TrackNotFoundError
 from wilder.lib.mgmt.album_dir import get_album_dir_json
 from wilder.lib.mgmt.album_dir import get_album_json_path
 from wilder.lib.mgmt.album_dir import get_track_path
@@ -134,6 +135,7 @@ class Album:
         for track in self._tracks:
             if track.name == name:
                 return track
+        raise TrackNotFoundError(self.name, name)
 
     def update_track(
         self, track_name, track_number=None, description=None, collaborators=None

@@ -2,8 +2,8 @@ from wilder.client.connection import create_connection
 from wilder.client.errors import OperationNotPermittedError
 from wilder.client.errors import WildBadRequestError
 from wilder.lib.constants import Constants
-from wilder.lib.errors import ArtistAlreadySignedError
-from wilder.lib.errors import ArtistNotSignedError
+from wilder.lib.errors import ArtistAlreadyExistsError
+from wilder.lib.errors import ArtistNotFoundError
 from wilder.lib.mgmt.album import Album
 from wilder.lib.mgmt.artist import Artist
 from wilder.lib.util.sh import expand_path
@@ -74,7 +74,7 @@ class WildClient(BaseWildApi):
             self._post(url, data)
         except WildBadRequestError as err:
             if f"{artist} already signed" in str(err):
-                raise ArtistAlreadySignedError(artist)
+                raise ArtistAlreadyExistsError(artist)
             raise
 
     def unsign_artist(self, artist):
@@ -84,7 +84,7 @@ class WildClient(BaseWildApi):
             self._post(url, _as_artist_dict(artist))
         except WildBadRequestError as err:
             if f"{artist} is not signed" in str(err):
-                raise ArtistNotSignedError(artist)
+                raise ArtistNotFoundError(artist)
             raise
 
     def update_artist(self, name=None, bio=None):

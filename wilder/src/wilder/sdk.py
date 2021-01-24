@@ -3,11 +3,9 @@ from datetime import datetime
 
 import wilder.lib.user as user
 from wilder.lib.constants import Constants as Constants
-from wilder.lib.errors import AlbumNotFoundError
-from wilder.lib.errors import ArtistAlreadySignedError
-from wilder.lib.errors import ArtistNotSignedError
+from wilder.lib.errors import ArtistAlreadyExistsError
+from wilder.lib.errors import ArtistNotFoundError
 from wilder.lib.errors import NoArtistsFoundError
-from wilder.lib.errors import TrackNotFoundError
 from wilder.lib.mgmt.artist import Artist
 from wilder.lib.player import play_album
 from wilder.lib.player import play_track
@@ -79,7 +77,7 @@ class Wilder(BaseWildApi):
         for artist in self._artists:
             if artist.name == name:
                 return artist
-        raise ArtistNotSignedError(name)
+        raise ArtistNotFoundError(name)
 
     def _get_focus_artist(self):
         """Get the Wilder focus artist."""
@@ -107,7 +105,7 @@ class Wilder(BaseWildApi):
     def create_artist(self, name, bio=None):
         """Create a new artist."""
         if self.is_represented(name):
-            raise ArtistAlreadySignedError(name)
+            raise ArtistAlreadyExistsError(name)
         artist = Artist(name=name, bio=bio)
         self._artists.append(artist)
 
@@ -119,7 +117,7 @@ class Wilder(BaseWildApi):
     def delete_artist(self, name):
         """Remove an artist."""
         if not self.is_represented(name):
-            raise ArtistNotSignedError(name)
+            raise ArtistNotFoundError(name)
 
         self._remove_artist_by_name(name)
         if not self._artists:
@@ -175,8 +173,6 @@ class Wilder(BaseWildApi):
         """Get an album by its title."""
         artist = self.get_artist(name=artist_name)
         album = artist.get_album_by_name(name)
-        if not album:
-            raise AlbumNotFoundError(name)
         return album
 
     def create_album(
@@ -267,8 +263,6 @@ class Wilder(BaseWildApi):
         artist = self.get_artist(artist_name)
         album = self.get_album(album_name, artist.name)
         track = album.get_track(track_name)
-        if not track:
-            raise TrackNotFoundError(album.name, track_name)
         return track
 
     def delete_track(self, track_name, album_name, artist_name=None, hard=None):

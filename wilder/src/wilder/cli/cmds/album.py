@@ -8,7 +8,6 @@ from wilder.cli.argv import update_album_options
 from wilder.cli.argv import wild_options
 from wilder.cli.argv import yes_option
 from wilder.cli.cmds import AlbumDirCommand
-from wilder.cli.cmds import ArtistArgRequiredIfGivenCommand
 from wilder.cli.cmds.util import echo_formatted_list
 from wilder.cli.output_formats import OutputFormat
 from wilder.cli.util import abridge
@@ -24,7 +23,7 @@ def album():
     pass
 
 
-@click.command(cls=ArtistArgRequiredIfGivenCommand)
+@album.command(cls=click.Command)
 @update_album_options()
 @click.option("--path", "-p", help=f"The path where to start an album.", required=True)
 @click.option("--name", "-n", help="The name to give the album.", required=True)
@@ -49,27 +48,15 @@ ALBUM_HEADER = {
 }
 
 
-@click.command()
-@wild_options()
-@artist_option
-@album_name_arg
-def path(state, album_name, artist):
-    """Prints the path to the album."""
-    _album = state.wilder.get_album(album_name, artist_name=artist)
-    click.echo(_album.path)
-
-
-@click.command(Constants.LIST, cls=ArtistArgRequiredIfGivenCommand)
+@album.command(Constants.LIST, cls=click.Command)
 @wild_options()
 @artist_option
 @format_option
 def _list(state, artist, format):
     """List an artist's discography."""
     artist_obj = state.wilder.get_artist(artist)
-    albums_json_list = [a.to_json_for_album_dir() for a in artist_obj.discography]
-    if not albums_json_list:
-        _handle_no_albums_found(artist_obj.name)
-        return
+    disco = artist_obj.get_discography()
+    albums_json_list = [a.to_json_for_album_dir() for a in disco]
 
     if format == OutputFormat.TABLE:
         _abridge_discography_data(albums_json_list)
@@ -85,7 +72,7 @@ def _abridge_discography_data(albums_json_list):
             alb[Constants.DESCRIPTION] = abridge(full_desc)
 
 
-@click.command(cls=AlbumDirCommand)
+@album.command(cls=AlbumDirCommand)
 @update_album_options()
 @album_option()
 def update(state, artist, description, album_type, status):
@@ -99,7 +86,7 @@ def update(state, artist, description, album_type, status):
     )
 
 
-@click.command(cls=ArtistArgRequiredIfGivenCommand)
+@album.command(cls=click.Command)
 @wild_options()
 @artist_option
 @album_name_arg
@@ -114,7 +101,7 @@ def delete(state, artist, album_name, hard):
             remove_directory(_album.path)
 
 
-@click.command(cls=AlbumDirCommand)
+@album.command(cls=AlbumDirCommand)
 @wild_options()
 @artist_option
 @album_option()
@@ -129,16 +116,3 @@ def show(state, artist, album):
     if tracks:
         click.echo("\nTracks:\n")
         echo_tracks(tracks)
-
-
-def _handle_no_albums_found(name):
-    msg = f"{name} does not have any albums."
-    click.echo(msg)
-
-
-album.add_command(new)
-album.add_command(_list)
-album.add_command(path)
-album.add_command(update)
-album.add_command(delete)
-album.add_command(show)

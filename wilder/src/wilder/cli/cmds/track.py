@@ -51,7 +51,7 @@ def metadata_options():
     return decorator
 
 
-@click.command("list", cls=AlbumDirCommand)
+@track.command("list", cls=AlbumDirCommand)
 @track_options()
 def _list(state, artist, album):
     """List the tracks on an album."""
@@ -63,7 +63,7 @@ def _list(state, artist, album):
         click.echo(f"No tracks yet on album '{_album.name}'.")
 
 
-@click.command(cls=AlbumDirCommand)
+@track.command(cls=AlbumDirCommand)
 @metadata_options()
 def new(state, track_name, artist, album, track_number, description, collaborator):
     """Add a track to an album."""
@@ -77,7 +77,7 @@ def new(state, track_name, artist, album, track_number, description, collaborato
     )
 
 
-@click.command(cls=AlbumDirCommand)
+@track.command(cls=AlbumDirCommand)
 @single_track_options()
 def show(state, track_name, artist, album):
     """Show information about a track."""
@@ -89,7 +89,7 @@ def show(state, track_name, artist, album):
         click.echo(f'\n"{_track.description}"')
 
 
-@click.command(cls=AlbumDirCommand)
+@track.command(cls=AlbumDirCommand)
 @metadata_options()
 def update(state, track_name, artist, album, track_number, description, collaborator):
     """Update track metadata."""
@@ -103,7 +103,7 @@ def update(state, track_name, artist, album, track_number, description, collabor
     )
 
 
-@click.command(cls=AlbumDirCommand)
+@track.command(cls=AlbumDirCommand)
 @single_track_options()
 @yes_option
 @hard_option
@@ -114,7 +114,7 @@ def delete(state, track_name, artist, album, hard):
         state.wilder.delete_track(track_name, album, artist_name=artist, hard=hard)
 
 
-@click.command(cls=AlbumDirCommand)
+@track.command(cls=AlbumDirCommand)
 @track_options()
 @click.option(
     "--auto",
@@ -151,18 +151,9 @@ def _get_track_num_choices(track_names, choices, answer_dict=None):
     return _get_track_num_choices(track_names, remaining_choices, answer_dict)
 
 
-@click.command(cls=AlbumDirCommand)
+@track.command(cls=AlbumDirCommand)
 @single_track_options()
 @audio_type_option
 def play(state, track_name, artist, album, audio_type):
     """Play a track."""
     state.wilder.play_track(track_name, album, audio_type, artist_name=artist)
-
-
-track.add_command(_list)
-track.add_command(new)
-track.add_command(show)
-track.add_command(update)
-track.add_command(delete)
-track.add_command(reorder)
-track.add_command(play)
