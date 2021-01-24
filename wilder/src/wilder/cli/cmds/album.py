@@ -15,7 +15,6 @@ from wilder.cli.util import abridge
 from wilder.cli.util import does_user_agree
 from wilder.lib.constants import Constants
 from wilder.lib.mgmt.album_dir import echo_tracks
-from wilder.lib.util.sh import remove_directory
 
 
 @click.group()
@@ -107,9 +106,7 @@ def remove(state, artist, album_name, hard):
     """Delete an album."""
     _album = state.wilder.get_album(album_name, artist_name=artist)
     if does_user_agree(f"Are you sure you wish to delete the album '{_album.name}'? "):
-        state.wilder.delete_album(_album.name, artist_name=artist)
-        if hard:
-            remove_directory(_album.path)
+        state.wilder.delete_album(_album.name, artist_name=artist, hard=hard)
 
 
 @album.command(cls=AlbumDirCommand)

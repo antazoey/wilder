@@ -1,5 +1,4 @@
 import os
-from pathlib import Path
 
 from wilder.lib.constants import Constants as Consts
 from wilder.lib.enum import AlbumStatus
@@ -144,18 +143,6 @@ class Album:
                 return track
         raise TrackNotFoundError(self.name, name)
 
-    def update_track(
-        self, track_name, track_number=None, description=None, collaborators=None
-    ):
-        """Update track metadata on the album. `None` does not overwrite."""
-        track = self.get_track(track_name)
-        track.update(
-            track_number=track_number,
-            description=description,
-            collaborators=collaborators,
-        )
-        self.save_album_metadata()
-
     def delete_track(self, track_name, hard=False):
         """Delete a track. Set hard to True to delete the directory."""
         for i in range(0, len(self._tracks)):
@@ -167,6 +154,12 @@ class Album:
             self.auto_set_track_numbers()
             self.save_album_metadata()
             break
+
+    def rename_track(self, new_name, track_name):
+        """Change the name of a track."""
+        track = self.get_track(track_name)
+        track.rename(new_name)
+        self.save_album_metadata()
 
     def bulk_set_track_numbers(self, track_number_dict):
         for name, num in track_number_dict.items():

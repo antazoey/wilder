@@ -9,7 +9,9 @@ from wilder.lib.mgmt.album_dir import get_track_json_path
 from wilder.lib.mgmt.album_dir import get_track_path
 from wilder.lib.mgmt.album_dir import init_track_dir
 from wilder.lib.util.conversion import to_int
+from wilder.lib.util.sh import remove_directory
 from wilder.lib.util.sh import remove_file_if_exists
+from wilder.lib.util.sh import rename_directory
 from wilder.lib.util.sh import save_json_as
 
 
@@ -113,9 +115,16 @@ class Track:
         }
 
     def update(self, track_number=None, description=None, collaborators=None):
+        """Update track metadata."""
         self.track_number = track_number or self.track_number
         self.description = description or self.description
         self.collaborators = collaborators or self.collaborators
+        self.save_track_metadata()
+
+    def rename(self, new_name):
+        """Renames the track. Warning: use album.rename_track() to update album metadata."""
+        self.name = new_name
+        self.path = rename_directory(self.path, new_name)
         self.save_track_metadata()
 
     def save_track_metadata(self):

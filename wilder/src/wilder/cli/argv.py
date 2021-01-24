@@ -78,6 +78,14 @@ def track_option(required=False):
     return click.option("--track", "-t", help="The name of a track.", required=required)
 
 
+def new_name_option(required=False):
+    return click.option(
+        "--new-name",
+        help="The name that will replace the current name.",
+        required=required,
+    )
+
+
 def description_option(_help):
     return click.option("--description", "--desc", help=_help)
 

@@ -6,9 +6,10 @@ from wilder.cli.argv import audio_type_option
 from wilder.cli.argv import collaborator_option
 from wilder.cli.argv import description_option
 from wilder.cli.argv import hard_option
-from wilder.cli.argv import new_name_arg
+from wilder.cli.argv import new_name_option
 from wilder.cli.argv import track_name_arg
 from wilder.cli.argv import track_num_option
+from wilder.cli.argv import track_option
 from wilder.cli.argv import wild_options
 from wilder.cli.argv import yes_option
 from wilder.cli.cmds import AlbumDirCommand
@@ -105,12 +106,12 @@ def update(state, track_name, artist, album, track_number, description, collabor
 
 
 @track.command(cls=AlbumDirCommand)
-@new_name_arg
-def rename(state, new_name, track_name, artist, album):
+@track_options()
+@new_name_option(required=True)
+@track_option(required=True)
+def rename(state, new_name, track, artist, album):
     """Change the name of a track on an album."""
-    state.wilder.rename_track(
-        new_name, track_name, album, artist_name=artist,
-    )
+    state.wilder.rename_track(new_name, track, album, artist_name=artist)
 
 
 @track.command(cls=AlbumDirCommand)

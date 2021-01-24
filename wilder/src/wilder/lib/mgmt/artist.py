@@ -6,6 +6,7 @@ from wilder.lib.errors import AlbumNotFoundError
 from wilder.lib.errors import ArtistHasNoAlbumsError
 from wilder.lib.mgmt.album import Album
 from wilder.lib.util.sh import expand_path
+from wilder.lib.util.sh import remove_directory
 
 
 class Artist:
@@ -66,12 +67,14 @@ class Artist:
             if alb.name == name:
                 raise AlbumAlreadyExistsError(alb.name)
 
-    def delete_album(self, album):
+    def delete_album(self, album, hard=False):
         """Remove an album from Wilder. This does not destroy the directory."""
         albums = []
         for alb in self._discography:
             if alb.name != album.name:
                 albums.append(album)
+            elif hard:
+                remove_directory(alb.path)
         self._discography = albums
 
     def get_album(self, name):

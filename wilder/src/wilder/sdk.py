@@ -213,17 +213,17 @@ class Wilder(BaseWildApi):
         album.update(description=description, album_type=album_type, status=status)
         self._save()
 
-    def rename_album(self, new_name, album_name, artist_name=None):
+    def rename_album(self, new_name, album_name, artist_name=None, hard=False):
         """Change the name of an album."""
         album = self.get_album(album_name, artist_name=artist_name)
-        album.rename(new_name)
+        album.rename(new_name, hard=hard)
         self._save()
 
-    def delete_album(self, album_name, artist_name=None):
+    def delete_album(self, album_name, artist_name=None, hard=False):
         """Delete an album."""
         artist = self.get_artist(artist_name)
         album = self.get_album(album_name, artist_name=artist_name)
-        artist.delete_album(album)
+        artist.delete_album(album, hard=hard)
         self._save()
 
     def play_album(self, album_name, audio_type, artist_name=None):
@@ -262,9 +262,8 @@ class Wilder(BaseWildApi):
         collaborators=None,
     ):
         """Update track metadata."""
-        album = self.get_album(album_name, artist_name=artist_name)
-        album.update_track(
-            track_name,
+        track = self.get_track(track_name, album_name, artist_name=artist_name)
+        track.update(
             track_number=track_number,
             description=description,
             collaborators=collaborators,
@@ -287,8 +286,8 @@ class Wilder(BaseWildApi):
 
     def rename_track(self, new_name, track_name, album_name, artist_name=None):
         """Change the name of a track."""
-        track = self.get_track(track_name, album_name, artist_name=artist_name)
-        track.rename(new_name)
+        album = self.get_album(album_name, artist_name=artist_name)
+        album.rename_track(new_name, track_name)
 
     def bulk_set_track_numbers(self, track_numbers, album_name, artist_name=None):
         """Bulk set all of the track numbers on an album."""
