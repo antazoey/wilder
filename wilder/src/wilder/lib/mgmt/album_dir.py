@@ -2,6 +2,8 @@ import os
 
 import click
 from wilder.lib.constants import Constants
+from wilder.lib.errors import ArtistHasNoAlbumsError
+from wilder.lib.errors import NoArtistsFoundError
 from wilder.lib.errors import NotInAlbumError
 from wilder.lib.resources import get_artwork_path
 from wilder.lib.resources import get_default_album_json
@@ -94,7 +96,7 @@ def echo_tracks(tracks):
         click.echo(f"{track.track_number}. {track.name}")
 
 
-def get_album_directory(wilder, get_default_handler=None):
+def get_album_directory_obj(wilder, get_default_handler=None):
     return AlbumDirectory(wilder, get_default_handler=get_default_handler)
 
 
@@ -109,28 +111,55 @@ class AlbumDirectory:
         directory.
 
         Cases:
-            * You provide the album arg: It uses the Wilder SDK to find the path to the album to get the rest of the data.
+            * You provide the album arg: It uses the Wilder SDK to find the path to the album to get the rest of the
+                data.
+            * If there is only 1 artist with 1 album, use that one.
             * You are in the album directory: It uses the local album.json file.
-            * You are in the album directory and the album.json does not exist: It recreates the default JSON and uses that.
+            * You are in the album directory and the album.json does not exist: It recreates the default JSON and uses
+                that.
             * You are in a track directory of an album. It uses the parent album.json file if it exists.
-            * You are in a track directory of an album and the album.json does not exist in the parent directorY: It will
-                create the default album JSON in the parent directory and use that.
+            * You are in a track directory of an album and the album.json does not exist in the parent directorY: It
+                will create the default album JSON in the parent directory and use that.
             * You provide a handler for getting the default Album Directory. An example would be to allow the user to
                 select from a list.
         """
 
         if not album_arg:
-            try:
-                album_json = _try_get_local_json()
-                if not album_json:
-                    return self._handle_could_not_find()
-                return album_json
-            except OSError:
-                # Handles case when in a strange directory
-                return self._handle_could_not_find()
+            return (
+                self._try_get_album_json_from_only_existing_album()
+                or self._try_get_local_json()
+            )
         else:
             album = self.wilder.get_album(album_arg, artist_name=artist_arg)
             return load_json_from_file(album.dir_json_path)
+
+    def _try_get_album_json_from_only_existing_album(self):
+        try:
+            artist = self._try_get_only_managed_artist()
+            if artist:
+                album = artist.get_album()
+                return album.to_json_for_album_dir()
+        except ArtistHasNoAlbumsError:
+            return None
+
+    def _try_get_only_managed_artist(self):
+        try:
+            artists = self.wilder.get_artists()
+            if len(artists) == 1:
+                return artists[0]
+        except NoArtistsFoundError:
+            # 0 alums managed if we get here
+            raise NotInAlbumError()
+
+    def _try_get_local_json(self):
+        try:
+            album_json = _try_get_local_json()
+            if not album_json:
+                return self._handle_could_not_find()
+            return album_json
+        except OSError:
+            # Handles case when in a strange directory
+            return self._handle_could_not_find()
 
     def _handle_could_not_find(self):
         if self._get_default:

@@ -74,7 +74,7 @@ class Artist:
                 albums.append(album)
         self._discography = albums
 
-    def get_album_by_name(self, name):
+    def get_album(self, name):
         """Return an album by its name."""
         for alb in self._discography:
             if alb.name == name:

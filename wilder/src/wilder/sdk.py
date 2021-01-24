@@ -177,7 +177,7 @@ class Wilder(BaseWildApi):
     def get_album(self, name, artist_name=None):
         """Get an album by its title."""
         artist = self.get_artist(name=artist_name)
-        album = artist.get_album_by_name(name)
+        album = artist.get_album(name)
         return album
 
     def create_album(
