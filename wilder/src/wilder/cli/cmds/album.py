@@ -92,7 +92,7 @@ def update(state, artist, description, album_type, status):
 @album_name_arg
 @yes_option
 @hard_option
-def delete(state, artist, album_name, hard):
+def remove(state, artist, album_name, hard):
     """Delete an album."""
     _album = state.wilder.get_album(album_name, artist_name=artist)
     if does_user_agree(f"Are you sure you wish to delete the album '{_album.name}'? "):

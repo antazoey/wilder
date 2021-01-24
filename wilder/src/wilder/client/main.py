@@ -127,7 +127,7 @@ class WildClient(BaseWildApi):
         artist_name = response[Constants.ARTIST]
         return Album.from_json(artist_name, response)
 
-    def start_new_album(
+    def create_album(
         self,
         path,
         album_name=None,
@@ -211,7 +211,7 @@ class WildClient(BaseWildApi):
             return response.json()
 
     def _delete(self, endpoint, json=None):
-        response = self.connection.delete(f"/{endpoint}", json=json)
+        response = self.connection.remove(f"/{endpoint}", json=json)
         if response:
             return response.json()
 

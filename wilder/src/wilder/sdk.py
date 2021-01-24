@@ -27,7 +27,8 @@ class BaseWildApi:
         """Returns True if the artist is represented by Wilder."""
         try:
             return name in self.artist_names
-        except ArtistNotFoundError:
+        except NoArtistsFoundError:
+            # To handle case where adding first artist
             return False
 
 
@@ -190,7 +191,7 @@ class Wilder(BaseWildApi):
     ):
         """Start a new album."""
         artist = self.get_artist(name=artist_name)
-        artist.start_new_album(
+        artist.create_album(
             album_path,
             name=album_name,
             description=description,

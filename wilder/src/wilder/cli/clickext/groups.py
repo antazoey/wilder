@@ -11,6 +11,7 @@ from wilder.lib.errors import AlbumNotFoundError
 from wilder.lib.errors import ArtistAlreadyExistsError
 from wilder.lib.errors import ArtistHasNoAlbumsError
 from wilder.lib.errors import ArtistNotFoundError
+from wilder.lib.errors import AudioTypeNotFoundError
 from wilder.lib.errors import NoArtistsFoundError
 from wilder.lib.errors import NotInAlbumError
 from wilder.lib.errors import TrackAlreadyExistError
@@ -43,14 +44,14 @@ class ExceptionHandlingGroup(click.Group):
             raise
 
         except (
-            AlbumNotFoundError,
-            ArtistNotFoundError,
-            ArtistAlreadyExistsError,
-            ArtistNotFoundError,
             AlbumAlreadyExistsError,
+            AlbumNotFoundError,
+            ArtistAlreadyExistsError,
             ArtistHasNoAlbumsError,
-            NotInAlbumError,
+            ArtistNotFoundError,
+            AudioTypeNotFoundError,
             NoArtistsFoundError,
+            NotInAlbumError,
             TrackAlreadyExistError,
             TrackNotFoundError,
         ) as err:

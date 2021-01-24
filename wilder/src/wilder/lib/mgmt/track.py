@@ -2,6 +2,7 @@ import os
 
 from wilder.lib.constants import Constants
 from wilder.lib.enum import AudioType
+from wilder.lib.errors import AudioTypeNotFoundError
 from wilder.lib.errors import UnsupportedAudioTypeError
 from wilder.lib.mgmt.album_dir import get_track_dir_json
 from wilder.lib.mgmt.album_dir import get_track_json_path
@@ -62,13 +63,16 @@ class Track:
     def get_file(self, audio_type):
         """Returns the path to the file for the given audio type extension."""
         audio_type = audio_type.lower()
-        if audio_type == AudioType.MP3:
-            return _get_path_if_exists(self.mp3_path)
-        elif audio_type == AudioType.WAV:
-            return _get_path_if_exists(self.wav_path)
-        elif audio_type == AudioType.FLAC:
-            return _get_path_if_exists(self.flac_path)
-        raise UnsupportedAudioTypeError(audio_type)
+        try:
+            if audio_type == AudioType.MP3:
+                return _get_path_if_exists(self.mp3_path)
+            elif audio_type == AudioType.WAV:
+                return _get_path_if_exists(self.wav_path)
+            elif audio_type == AudioType.FLAC:
+                return _get_path_if_exists(self.flac_path)
+            raise UnsupportedAudioTypeError(audio_type)
+        except FileNotFoundError:
+            raise AudioTypeNotFoundError(self.name, audio_type)
 
     def _get_file(self, ext):
         return os.path.join(self.path, f"{self.name}.{ext}")

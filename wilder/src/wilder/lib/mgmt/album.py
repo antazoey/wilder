@@ -96,7 +96,7 @@ class Album:
         self.status = status or self.status
         self.save_album_metadata()
 
-    def start_new_track(
+    def create_track(
         self, track_name, track_number=None, description=None, collaborators=None
     ):
         """Add a track to an album."""

@@ -74,9 +74,6 @@ def remove(state, artist_name):
 @bio_option
 def update(state, artist, bio):
     """Update artist information."""
-    if not bio:
-        click.echo("Nothing to do.")
-        return
     state.wilder.update_artist(artist, bio)
 
 

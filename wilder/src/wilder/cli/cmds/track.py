@@ -107,7 +107,7 @@ def update(state, track_name, artist, album, track_number, description, collabor
 @single_track_options()
 @yes_option
 @hard_option
-def delete(state, track_name, artist, album, hard):
+def remove(state, track_name, artist, album, hard):
     """Delete a track from an album."""
     _track = state.wilder.get_track(track_name, album, artist_name=artist)
     if does_user_agree(f"Are you sure you wish to delete '{track_name}'? "):

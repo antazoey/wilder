@@ -98,3 +98,10 @@ class UnsupportedAudioTypeError(WildError):
 
     def __init__(self, audio_type):
         super().__init__(f"Received unsupported audio-type '{audio_type}'.")
+
+
+class AudioTypeNotFoundError(WildError):
+    """An error raised when the audio-type requested was not found."""
+
+    def __init__(self, track_name, audio_type):
+        super().__init__(f"Track '{track_name}' has no audio-type '{audio_type}'.")
