@@ -22,12 +22,9 @@ class AlbumDirCommand(click.Command):
 def _select_album_from_list(artist):
     # Gets called when not in an album directory
     albums = artist.get_discography()  # Errors when no albums
-    if len(albums) == 1:
-        album = albums[0]
-    else:
-        choices = [a.name for a in albums]
-        album_name = _get_album_from_user_prompt(choices)
-        album = artist.get_album(album_name)
+    choices = [a.name for a in albums]
+    album_name = _get_album_from_user_prompt(choices)
+    album = artist.get_album(album_name)
     return album.to_json_for_album_dir()
 
 

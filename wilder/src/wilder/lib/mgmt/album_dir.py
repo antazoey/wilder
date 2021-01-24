@@ -134,11 +134,14 @@ class AlbumDirectory:
             return load_json_from_file(album.dir_json_path)
 
     def _try_get_album_json_from_only_existing_album(self):
+        """This method returns the album JSON if there is literally only 1 artist with a single album... because that
+        is obviously the one requested, right? Don't always expect things to be this easy."""
         try:
             artist = self._try_get_only_managed_artist()
             if artist:
-                album = artist.get_album()
-                return album.to_json_for_album_dir()
+                albums = artist.get_discography()
+                if len(albums) == 1:
+                    return albums[0].to_json_for_album_dir()
         except ArtistHasNoAlbumsError:
             return None
 
