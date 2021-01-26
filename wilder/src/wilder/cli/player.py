@@ -41,9 +41,11 @@ def _get_album_player_text(album, now_playing_index, time_remaining):
             prefix = ">"
             spaces = " " * 9
             time_remaining_text = _format_time_remaining(time_remaining)
-            track_text += f" {spaces}{time_remaining_text}"
+            track_text += f"{spaces}{time_remaining_text}"
         else:
             prefix = " "
+            trailing_spaces = " " * 16  # Clears previous 'time remaining' text
+            track_text += f"{trailing_spaces}"
         album_text += f"{prefix}{track_text}\n"
     return album_text
 

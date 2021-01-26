@@ -72,9 +72,9 @@ class InvalidAudioFileError(WildError):
 class TrackNotFoundError(WildNotFoundError):
     """An error raised when the track was not found."""
 
-    def __init__(self, album_name, track_name):
+    def __init__(self, album_name, prop, prop_name="name"):
         super().__init__(
-            f"Track named '{track_name}' on album '{album_name}' was not found."
+            f"Track with {prop_name} '{prop}' on album '{album_name}' was not found."
         )
 
 

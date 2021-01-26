@@ -10,6 +10,7 @@ from wilder.cli.argv import track_option
 from wilder.cli.argv import update_album_options
 from wilder.cli.argv import wild_options
 from wilder.cli.argv import yes_option
+from wilder.cli.clickext.options import incompatible_with
 from wilder.cli.cmds import AlbumDirCommand
 from wilder.cli.cmds.util import echo_formatted_list
 from wilder.cli.output_formats import OutputFormat
@@ -134,10 +135,23 @@ def show(state, artist, album):
 @audio_type_option
 @artist_option
 @album_option()
-@track_option()
-def play(state, artist, album, audio_type, track):
+@click.option(
+    "--track", "-t", help="The name of a track.", cls=incompatible_with("track_number")
+)
+@click.option(
+    "--track-number",
+    "--track-num",
+    help="The number the track is on the album.",
+    cls=incompatible_with("track"),
+)
+def play(state, artist, album, audio_type, track, track_number):
     """Play an album."""
     _album = state.wilder.get_album(album, artist_name=artist)
     tracks = _album.get_tracks()
-    start_track = _album.get_track(track) if track else tracks[0]
+    if track_number is not None:
+        start_track = _album.get_first_track_by_number(track_number)
+    elif track is not None:
+        start_track = _album.get_track(track)
+    else:
+        start_track = tracks[0]
     play_album(state.wilder, _album, start_track, audio_type)

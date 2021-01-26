@@ -11,6 +11,7 @@ from wilder.lib.mgmt.album_dir import get_track_path
 from wilder.lib.mgmt.album_dir import init_album_dir
 from wilder.lib.mgmt.release import Release
 from wilder.lib.mgmt.track import Track
+from wilder.lib.util.conversion import to_int
 from wilder.lib.util.sh import remove_directory
 from wilder.lib.util.sh import remove_file_if_exists
 from wilder.lib.util.sh import rename_directory
@@ -108,7 +109,8 @@ class Album:
         self, track_name, track_number=None, description=None, collaborators=None
     ):
         """Add a track to an album."""
-        current_tracks = [t.name for t in self._tracks]
+        tracks = self.get_tracks()
+        current_tracks = [t.name for t in tracks]
         if track_name in current_tracks:
             raise TrackAlreadyExistError(track_name, self.name)
         track_path = get_track_path(self.path, track_name)
@@ -140,14 +142,27 @@ class Album:
 
     def get_track(self, name):
         """Get a track on the album by name."""
-        for track in self._tracks:
+        tracks = self.get_tracks()
+        for track in tracks:
             if track.name == name:
                 return track
         raise TrackNotFoundError(self.name, name)
 
+    def get_first_track_by_number(self, track_number):
+        """Returns the first track with the given number."""
+        track_number = to_int(track_number)
+        tracks = self.get_tracks()
+        for track in tracks:
+            if to_int(track.track_number) == track_number:
+                return track
+        raise TrackNotFoundError(
+            self.name, str(track_number), prop_name=Consts.TRACK_NUMBER
+        )
+
     def delete_track(self, track_name, hard=False):
         """Delete a track. Set hard to True to delete the directory."""
-        for i in range(0, len(self._tracks)):
+        tracks = self.get_tracks()
+        for i in range(0, len(tracks)):
             if self._tracks[i].name != track_name:
                 continue
             elif hard:
@@ -171,8 +186,9 @@ class Album:
         self.save_album_metadata()
 
     def auto_set_track_numbers(self):
-        for i in range(0, len(self._tracks)):
-            track = self._tracks[i]
+        tracks = self.get_tracks()
+        for i in range(0, len(tracks)):
+            track = tracks[i]
             track.track_number = i + 1
             track.save_track_metadata()
 
