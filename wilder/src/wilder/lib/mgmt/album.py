@@ -2,6 +2,7 @@ import os
 
 from wilder.lib.constants import Constants as Consts
 from wilder.lib.enum import AlbumStatus
+from wilder.lib.errors import NoTracksFoundErrorWildError
 from wilder.lib.errors import TrackAlreadyExistError
 from wilder.lib.errors import TrackNotFoundError
 from wilder.lib.mgmt.album_dir import get_album_dir_json
@@ -59,8 +60,9 @@ class Album:
         )
         return album.save_album_metadata()
 
-    @property
-    def tracks(self):
+    def get_tracks(self):
+        if not self._tracks:
+            raise NoTracksFoundErrorWildError(self.name)
         return sorted(self._tracks, key=lambda t: t.track_number)
 
     @property

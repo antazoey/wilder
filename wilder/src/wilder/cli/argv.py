@@ -41,7 +41,6 @@ audio_type_option = click.option(
     "--audio-type",
     help="The audio file extension of the track to play.",
     type=click.Choice(AudioType.choices()),
-    default=AudioType.MP3,
 )
 
 

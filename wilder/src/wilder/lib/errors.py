@@ -78,6 +78,13 @@ class TrackNotFoundError(WildNotFoundError):
         )
 
 
+class NoTracksFoundErrorWildError(WildError):
+    """An error raised when album has no tracks."""
+
+    def __init__(self, album_name):
+        super().__init__(f"Album '{album_name}' does not have any tracks.")
+
+
 class TrackAlreadyExistError(WildError):
     """An error raised when trying to start a new track with the same name as another track on its album."""
 
@@ -105,3 +112,10 @@ class AudioTypeNotFoundError(WildError):
 
     def __init__(self, track_name, audio_type):
         super().__init__(f"Track '{track_name}' has no audio-type '{audio_type}'.")
+
+
+class NoAudioFoundError(WildError):
+    """An error raised when a track has no audio."""
+
+    def __init__(self, track_name):
+        super().__init__(f"Track '{track_name}' has no audio.")

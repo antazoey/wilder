@@ -3,13 +3,13 @@ import os
 from wilder.lib.constants import Constants
 from wilder.lib.enum import AudioType
 from wilder.lib.errors import AudioTypeNotFoundError
+from wilder.lib.errors import NoAudioFoundError
 from wilder.lib.errors import UnsupportedAudioTypeError
 from wilder.lib.mgmt.album_dir import get_track_dir_json
 from wilder.lib.mgmt.album_dir import get_track_json_path
 from wilder.lib.mgmt.album_dir import get_track_path
 from wilder.lib.mgmt.album_dir import init_track_dir
 from wilder.lib.util.conversion import to_int
-from wilder.lib.util.sh import remove_directory
 from wilder.lib.util.sh import remove_file_if_exists
 from wilder.lib.util.sh import rename_directory
 from wilder.lib.util.sh import save_json_as
@@ -50,20 +50,35 @@ class Track:
     @property
     def mp3_path(self):
         """The path to the mp3 file for this track, if it exists."""
-        return self._get_file("mp3")
+        return self._get_audio_file_path("mp3")
 
     @property
     def wav_path(self):
         """The path to the mp3 file for this track, if it exists."""
-        return self._get_file("wav")
+        return self._get_audio_file_path("wav")
 
     @property
     def flac_path(self):
         """The path to the FLAC file for this track, if it exists."""
-        return self._get_file("flac")
+        return self._get_audio_file_path("flac")
 
-    def get_file(self, audio_type):
+    def get_file(self, audio_type=None):
         """Returns the path to the file for the given audio type extension."""
+        if not audio_type:
+            return self._try_get_first_audio_file_found()
+        else:
+            return self._get_file(audio_type)
+
+    def _try_get_first_audio_file_found(self):
+        audio_types = AudioType.choices()
+        for ext in audio_types:
+            try:
+                return self._get_file(ext)
+            except AudioTypeNotFoundError:
+                pass
+        raise NoAudioFoundError(self.name)
+
+    def _get_file(self, audio_type):
         audio_type = audio_type.lower()
         try:
             if audio_type == AudioType.MP3:
@@ -76,7 +91,7 @@ class Track:
         except FileNotFoundError:
             raise AudioTypeNotFoundError(self.name, audio_type)
 
-    def _get_file(self, ext):
+    def _get_audio_file_path(self, ext):
         return os.path.join(self.path, f"{self.name}.{ext}")
 
     @classmethod

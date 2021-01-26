@@ -2,15 +2,18 @@ import click
 from wilder.cli.argv import album_name_arg
 from wilder.cli.argv import album_option
 from wilder.cli.argv import artist_option
+from wilder.cli.argv import audio_type_option
 from wilder.cli.argv import format_option
 from wilder.cli.argv import hard_option
 from wilder.cli.argv import new_name_arg
+from wilder.cli.argv import track_option
 from wilder.cli.argv import update_album_options
 from wilder.cli.argv import wild_options
 from wilder.cli.argv import yes_option
 from wilder.cli.cmds import AlbumDirCommand
 from wilder.cli.cmds.util import echo_formatted_list
 from wilder.cli.output_formats import OutputFormat
+from wilder.cli.player import play_album
 from wilder.cli.util import abridge
 from wilder.cli.util import does_user_agree
 from wilder.lib.constants import Constants
@@ -124,3 +127,17 @@ def show(state, artist, album):
     if tracks:
         click.echo("\nTracks:\n")
         echo_tracks(tracks)
+
+
+@album.command(cls=AlbumDirCommand)
+@wild_options()
+@audio_type_option
+@artist_option
+@album_option()
+@track_option()
+def play(state, artist, album, audio_type, track):
+    """Play an album."""
+    _album = state.wilder.get_album(album, artist_name=artist)
+    tracks = _album.get_tracks()
+    start_track = _album.get_track(track) if track else tracks[0]
+    play_album(state.wilder, _album, start_track, audio_type)

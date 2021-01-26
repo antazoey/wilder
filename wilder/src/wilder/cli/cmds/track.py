@@ -13,6 +13,7 @@ from wilder.cli.argv import track_option
 from wilder.cli.argv import wild_options
 from wilder.cli.argv import yes_option
 from wilder.cli.cmds import AlbumDirCommand
+from wilder.cli.player import play_track
 from wilder.cli.util import does_user_agree
 from wilder.lib.mgmt.album_dir import echo_tracks
 
@@ -58,11 +59,9 @@ def metadata_options():
 def _list(state, artist, album):
     """List the tracks on an album."""
     _album = state.wilder.get_album(album, artist_name=artist)
-    if _album.tracks:
-        click.echo(f"'{_album.name}' by {_album.artist}: \n")
-        echo_tracks(_album.tracks)
-    else:
-        click.echo(f"No tracks yet on album '{_album.name}'.")
+    tracks = _album.get_tracks()
+    click.echo(f"'{_album.name}' by {_album.artist}: \n")
+    echo_tracks(tracks)
 
 
 @track.command(cls=AlbumDirCommand)
@@ -167,4 +166,5 @@ def _get_track_num_choices(track_names, choices, answer_dict=None):
 @audio_type_option
 def play(state, track_name, artist, album, audio_type):
     """Play a track."""
-    state.wilder.play_track(track_name, album, audio_type, artist_name=artist)
+    _track = state.wilder.get_track(track_name, album, artist_name=artist)
+    play_track(state.wilder, _track, audio_type=audio_type)

@@ -5,7 +5,8 @@ from wilder.lib.errors import WildVLCPlayerLaunchError
 
 
 def play_album(album, audio_type):
-    for track in album.tracks:
+    tracks = album.get_tracks()
+    for track in tracks:
         path = track.get_file(audio_type)
         play_track(path)
 
@@ -26,6 +27,6 @@ def play_track(track_path):
     remaining = track_length - start
     while remaining > 0:
         wait_time = 0.1
-        yield wait_time
+        yield remaining
         time.sleep(wait_time)
         remaining -= wait_time

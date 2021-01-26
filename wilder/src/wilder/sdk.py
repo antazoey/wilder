@@ -299,11 +299,11 @@ class Wilder(BaseWildApi):
         album = self.get_album(album_name, artist_name=artist_name)
         album.auto_set_track_numbers()
 
-    def play_track(self, track_name, album_name, audio_type, artist_name=None):
+    def play_track(self, track_name, album_name, audio_type=None, artist_name=None):
         """Play a track from an album."""
         track = self.get_track(track_name, album_name, artist_name=artist_name)
-        path = track.get_file(audio_type)
-        play_track(path)
+        path = track.get_file(audio_type=audio_type)
+        return play_track(path)
 
     """Other"""
 
