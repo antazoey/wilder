@@ -7,28 +7,37 @@ from wilder.lib.util.sh import count_lines
 
 def play_album(wilder, album, start_track, audio_type=None):
     tracks = album.get_tracks()
-    start_index = start_track.track_number - 1
+    start_index = _get_index_of_track(start_track, tracks)
 
     def play_track_at_index(index):
         track = tracks[index]
         for time_remaining in wilder.play_track(
             track.name, track.album, audio_type=audio_type, artist_name=track.artist
         ):
-            text = _get_album_player_text(album, start_track.name, time_remaining)
+            text = _get_album_player_text(album, index, time_remaining)
             number_of_lines = count_lines(text)
             print(f" {text}", end=f"{number_of_lines * BEGIN_OF_PREVIOUS_LINE}")
         next_index = (index + 1) % len(tracks)
+
         play_track_at_index(next_index)
 
     play_track_at_index(start_index)
 
 
-def _get_album_player_text(album, now_playing, time_remaining):
+def _get_index_of_track(track, tracks):
+    for index in range(0, len(tracks)):
+        track_to_check = tracks[index]
+        if track_to_check.name == track.name:
+            return index
+
+
+def _get_album_player_text(album, now_playing_index, time_remaining):
     tracks = album.get_tracks()
     album_text = f"'{album.name}' by '{album.artist}'\n\n"
-    for track in tracks:
+    for index in range(0, len(tracks)):
+        track = tracks[index]
         track_text = f"{track.track_number}. {track.name}"
-        if track.name == now_playing:
+        if index == now_playing_index:
             prefix = ">"
             spaces = " " * 9
             time_remaining_text = _format_time_remaining(time_remaining)
