@@ -7,7 +7,6 @@ from wilder.lib.errors import ArtistAlreadyExistsError
 from wilder.lib.errors import ArtistNotFoundError
 from wilder.lib.errors import NoArtistsFoundError
 from wilder.lib.mgmt.artist import Artist
-from wilder.lib.player import play_album
 from wilder.lib.player import play_track
 from wilder.lib.util.sh import save_json_as
 
@@ -225,11 +224,6 @@ class Wilder(BaseWildApi):
         album = self.get_album(album_name, artist_name=artist_name)
         artist.delete_album(album, hard=hard)
         self._save()
-
-    def play_album(self, album_name, audio_type, artist_name=None):
-        """Play a whole album."""
-        album = self.get_album(album_name, artist_name=artist_name)
-        play_album(album, audio_type)
 
     """Tracks"""
 

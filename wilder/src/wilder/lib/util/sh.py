@@ -8,6 +8,9 @@ from wilder.lib.errors import WildNotFoundError
 # This module abstracts some OS shell operations.
 
 
+BEGIN_OF_PREVIOUS_LINE = "\033[F"
+
+
 def wopen(*args, **kwargs):
     """Open a file."""
     return open(*args, **kwargs)
@@ -100,3 +103,15 @@ def load_json_from_file(file_path):
 def file_exists_with_data(file_path):
     """Check if a file exists and contains bytes."""
     return os.path.isfile(file_path) and os.path.getsize(file_path)
+
+
+def count_lines(text):
+    """Counts the number of lines in a weird but extremely cautious way."""
+    temp_file_name = "_wilder_temp_file.txt"
+    remove_file_if_exists(temp_file_name)
+    save_as(temp_file_name, text)
+    with wopen(temp_file_name) as temp_file:
+        number_of_lines = len(temp_file.readlines())
+
+    remove_file_if_exists(temp_file_name)
+    return number_of_lines

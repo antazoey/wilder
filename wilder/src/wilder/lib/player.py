@@ -4,13 +4,6 @@ import vlc
 from wilder.lib.errors import WildVLCPlayerLaunchError
 
 
-def play_album(album, audio_type):
-    tracks = album.get_tracks()
-    for track in tracks:
-        path = track.get_file(audio_type)
-        play_track(path)
-
-
 def play_track(track_path):
     player = vlc.MediaPlayer()
     media = vlc.Media(track_path)
