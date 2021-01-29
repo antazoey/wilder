@@ -6,7 +6,6 @@ from wilder.cli.argv import audio_type_option
 from wilder.cli.argv import format_option
 from wilder.cli.argv import hard_option
 from wilder.cli.argv import new_name_arg
-from wilder.cli.argv import track_option
 from wilder.cli.argv import update_album_options
 from wilder.cli.argv import wild_options
 from wilder.cli.argv import yes_option

@@ -40,7 +40,7 @@ hard_option = click.option(
 audio_type_option = click.option(
     "--audio-type",
     help="The audio file extension of the track to play.",
-    type=click.Choice(AudioType.choices()),
+    type=click.Choice(AudioType.choices(), case_sensitive=False),
 )
 
 

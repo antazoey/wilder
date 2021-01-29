@@ -93,6 +93,8 @@ class Artist:
         old_name = self.name
         self.name = new_name
         self._try_append_aka(forget_old_name, old_name)
+        for album in self._discography:
+            album.update(artist=new_name)
 
     def _try_append_aka(self, forget_old_name, old_name):
         if not forget_old_name and old_name not in self.also_known_as:

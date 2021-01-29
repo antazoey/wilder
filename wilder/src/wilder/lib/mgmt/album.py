@@ -1,7 +1,6 @@
 import os
 
 from wilder.lib.constants import Constants as Consts
-from wilder.lib.enum import AlbumStatus
 from wilder.lib.errors import NoTracksFoundErrorWildError
 from wilder.lib.errors import TrackAlreadyExistError
 from wilder.lib.errors import TrackNotFoundError
@@ -55,7 +54,7 @@ class Album:
             artist=artist_name,
             description=album_json.get(Consts.DESCRIPTION, ""),
             album_type=album_json.get(Consts.ALBUM_TYPE),
-            status=album_json.get(Consts.STATUS, AlbumStatus.IN_PROGRESS),
+            status=album_json.get(Consts.STATUS),
             tracks=_parse_tracks(album_json),
             releases=_parse_releases(artist_name, name, album_json),
         )
@@ -93,11 +92,12 @@ class Album:
 
         return {Consts.NAME: self.name, Consts.PATH: self.path}
 
-    def update(self, description=None, album_type=None, status=None):
+    def update(self, description=None, album_type=None, status=None, artist=None):
         """Update an album."""
         self.description = description or self.description
         self.album_type = album_type or self.album_type
         self.status = status or self.status
+        self.artist = artist or self.artist
         self.save_album_metadata()
 
     def rename(self, new_name):
