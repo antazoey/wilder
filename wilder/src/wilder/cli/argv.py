@@ -77,6 +77,10 @@ def track_option(required=False):
     return click.option("--track", "-t", help="The name of a track.", required=required)
 
 
+def all_option(item_type):
+    return click.option("--all", help=f"To get all {item_type}s across all artists.", is_flag=True)
+
+
 def new_name_option(required=False):
     return click.option(
         "--new-name",

@@ -1,5 +1,5 @@
 import click
-from wilder.cli.argv import album_name_arg
+from wilder.cli.argv import album_name_arg, all_option
 from wilder.cli.argv import album_option
 from wilder.cli.argv import artist_option
 from wilder.cli.argv import audio_type_option
@@ -55,16 +55,25 @@ ALBUM_HEADER = {
 @wild_options()
 @artist_option
 @format_option
-def _list(state, artist, format):
+@all_option(Constants.ALBUM)
+def _list(state, artist, format, all):
     """List an artist's discography."""
-    artist_obj = state.wilder.get_artist(artist)
-    disco = artist_obj.get_discography()
-    albums_json_list = [a.to_json_for_album_dir() for a in disco]
+    if all:
+        artists = state.wilder.get_artists()
+        albums_json_list = []
+        for artist_obj in artists:
+            disco = artist_obj.get_discography()
+            for _album in disco:
+                albums_json_list.append(_album.to_json_for_album_dir())
+    else:
+        artist_obj = state.wilder.get_artist(artist)
+        click.echo(f"Albums by '{artist_obj.name}':\n")
+        disco = artist_obj.get_discography()
+        albums_json_list = [a.to_json_for_album_dir() for a in disco]
 
     if format == OutputFormat.TABLE:
         _abridge_discography_data(albums_json_list)
 
-    click.echo(f"Albums by '{artist_obj.name}':\n")
     echo_formatted_list(format, albums_json_list, header=ALBUM_HEADER)
 
 
