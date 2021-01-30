@@ -1,4 +1,5 @@
 class Constants:
+    _ALL = "!!!__all__"
     ALIAS = "alias"
     ALBUM = "album"
     ALBUMS = "albums"

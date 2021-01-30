@@ -168,10 +168,20 @@ class Wilder(BaseWildApi):
 
     """Albums"""
 
+    def get_albums(self, artist_key):
+        if artist_key == Constants._ALL:
+            artists = self.get_artists()
+            albums = []
+            for artist in artists:
+                albums += artist.get_discography()
+            return albums
+        else:
+            return self.get_discography(artist_key)
+
     def get_discography(self, artist_name=None):
         """Get all the albums for an artist."""
         artist_name = self.get_artist(name=artist_name)
-        return artist_name.discography
+        return artist_name.get_discography()
 
     def get_album(self, name, artist_name=None):
         """Get an album by its title."""

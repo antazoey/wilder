@@ -1,6 +1,6 @@
 import click
 from PyInquirer import prompt
-from wilder.cli.argv import album_option
+from wilder.cli.argv import album_option, all_option
 from wilder.cli.argv import artist_option
 from wilder.cli.argv import audio_type_option
 from wilder.cli.argv import collaborator_option
@@ -15,6 +15,7 @@ from wilder.cli.argv import yes_option
 from wilder.cli.cmds import AlbumDirCommand
 from wilder.cli.player import play_track
 from wilder.cli.util import does_user_agree
+from wilder.lib.constants import Constants
 from wilder.lib.mgmt.album_dir import echo_tracks
 
 
@@ -56,11 +57,16 @@ def metadata_options():
 
 @track.command("list", cls=AlbumDirCommand)
 @track_options()
-def _list(state, artist, album):
+@all_option(Constants.TRACK)
+def _list(state, artist, album, all):
     """List the tracks on an album."""
-    _album = state.wilder.get_album(album, artist_name=artist)
-    tracks = _album.get_tracks()
-    click.echo(f"'{_album.name}' by {_album.artist}: \n")
+    if all:
+        tracks = []
+        artists = state.wilder.get_artists()
+    else:
+        _album = state.wilder.get_album(album, artist_name=artist)
+        tracks = _album.get_tracks()
+        click.echo(f"'{_album.name}' by {_album.artist}: \n")
     echo_tracks(tracks)
 
 
