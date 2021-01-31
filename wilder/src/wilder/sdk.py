@@ -2,7 +2,6 @@ import shutil
 from datetime import datetime
 
 import wilder.lib.user as user
-from wilder.lib.constants import _WDirective
 from wilder.lib.constants import Constants as Constants
 from wilder.lib.errors import ArtistAlreadyExistsError
 from wilder.lib.errors import ArtistNotFoundError
@@ -18,19 +17,25 @@ class BaseWildApi:
         """Override"""
         return []
 
-    @property
-    def artist_names(self):
-        """The names of the artists represented."""
+    def get_artist_names(self):
         artists = self.get_artists()
         return [a.name for a in artists]
 
     def is_represented(self, name):
         """Returns True if the artist is represented by Wilder."""
         try:
-            return name in self.artist_names
+            names = self.get_artist_names()
+            return name in names
         except NoArtistsFoundError:
             # To handle case where adding first artist
             return False
+
+    def _get_artist_by_name(self, name):
+        artists = self.get_artists()
+        for artist in artists:
+            if artist.name == name:
+                return artist
+        raise ArtistNotFoundError(name)
 
 
 class Wilder(BaseWildApi):
@@ -39,7 +44,7 @@ class Wilder(BaseWildApi):
     ):
         self._artists = artists
         self._last_updated = last_updated
-        self._focus_artist = focus_artist or _WDirective._ALL
+        self._focus_artist = focus_artist
 
     def __repr__(self):
         return (
@@ -75,20 +80,17 @@ class Wilder(BaseWildApi):
 
     def get_artist(self, name=None):
         """Get an artist."""
-        return self._get_focus_artist() if not name else self._get_artist_by_name(name)
-
-    def _get_artist_by_name(self, name):
-        if name == _WDirective._ALL:
-            return self.get_artists()
-        artists = self.get_artists()
-        for artist in artists:
-            if artist.name == name:
-                return artist
-        raise ArtistNotFoundError(name)
+        artist = (
+            self._get_focus_artist() if not name else self._get_artist_by_name(name)
+        )
+        if not artist and len(self._artists) == 1:
+            return self._artists[0]
+        return artist
 
     def _get_focus_artist(self):
         name = self._focus_artist
-        return self._get_artist_by_name(name)
+        if name:
+            return self._get_artist_by_name(name)
 
     def focus_on_artist(self, artist_name):
         """Change the focus artist."""
@@ -118,9 +120,9 @@ class Wilder(BaseWildApi):
             if artist.name != name:
                 new_artists.append(artist)
 
-        # Reset focus artist to ALL, if deleting the current focus artist.
+        # Unset focus artist, if deleting the current focus artist.
         if self._focus_artist == name:
-            self._focus_artist = _WDirective._ALL
+            self._focus_artist = None
 
         self._artists = new_artists
 
@@ -159,26 +161,17 @@ class Wilder(BaseWildApi):
     """Albums"""
 
     def get_all_albums(self):
-        return self.get_discography(_WDirective._ALL)
+        return _get_albums_from_artists(self.get_artists())
 
     def get_discography(self, artist_name=None):
         """Get all the albums for an artist."""
-        if artist_name == _WDirective._ALL:
-            return _get_albums_from_artists(self.get_artists())
-        else:
-            artist = self.get_artist(name=artist_name)
-            if isinstance(artist, (list, tuple)):
-                return _get_albums_from_artists(artist)
-            else:
-                return artist.get_discography()
+        artist = self.get_artist(name=artist_name)
+        return artist.get_discography()
 
     def get_album(self, name, artist_name=None):
         """Get an album by its title."""
-        if not name or name == _WDirective._ALL:
-            return self.get_all_albums()
         artist = self.get_artist(name=artist_name)
-        album = artist.get_album(name)
-        return album
+        return artist.get_album(name)
 
     def create_album(
         self,

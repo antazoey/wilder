@@ -1,4 +1,5 @@
 import click
+from PyInquirer import prompt
 from wilder.cli.argv import alias_arg
 from wilder.cli.argv import artist_name_arg
 from wilder.cli.argv import artist_option
@@ -26,6 +27,9 @@ def artist():
 def show(state, artist):
     """The artist information."""
     _artist = state.wilder.get_artist(artist)
+    if not _artist:
+        _artist = _select_artist(state.wilder)
+
     _bio = convert_to_table_none_if_needed(_artist.bio)
     also_known_as = _artist.also_known_as
     click.echo(f"{Constants.NAME}: {_artist.name}")
@@ -33,6 +37,18 @@ def show(state, artist):
     if also_known_as:
         also_known_as = ", ".join(also_known_as)
         click.echo(f"Also known as: '{also_known_as}'")
+
+
+def _select_artist(wilder):
+    artists = wilder.get_artist_names()
+    question = {
+        "type": "list",
+        "name": "choice",
+        "message": "What artist would you like to see?",
+        "choices": artists,
+    }
+    artist_name_chosen = prompt(question)["choice"]
+    return wilder.get_artist(artist_name_chosen)
 
 
 @artist.command(Constants.LIST)
