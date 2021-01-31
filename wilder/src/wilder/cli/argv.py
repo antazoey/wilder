@@ -1,4 +1,5 @@
 import click
+from wilder.cli.clickext.options import incompatible_with
 from wilder.cli.clickext.types import FileOrString
 from wilder.cli.output_formats import OutputFormat
 from wilder.cli.wild_factory import get_wilder
@@ -78,7 +79,12 @@ def track_option(required=False):
 
 
 def all_option(item_type):
-    return click.option("--all", help=f"To get all {item_type}s across all artists.", is_flag=True)
+    return click.option(
+        "--all",
+        help=f"To get all {item_type}s across all artists.",
+        is_flag=True,
+        cls=incompatible_with([item_type]),
+    )
 
 
 def new_name_option(required=False):

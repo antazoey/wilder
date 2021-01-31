@@ -62,6 +62,13 @@ class NotInAlbumError(WildError):
         super().__init__(msg)
 
 
+class NoAlbumsError(WildError):
+    """An error raised when there are zero albums in all of Wilder."""
+
+    def __init__(self):
+        super().__init__("There are no albums.")
+
+
 class InvalidAudioFileError(WildError):
     """An error raised when receiving a file that has non-audio mime-type when expecting one."""
 

@@ -1,6 +1,7 @@
 import click
 from PyInquirer import prompt
-from wilder.cli.argv import album_option, all_option
+from wilder.cli.argv import album_option
+from wilder.cli.argv import all_option
 from wilder.cli.argv import artist_option
 from wilder.cli.argv import audio_type_option
 from wilder.cli.argv import collaborator_option

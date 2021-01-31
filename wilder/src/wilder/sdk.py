@@ -2,9 +2,11 @@ import shutil
 from datetime import datetime
 
 import wilder.lib.user as user
+from wilder.lib.constants import _WDirective
 from wilder.lib.constants import Constants as Constants
 from wilder.lib.errors import ArtistAlreadyExistsError
 from wilder.lib.errors import ArtistNotFoundError
+from wilder.lib.errors import NoAlbumsError
 from wilder.lib.errors import NoArtistsFoundError
 from wilder.lib.mgmt.artist import Artist
 from wilder.lib.player import play_track
@@ -37,10 +39,12 @@ class Wilder(BaseWildApi):
     ):
         self._artists = artists
         self._last_updated = last_updated
-        self._focus_artist = focus_artist
+        self._focus_artist = focus_artist or _WDirective._ALL
 
     def __repr__(self):
-        return f"Wilder-{self._focus_artist}"
+        return (
+            f"<Wilder-{len(self._artists)} artists, lastUpdated={self._last_updated}.>"
+        )
 
     """Class"""
 
@@ -65,19 +69,17 @@ class Wilder(BaseWildApi):
 
     def get_artists(self):
         """Get all artists."""
-        artists = self._artists
-        if not artists:
+        if not self._artists:
             raise NoArtistsFoundError()
-        return artists
+        return self._artists
 
     def get_artist(self, name=None):
         """Get an artist."""
-        artist = (
-            self._get_focus_artist() if not name else self._get_artist_by_name(name)
-        )
-        return artist
+        return self._get_focus_artist() if not name else self._get_artist_by_name(name)
 
     def _get_artist_by_name(self, name):
+        if name == _WDirective._ALL:
+            return self.get_artists()
         artists = self.get_artists()
         for artist in artists:
             if artist.name == name:
@@ -85,20 +87,8 @@ class Wilder(BaseWildApi):
         raise ArtistNotFoundError(name)
 
     def _get_focus_artist(self):
-        """Get the Wilder focus artist."""
-        artists = self.get_artists()
-        for artist in artists:
-            if artist.name == self._focus_artist:
-                return artist
-
-        # If for some we have artists but none set as focus, set the first one.
-        return self._set_first_artist_as_focus_artist()
-
-    def _set_first_artist_as_focus_artist(self):
-        first_artist = self._artists[0]
-        self._focus_artist = first_artist.name
-        self._save()
-        return first_artist
+        name = self._focus_artist
+        return self._get_artist_by_name(name)
 
     def focus_on_artist(self, artist_name):
         """Change the focus artist."""
@@ -112,10 +102,6 @@ class Wilder(BaseWildApi):
             raise ArtistAlreadyExistsError(name)
         artist = Artist(name=name, bio=bio)
         self._artists.append(artist)
-
-        # Set focus artist if first artist signed
-        if len(self._artists) == 1:
-            self._focus_artist = artist.name
         self._save()
 
     def delete_artist(self, name):
@@ -124,10 +110,6 @@ class Wilder(BaseWildApi):
             raise ArtistNotFoundError(name)
 
         self._remove_artist_by_name(name)
-        if not self._artists:
-            self._focus_artist = None
-        elif self._focus_artist == name:
-            self._set_first_artist_as_focus_artist()
         self._save()
 
     def _remove_artist_by_name(self, name):
@@ -135,6 +117,11 @@ class Wilder(BaseWildApi):
         for artist in self._artists:
             if artist.name != name:
                 new_artists.append(artist)
+
+        # Reset focus artist to ALL, if deleting the current focus artist.
+        if self._focus_artist == name:
+            self._focus_artist = _WDirective._ALL
+
         self._artists = new_artists
 
     def update_artist(self, name=None, bio=None):
@@ -150,8 +137,11 @@ class Wilder(BaseWildApi):
         artist = self.get_artist(name=artist_name)
         old_name = artist.name
         artist.rename(new_name, forget_old_name=forget_old_name)
+
+        # Set focus artist to the new artist's name, if renaming the focus artist.
         if old_name == self._focus_artist:
             self._focus_artist = new_name
+
         self._save()
 
     def add_alias(self, alias, artist_name=None):
@@ -168,23 +158,24 @@ class Wilder(BaseWildApi):
 
     """Albums"""
 
-    def get_albums(self, artist_key):
-        if artist_key == Constants._ALL:
-            artists = self.get_artists()
-            albums = []
-            for artist in artists:
-                albums += artist.get_discography()
-            return albums
-        else:
-            return self.get_discography(artist_key)
+    def get_all_albums(self):
+        return self.get_discography(_WDirective._ALL)
 
     def get_discography(self, artist_name=None):
         """Get all the albums for an artist."""
-        artist_name = self.get_artist(name=artist_name)
-        return artist_name.get_discography()
+        if artist_name == _WDirective._ALL:
+            return _get_albums_from_artists(self.get_artists())
+        else:
+            artist = self.get_artist(name=artist_name)
+            if isinstance(artist, (list, tuple)):
+                return _get_albums_from_artists(artist)
+            else:
+                return artist.get_discography()
 
     def get_album(self, name, artist_name=None):
         """Get an album by its title."""
+        if not name or name == _WDirective._ALL:
+            return self.get_all_albums()
         artist = self.get_artist(name=artist_name)
         album = artist.get_album(name)
         return album
@@ -336,3 +327,12 @@ def save(mgmt_json_dict):
     mgmt_json_dict[Constants.LAST_UPDATED] = datetime.utcnow().timestamp()
     mgmt_path = user.get_mgmt_json_path()
     save_json_as(mgmt_path, mgmt_json_dict)
+
+
+def _get_albums_from_artists(artists):
+    albums = []
+    for artist in artists:
+        albums += artist.get_discography(err_on_none=False)
+    if not albums:
+        raise NoAlbumsError()
+    return albums

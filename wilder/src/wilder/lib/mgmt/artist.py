@@ -28,10 +28,11 @@ class Artist:
             discography=discography, name=name, bio=bio, also_known_as=also_known_as
         )
 
-    def get_discography(self):
+    def get_discography(self, err_on_none=True):
         """Get all the albums of an artist."""
         if not self._discography:
-            raise ArtistHasNoAlbumsError(self.name)
+            if err_on_none:
+                raise ArtistHasNoAlbumsError(self.name)
         return self._discography
 
     def to_json(self):
