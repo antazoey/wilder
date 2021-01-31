@@ -1,5 +1,4 @@
 import click
-from PyInquirer import prompt
 from wilder.cli.argv import album_option
 from wilder.cli.argv import all_option
 from wilder.cli.argv import artist_option
@@ -14,6 +13,7 @@ from wilder.cli.argv import track_option
 from wilder.cli.argv import wild_options
 from wilder.cli.argv import yes_option
 from wilder.cli.cmds import AlbumDirCommand
+from wilder.cli.cmds import get_user_selected_item
 from wilder.cli.player import play_track
 from wilder.cli.util import does_user_agree
 from wilder.lib.constants import Constants
@@ -156,13 +156,8 @@ def _get_track_num_choices(track_names, choices, answer_dict=None):
 
     answer_dict = answer_dict or {}
     track_name = track_names.pop()
-    question = {
-        "type": "list",
-        "name": "choice",
-        "message": f"What do you want the track number for '{track_name}' to be?",
-        "choices": choices,
-    }
-    ans = prompt(question)["choice"]
+    message = f"What do you want the track number for '{track_name}' to be?"
+    ans = get_user_selected_item(message, choices)
     answer_dict[track_name] = ans
     remaining_choices = tuple(filter(lambda i: i != ans, choices))
     return _get_track_num_choices(track_names, remaining_choices, answer_dict)

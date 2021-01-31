@@ -1,5 +1,4 @@
 import click
-from PyInquirer import prompt
 from wilder.cli.argv import alias_arg
 from wilder.cli.argv import artist_name_arg
 from wilder.cli.argv import artist_option
@@ -9,6 +8,7 @@ from wilder.cli.argv import new_name_arg
 from wilder.cli.argv import wild_options
 from wilder.cli.cmds.util import echo_formatted_list
 from wilder.cli.output_formats import OutputFormat
+from wilder.cli.select import get_user_selected_item
 from wilder.cli.util import abridge
 from wilder.cli.util import convert_to_table_none_if_needed
 from wilder.lib.constants import Constants
@@ -41,13 +41,8 @@ def show(state, artist):
 
 def _select_artist(wilder):
     artists = wilder.get_artist_names()
-    question = {
-        "type": "list",
-        "name": "choice",
-        "message": "What artist would you like to see?",
-        "choices": artists,
-    }
-    artist_name_chosen = prompt(question)["choice"]
+    message = "What artist would you like to see?"
+    artist_name_chosen = get_user_selected_item(message, artists)
     return wilder.get_artist(artist_name_chosen)
 
 

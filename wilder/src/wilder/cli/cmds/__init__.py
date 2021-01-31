@@ -1,5 +1,5 @@
 import click
-from PyInquirer import prompt
+from wilder.cli.select import get_user_selected_item
 from wilder.lib.constants import Constants
 from wilder.lib.mgmt.album_dir import get_album_directory_obj
 
@@ -26,16 +26,6 @@ def _select_album_from_list(artist):
     # Gets called when not in an album directory
     albums = artist.get_discography()  # Errors when no albums
     choices = [a.name for a in albums]
-    album_name = _get_album_from_user_prompt(choices)
+    album_name = get_user_selected_item("What album?", choices)
     album = artist.get_album(album_name)
     return album.to_json_for_album_dir()
-
-
-def _get_album_from_user_prompt(choices):
-    question = {
-        "type": "list",
-        "name": "choice",
-        "message": "What album?",
-        "choices": choices,
-    }
-    return prompt(question)["choice"]
