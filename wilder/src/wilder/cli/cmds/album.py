@@ -60,12 +60,7 @@ ALBUM_HEADER = {
 @all_option(Constants.ALBUM)
 def _list(state, artist, format, all):
     """List an artist's discography."""
-    if all:
-        artist = _WDirective._ALL
-    elif artist:
-        click.echo(f"Albums by '{state.wilder.get_artist(artist).name}':\n")
-
-    albums = state.wilder.get_discography(artist)
+    albums = state.wilder.get_all_albums() if all else artist.get_discography()
     albums_json_list = [a.to_json_for_album_dir() for a in albums]
     if format == OutputFormat.TABLE:
         _abridge_discography_data(albums_json_list)

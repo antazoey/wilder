@@ -13,7 +13,7 @@ from wilder.cli.argv import track_option
 from wilder.cli.argv import wild_options
 from wilder.cli.argv import yes_option
 from wilder.cli.cmds import AlbumDirCommand
-from wilder.cli.cmds import get_user_selected_item
+from wilder.cli.select import get_user_selected_item
 from wilder.cli.player import play_track
 from wilder.cli.util import does_user_agree
 from wilder.lib.constants import Constants

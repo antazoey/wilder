@@ -2,9 +2,10 @@ import click
 from wilder.cli.clickext.options import incompatible_with
 from wilder.cli.clickext.types import FileOrString
 from wilder.cli.output_formats import OutputFormat
-from wilder.cli.select import get_user_selected_item
+from wilder.cli.select import get_user_selected_resource
 from wilder.cli.wild_factory import get_wilder
 from wilder.lib.config import create_config_object
+from wilder.lib.constants import Constants
 from wilder.lib.enum import AlbumStatus
 from wilder.lib.enum import AlbumType
 from wilder.lib.enum import AudioType
@@ -55,8 +56,7 @@ def _get_artist(wilder, artist):
     if _artist:
         return _artist
     artists = wilder.get_artist_names()
-    message = "What artist?"
-    artist_name_chosen = get_user_selected_item(message, artists)
+    artist_name_chosen = get_user_selected_resource(Constants.ARTIST, artists)
     return wilder.get_artist(artist_name_chosen)
 
 

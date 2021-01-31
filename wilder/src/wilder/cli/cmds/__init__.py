@@ -1,5 +1,5 @@
 import click
-from wilder.cli.select import get_user_selected_item
+from wilder.cli.select import get_user_selected_resource
 from wilder.lib.constants import Constants
 from wilder.lib.mgmt.album_dir import get_album_directory_obj
 
@@ -19,10 +19,19 @@ class AlbumDirCommand(click.Command):
         return super().invoke(ctx)
 
 
+def create_list_command(item_key):
+    class ListCommand(click.Command):
+        def invoke(self, ctx):
+            wilder = ctx.obj.wilder  # This line must stay to load context
+            item_arg = ctx.params.get(item_key)
+            all_arg = ctx.params.get("all")
+            if not item_arg and all_arg:
+                ctx.params[item_arg] = _WDirective._ALL
+
 def _select_album_from_list(artist):
     # Gets called when not in an album directory
     albums = artist.get_discography()  # Errors when no albums
     choices = [a.name for a in albums]
-    album_name = get_user_selected_item("What album?", choices)
+    album_name = get_user_selected_resource(Constants.ALBUM, choices)
     album = artist.get_album(album_name)
     return album.to_json_for_album_dir()
