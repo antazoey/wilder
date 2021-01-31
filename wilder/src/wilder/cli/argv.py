@@ -2,6 +2,7 @@ import click
 from wilder.cli.clickext.options import incompatible_with
 from wilder.cli.clickext.types import FileOrString
 from wilder.cli.output_formats import OutputFormat
+from wilder.cli.select import get_user_selected_item
 from wilder.cli.wild_factory import get_wilder
 from wilder.lib.config import create_config_object
 from wilder.lib.enum import AlbumStatus
@@ -28,7 +29,11 @@ format_option = click.option(
     default=OutputFormat.TABLE,
 )
 bio_option = click.option("--bio", "--biography", help="The artist biography.")
-artist_option = click.option("--artist", help="The name of an artist.")
+artist_option = click.option(
+    "--artist",
+    help="The name of an artist.",
+    callback=lambda ctx, param, arg: _get_artist(ctx.obj.wilder, arg),
+)
 track_num_option = click.option(
     "--track-number", "--track-num", help="The number the track is on the album."
 )
@@ -43,6 +48,16 @@ audio_type_option = click.option(
     help="The audio file extension of the track to play.",
     type=click.Choice(AudioType.choices(), case_sensitive=False),
 )
+
+
+def _get_artist(wilder, artist):
+    _artist = wilder.get_artist(artist)
+    if _artist:
+        return _artist
+    artists = wilder.get_artist_names()
+    message = "What artist?"
+    artist_name_chosen = get_user_selected_item(message, artists)
+    return wilder.get_artist(artist_name_chosen)
 
 
 class CLIState:

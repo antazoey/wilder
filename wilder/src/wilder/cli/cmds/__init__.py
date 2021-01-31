@@ -10,15 +10,12 @@ class AlbumDirCommand(click.Command):
         album_arg = ctx.params.get(Constants.ALBUM)
         artist_arg = ctx.params.get(Constants.ARTIST)
         artist = wilder.get_artist(artist_arg)
-
-        # If not getting ALL, set the dir-based artist/album props.
-        if not isinstance(artist, (list, tuple)):
-            album_dir_obj = get_album_directory_obj(
-                wilder, get_default_handler=lambda: _select_album_from_list(artist)
-            )
-            album_json = album_dir_obj.get_album_json(artist_arg, album_arg)
-            ctx.params[Constants.ALBUM] = album_json[Constants.NAME]
-            ctx.params[Constants.ARTIST] = album_json[Constants.ARTIST]
+        album_dir_obj = get_album_directory_obj(
+            wilder, get_default_handler=lambda: _select_album_from_list(artist)
+        )
+        album_json = album_dir_obj.get_album_json(artist_arg, album_arg)
+        ctx.params[Constants.ALBUM] = album_json[Constants.NAME]
+        ctx.params[Constants.ARTIST] = album_json[Constants.ARTIST]
         return super().invoke(ctx)
 
 

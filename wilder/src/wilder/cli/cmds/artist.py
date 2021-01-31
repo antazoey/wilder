@@ -8,7 +8,6 @@ from wilder.cli.argv import new_name_arg
 from wilder.cli.argv import wild_options
 from wilder.cli.cmds.util import echo_formatted_list
 from wilder.cli.output_formats import OutputFormat
-from wilder.cli.select import get_user_selected_item
 from wilder.cli.util import abridge
 from wilder.cli.util import convert_to_table_none_if_needed
 from wilder.lib.constants import Constants
@@ -26,24 +25,13 @@ def artist():
 @artist_option
 def show(state, artist):
     """The artist information."""
-    _artist = state.wilder.get_artist(artist)
-    if not _artist:
-        _artist = _select_artist(state.wilder)
-
-    _bio = convert_to_table_none_if_needed(_artist.bio)
-    also_known_as = _artist.also_known_as
-    click.echo(f"{Constants.NAME}: {_artist.name}")
+    _bio = convert_to_table_none_if_needed(artist.bio)
+    also_known_as = artist.also_known_as
+    click.echo(f"{Constants.NAME}: {artist.name}")
     click.echo(f"{Constants.BIO}: {_bio}")
     if also_known_as:
         also_known_as = ", ".join(also_known_as)
         click.echo(f"Also known as: '{also_known_as}'")
-
-
-def _select_artist(wilder):
-    artists = wilder.get_artist_names()
-    message = "What artist would you like to see?"
-    artist_name_chosen = get_user_selected_item(message, artists)
-    return wilder.get_artist(artist_name_chosen)
 
 
 @artist.command(Constants.LIST)
@@ -86,7 +74,7 @@ def remove(state, artist_name):
 @bio_option
 def update(state, artist, bio):
     """Update artist information."""
-    state.wilder.update_artist(artist, bio)
+    state.wilder.update_artist(artist.name, bio)
 
 
 @artist.command(cls=click.Command)
@@ -103,7 +91,7 @@ def focus(state, artist_name):
 @alias_arg
 def add_alias(state, artist, alias):
     """Add an artist alias."""
-    state.wilder.add_alias(alias, artist_name=artist)
+    state.wilder.add_alias(alias, artist_name=artist.name)
 
 
 @artist.command(cls=click.Command)
@@ -112,7 +100,7 @@ def add_alias(state, artist, alias):
 @alias_arg
 def remove_alias(state, artist, alias):
     """Remove an artist alias."""
-    state.wilder.remove_alias(alias, artist_name=artist)
+    state.wilder.remove_alias(alias, artist_name=artist.name)
 
 
 @artist.command()
@@ -125,5 +113,5 @@ def remove_alias(state, artist, alias):
 def rename(state, new_name, artist, forget_old_name):
     """Rename an artist."""
     state.wilder.rename_artist(
-        new_name, artist_name=artist, forget_old_name=forget_old_name
+        new_name, artist_name=artist.name, forget_old_name=forget_old_name
     )
